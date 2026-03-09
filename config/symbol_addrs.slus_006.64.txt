@@ -878,3 +878,4 @@ g_C1Buffer = 0x800625FC;
 g_C2Buffer = 0x8006261E;
 
 g_pTMR_HRETRACE_MODE = 0x80058964;
+_ctype_ = 0x800567C1;
