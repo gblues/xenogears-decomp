@@ -2,7 +2,7 @@
 #include "psyq/stdio.h"
 
 extern u32 D_8005A234;
-extern u8 D_800567C1[];
+extern u8 _ctype_[];
 extern char* D_80018F3C; // "<NULL>"
 
 void puts(char* str) {
@@ -30,12 +30,23 @@ void putchar(char ch) {
         return;
     }
 
-    if (D_800567C1[ch] & 0x97) {
+    if (_ctype_[ch] & 0x97) {
         D_8005A234++;
     }
 
     write(1, &ch, 1);
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libc2/puts", toupper);
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libc2/puts", tolower);
+char toupper(char ch) {
+    if (_ctype_[ch] & 0x2) {
+        ch -= 0x20;
+    }
+    return ch;
+}
+
+char tolower(char ch) {
+    if (_ctype_[ch] & 0x1) {
+        ch += 0x20;
+    }
+    return ch;
+}
