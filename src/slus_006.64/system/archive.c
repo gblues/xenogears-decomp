@@ -194,7 +194,32 @@ int* ArchiveAllocStreamFile(int numEntries, int allocMode) {
     return NULL;
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002A2D0);
+void ArchiveCdSeekOrPause(int entryIndex) {
+    u_char nCommand;
+    u_char* nParam;
+    int nSector;
+    CdlLOC* pCdLocation;
+
+    if ((g_ArchiveDebugTable == 0) && (ArchiveDataSync() == 0)) {
+        D_8004FE18 = g_CurArchiveOffset;
+        if (entryIndex > 0) {
+            pCdLocation = &g_ArchiveCdCurLocation;
+            nSector = ArchiveDecodeSector(entryIndex);
+            CdIntToPos(nSector, pCdLocation);
+            g_ArchiveCdDriveState = ARCHIVE_CD_DRIVE_SEEK;
+            CdSyncCallback(&ArchiveCdDriveCommandHandler);
+            nCommand = CdlSetloc;
+            nParam = (u_char*)pCdLocation;
+        } else {
+            g_ArchiveCdDriveState = ARCHIVE_CD_DRIVE_DONE;
+            CdSyncCallback(&ArchiveCdDriveCommandHandler);
+            nCommand = CdlPause;
+            nParam = NULL;
+        }
+
+        CdControlF(nCommand, nParam);
+    }
+}
 
 void ArchiveCdSeekToFile(int entryIndex) {
     u_char nCommand;
