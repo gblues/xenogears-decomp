@@ -387,7 +387,57 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008D2E0);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008D30C);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008D380);
+static inline void CopySpriteFieldS32(FieldActor* actors, int dstId, int srcId, int offset) {
+    void* dst = actors[dstId].pSpriteData;
+    void* src = actors[srcId].pSpriteData;
+    *(s32*)((u8*)dst + offset) = *(s32*)((u8*)src + offset);
+}
+
+static inline void CopySpriteFieldU16(FieldActor* actors, int dstId, int srcId, int offset) {
+    void* dst = actors[dstId].pSpriteData;
+    void* src = actors[srcId].pSpriteData;
+    *(u16*)((u8*)dst + offset) = *(u16*)((u8*)src + offset);
+}
+
+static inline void CopyActorFieldS32(FieldActor* base, int dstId, int srcId, int offset) {
+    *(s32*)((u8*)&base[dstId] + offset) = *(s32*)((u8*)&base[srcId] + offset);
+}
+
+void FieldActorCopyPlacement(int dstActorId, int srcActorId) {
+    FieldActor* actors = g_FieldActors;
+    ActorData* dstActor;
+    ActorData* srcActor;
+    int i;
+
+    srcActor = actors[srcActorId].pActorData;
+    dstActor = actors[dstActorId].pActorData;
+
+    for (i = 0; i < 4; i++) {
+        dstActor->walkmeshTriIds[i] = srcActor->walkmeshTriIds[i];
+    }
+    {
+      s16 walkmeshId = srcActor->walkmeshId;
+      dstActor->walkmeshId = walkmeshId;
+    }
+    dstActor->curTriNormal.vx = srcActor->curTriNormal.vx;
+    dstActor->curTriNormal.vy = srcActor->curTriNormal.vy;
+    dstActor->curTriNormal.vz = srcActor->curTriNormal.vz;
+    dstActor->position.vx = srcActor->position.vx;
+    dstActor->position.vy = srcActor->position.vy;
+    dstActor->position.vz = srcActor->position.vz;
+    dstActor->unkEC = srcActor->unkEC;
+    dstActor->curYPos = srcActor->curYPos;
+    dstActor->curWalkmeshTriMaterial = srcActor->curWalkmeshTriMaterial;
+
+    CopySpriteFieldU16(g_FieldActors, dstActorId, srcActorId, offsetof(SpriteData, field_0x84));
+    CopySpriteFieldS32(g_FieldActors, dstActorId, srcActorId, offsetof(SpriteData, position.x));
+    CopySpriteFieldS32(g_FieldActors, dstActorId, srcActorId, offsetof(SpriteData, position.y));
+    CopySpriteFieldS32(g_FieldActors, dstActorId, srcActorId, offsetof(SpriteData, position.z));
+
+    CopyActorFieldS32(g_FieldActors, dstActorId, srcActorId, offsetof(FieldActor, transformMatrix.t[0]));
+    CopyActorFieldS32(g_FieldActors, dstActorId, srcActorId, offsetof(FieldActor, transformMatrix.t[1]));
+    CopyActorFieldS32(g_FieldActors, dstActorId, srcActorId, offsetof(FieldActor, transformMatrix.t[2]));
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008D570);
 
