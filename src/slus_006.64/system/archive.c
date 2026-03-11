@@ -194,7 +194,32 @@ int* ArchiveAllocStreamFile(int numEntries, int allocMode) {
     return NULL;
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002A2D0);
+void ArchiveCdSeekOrPause(int entryIndex) {
+    u_char nCommand;
+    u_char* nParam;
+    int nSector;
+    CdlLOC* pCdLocation;
+
+    if ((g_ArchiveDebugTable == 0) && (ArchiveDataSync() == 0)) {
+        D_8004FE18 = g_CurArchiveOffset;
+        if (entryIndex > 0) {
+            pCdLocation = &g_ArchiveCdCurLocation;
+            nSector = ArchiveDecodeSector(entryIndex);
+            CdIntToPos(nSector, pCdLocation);
+            g_ArchiveCdDriveState = ARCHIVE_CD_DRIVE_SEEK;
+            CdSyncCallback(&ArchiveCdDriveCommandHandler);
+            nCommand = CdlSetloc;
+            nParam = (u_char*)pCdLocation;
+        } else {
+            g_ArchiveCdDriveState = ARCHIVE_CD_DRIVE_DONE;
+            CdSyncCallback(&ArchiveCdDriveCommandHandler);
+            nCommand = CdlPause;
+            nParam = NULL;
+        }
+
+        CdControlF(nCommand, nParam);
+    }
+}
 
 void ArchiveCdSeekToFile(int entryIndex) {
     u_char nCommand;
@@ -257,9 +282,65 @@ void func_8002A498(int channel) {
     }
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", ArchiveStreamFreeQueueData);
+void ArchiveStreamFreeQueueData(StreamDataQueueEntry* pEntries) {
+    StreamDataQueueEntry* pCurrent;
+    void* pData;
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002A57C);
+    if ((unsigned short)pEntries->archiveIndex != 0) {
+        pCurrent = pEntries;
+        do {
+            pData = pCurrent->pData;
+            pCurrent++;
+            if (pData) {
+                HeapFree(pData);
+            }
+        } while ((unsigned short)pCurrent->archiveIndex != 0);
+    }
+}
+
+StreamDataQueueEntry* ArchiveStreamAllocQueueData(int archiveIndex, StreamDataQueueEntry* pEntries) {
+    int entryIndex;
+    int numEntries;
+    int i;
+    s32 bHasAllocatedEntries;
+    void* pBuffer;
+
+    bHasAllocatedEntries = 0;
+    numEntries = (short)ArchiveDecodeSizeAbsolute(archiveIndex);
+
+    if (numEntries > 0) {
+        if (pEntries == NULL) {
+            pEntries = HeapAlloc((numEntries + 1) * sizeof(StreamDataQueueEntry), 0);
+            bHasAllocatedEntries = 1;
+            if (pEntries == NULL) {
+                return NULL;
+            }
+        }
+
+        for (i = 0; i < numEntries; i++) {
+            entryIndex = archiveIndex + i + 1;
+            pEntries[i].archiveIndex = entryIndex;
+
+            pBuffer = HeapAlloc(ArchiveDecodeAlignedSize(entryIndex), 0);
+            pEntries[i].pData = pBuffer;
+            if (pBuffer == NULL) {
+                ArchiveStreamFreeQueueData(pEntries);
+                if (bHasAllocatedEntries > 0) {
+                    HeapFree(pEntries);
+                }
+                pEntries = NULL;
+                return 0;
+            }
+        }
+
+        pEntries[numEntries].archiveIndex = 0;
+        pEntries[numEntries].pData = NULL;
+    } else {
+        pEntries = NULL;
+    }
+
+    return pEntries;
+}
 
 void ArchiveCdDriveCommandHandler(u_char status, u_char* pResult) {
     char channel;
