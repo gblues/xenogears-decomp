@@ -218,10 +218,7 @@ typedef struct {
     u_int scriptFlags_0x16: 1;
     u_int scriptFlags_0x17: 8;
     /* 0x4  */ u_int flags; // ?
-    /* 0x8  */ u_short walkmesh0TriId;
-    /* 0xA  */ u_short walkmesh1TriId;
-    /* 0xC  */ u_short walkmesh2TriId;
-    /* 0xE  */ u_short walkmesh3TriId;
+    /* 0x8  */ u_short walkmeshTriIds[4];
     /* 0x10 */ short walkmeshId;
     /* 0x12 */ short pad_0x12;
     /* 0x14 */ u_int curWalkmeshTriMaterial;

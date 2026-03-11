@@ -56,6 +56,8 @@ FieldTextBoxInitializePrimitives = 0x8007EE0C;
 
 // Script / Event
 
+FieldActorCopyPlacement = 0x8008D380;
+
 FieldPartyMemberIncreaseGearHp = 0x8008DB68;
 FieldPartyMemberDecreaseGearHp = 0x8008DBF0;
 FieldScriptVMHandlerIncreasePartyGearHp = 0x8008DC74;
