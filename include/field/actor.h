@@ -216,8 +216,10 @@ typedef struct {
     u_int scriptFlags_0x14: 1;
     u_int scriptFlags_0x15: 1;
     u_int scriptFlags_0x16: 1;
-    u_int scriptFlags_0x17: 8;
-    /* 0x4  */ u_int flags; // ?
+    u_int scriptFlags_0x17: 1;
+    u_int scriptFlags_0x18: 1;
+    u_int scriptFlags_0x19: 6;
+    u_int flags;
     /* 0x8  */ u_short walkmeshTriIds[4];
     /* 0x10 */ short walkmeshId;
     /* 0x12 */ short pad_0x12;
@@ -255,9 +257,9 @@ typedef struct {
     /* 0xE2  */ u_char curDoorStep;
     /* 0xE3  */ u_char unkE3; // timer?
     /* 0xE4  */ u_short characterId;
-    /* 0xE6  */ u_short defaultAnimationId;
-    /* 0xE8  */ u_short curAnimationId;
-    /* 0xEA  */ u_short unkAnimationId;
+    /* 0xE6  */ short defaultAnimationId;
+    /* 0xE8  */ short curAnimationId;
+    /* 0xEA  */ short unkAnimationId;
     /* 0xEC  */ short unkEC;
     /* 0xEE  */ short unkEE;
     /* 0xF0  */ int unkF0;

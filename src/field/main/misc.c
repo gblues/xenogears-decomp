@@ -1608,17 +1608,150 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800989F0);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80098A7C);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80098C00);
+void func_80098C00(void) {
+    g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0 = 0xFFFF;
+    func_80098CAC(0);
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80098C3C);
+void func_80098C3C(void) {
+    if (g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0 == 0xFFFF) {
+        g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0 = FieldScriptVMGetArgument(0xB);
+    }
+    func_80098CAC(1);
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80098CAC);
+extern s32 D_800AFD1C;
+extern s32 D_800B00C0;
+
+void func_80098CAC(s32 arg0) {
+    IVEC3 prevPosition;
+    s16 rotation;
+    s32 animationId;
+    s32 scriptArg2;
+    s32 scriptArg1;
+    s32 scriptArg3;
+    s32 speed;
+    SpriteData* pSprite;
+    FieldActor* pFieldActor;
+    ActorData *pActorData;
+
+    pFieldActor = g_FieldActors;
+    pActorData = pFieldActor[D_800AFD1C].pActorData;
+    pSprite = pFieldActor[D_800AFD1C].pSpriteData;
+    if (pActorData->flags & 0x2000) {
+        speed = (0x8000000 / g_FieldScriptVMCurActor->moveSpeed) >> 0x10;
+    } else {
+        speed = (0x4000000 / g_FieldScriptVMCurActor->moveSpeed) >> 0x10;
+    }
+    if (speed == 0) {
+        speed = 1;
+    }
+    
+    animationId = 1;
+    g_FieldScriptVMCurActor->scriptFlags_0xX = 1;
+    if (SCRIPT_READ_U8_REL(1) == 0) {
+        scriptArg1 = func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)) << 0x10;
+        scriptArg2 = func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)) << 0x10;
+        scriptArg3 = func_8009D000(6, SCRIPT_READ_U8_REL(0x8)) << 0x10;
+        g_FieldScriptVMCurActor->unk102 = func_80099A04(
+            (scriptArg1 - g_FieldScriptVMCurActor->position.vx) >> 0x10, 
+            (scriptArg3 - g_FieldScriptVMCurActor->position.vy) >> 0x10, 
+            (scriptArg2 - g_FieldScriptVMCurActor->position.vz) >> 0x10
+        ) / speed;
+
+        if ((g_FieldScriptVMCurActor->unk102 << 0x10) == 0) {
+            g_FieldScriptVMCurActor->unk102++;
+        }
+        
+        g_FieldScriptVMCurActor->unkD0.vx = (scriptArg1 - g_FieldScriptVMCurActor->position.vx) / g_FieldScriptVMCurActor->unk102;
+        g_FieldScriptVMCurActor->unkD0.vy = (scriptArg3 - g_FieldScriptVMCurActor->position.vy) / g_FieldScriptVMCurActor->unk102;
+        g_FieldScriptVMCurActor->unkD0.vz = (scriptArg2 - g_FieldScriptVMCurActor->position.vz) / g_FieldScriptVMCurActor->unk102;
+        if ((scriptArg1 >> 0x10) != (g_FieldScriptVMCurActor->position.vx >> 0x10) || 
+            (scriptArg2 >> 0x10) != (g_FieldScriptVMCurActor->position.vz >> 0x10)
+        ) {
+            rotation = -func_8004B32C(
+                g_FieldScriptVMCurActor->unkD0.vz >> 0x10, 
+                g_FieldScriptVMCurActor->unkD0.vx >> 0x10
+            );
+            g_FieldScriptVMCurActor->rotationX = rotation;
+            g_FieldScriptVMCurActor->rotationY = rotation;
+        }
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 9;
+    } else {
+        if (g_FieldScriptVMCurActor->unk102 <= 0 || g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0 == 0) {
+            g_FieldScriptVMCurActor->scriptInstructionPointer -= 9;
+            if (g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0 != 0) {
+                prevPosition.x = g_FieldScriptVMCurActor->position.vx;
+                prevPosition.y = g_FieldScriptVMCurActor->position.vy;
+                prevPosition.z = g_FieldScriptVMCurActor->position.vz;
+                g_FieldScriptVMCurActor->position.vx = func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)) << 0x10;
+                g_FieldScriptVMCurActor->position.vz = func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)) << 0x10;
+                g_FieldScriptVMCurActor->position.vy = func_8009D000(6, SCRIPT_READ_U8_REL(0x8)) << 0x10;
+                g_FieldScriptVMCurActor->moveModified.vx = g_FieldScriptVMCurActor->position.vx - prevPosition.x;
+                g_FieldScriptVMCurActor->moveModified.vy = g_FieldScriptVMCurActor->position.vy - prevPosition.y;
+                g_FieldScriptVMCurActor->moveModified.vz = g_FieldScriptVMCurActor->position.vz - prevPosition.z;
+            }
+            animationId = g_FieldScriptVMCurActor->defaultAnimationId;
+            if (arg0 == 0) {
+                g_FieldScriptVMCurActor->scriptInstructionPointer += 0xB;
+            } else {
+                g_FieldScriptVMCurActor->scriptInstructionPointer += 0xD;
+            }
+            g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0 = 0xFFFF;
+        } else {
+            g_FieldScriptVMCurActor->position.vx += g_FieldScriptVMCurActor->unkD0.vx;
+            g_FieldScriptVMCurActor->position.vz += g_FieldScriptVMCurActor->unkD0.vz;
+            g_FieldScriptVMCurActor->position.vy +=  g_FieldScriptVMCurActor->unkD0.vy;
+            g_FieldScriptVMCurActor->moveModified.vx = g_FieldScriptVMCurActor->unkD0.vx;
+            g_FieldScriptVMCurActor->moveModified.vy = g_FieldScriptVMCurActor->unkD0.vy;
+            g_FieldScriptVMCurActor->moveModified.vz = g_FieldScriptVMCurActor->unkD0.vz;
+            g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0--;
+            D_800B00C0 = 1;
+        }
+        g_FieldScriptVMCurActor->unk102--;
+        g_FieldActors[D_800AFD1C].transformMatrix.t[0] = g_FieldScriptVMCurActor->position.vx >> 0x10;
+        g_FieldActors[D_800AFD1C].transformMatrix.t[1] = g_FieldScriptVMCurActor->position.vy >> 0x10;
+        g_FieldActors[D_800AFD1C].transformMatrix.t[2] = g_FieldScriptVMCurActor->position.vz >> 0x10;
+        pSprite->position.x = g_FieldScriptVMCurActor->position.vx;
+        pSprite->position.y = g_FieldScriptVMCurActor->position.vy;
+        pSprite->position.z = g_FieldScriptVMCurActor->position.vz;
+    }
+    
+    if (g_FieldScriptVMCurActor->unkAnimationId != 0xFF) {
+        animationId = g_FieldScriptVMCurActor->unkAnimationId;
+    }
+    
+    if (g_FieldScriptVMCurActor->curAnimationId != animationId &&  
+        !g_FieldScriptVMCurActor->scriptFlags_0x18
+    ) {
+        g_FieldScriptVMCurActor->curAnimationId = animationId;
+        func_800821F4(pSprite, animationId, D_800B06B8, g_FieldScriptVMCurActor);
+    }
+    func_80081F80(pSprite, g_FieldScriptVMCurActor->rotationX, D_800B06B8);
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099214);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099980);
+//INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099980);
+void func_80099980(void) {
+    g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0x17 = 0;
+    g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0 = 0xFFFF;
+    if (func_80099AC0(0xFFFF) == 0) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 0x6;
+    }
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099A04);
+//INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099A04);
+void func_80099A04(long x, long y, long z) {
+    VECTOR vec;
+    VECTOR vec2;
+
+    vec.vx = x;
+    vec.vy = y;
+    vec.vz = z;
+    func_8004A414(&vec, &vec2);
+    func_80048C4C(vec2.vx + vec2.vy + vec2.vz);
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099A4C);
 
