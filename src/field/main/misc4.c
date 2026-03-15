@@ -7,6 +7,7 @@
 #include "system/archive.h"
 #include "system/sound.h"
 #include "psyq/libetc.h"
+#include "psyq/libcd.h"
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc4", func_80078B5C);
 
@@ -798,7 +799,7 @@ void func_80085FB8(void) {
     ArchiveSetIndex(0x1C, 0x0);
     pWdsFileBuffer = HeapAlloc(ArchiveDecodeAlignedSize(3), 1);
     D_800B00E0 = pWdsFileBuffer;
-    func_800295D8(3, pWdsFileBuffer, 0, 0x80);
+    ArchiveReadFileToBuffer(3, pWdsFileBuffer, 0, CdlModeSpeed);
     ArchiveSetIndex(4, 0);
     D_8004F364 = 0x80;
 }

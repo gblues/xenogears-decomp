@@ -6,6 +6,8 @@
 // Temp
 extern int func_800286CC(void);
 
+extern s32 g_ArchiveCurFileSector;
+
 void ArchiveInit(u32 pArchiveTable, u32 pHeaderTable, u32 pDebugTable) {
     D_8005A488 = 0;
     D_8005A48C = 0;
@@ -46,9 +48,9 @@ void ArchiveInit(u32 pArchiveTable, u32 pHeaderTable, u32 pDebugTable) {
     D_8004FE4C = -1;
     
     if (!pDebugTable) {
-        func_8002954C(0x18, pArchiveTable, (0x10 * CD_SECTOR_SIZE), 0, 0);
+        ArchiveReadFileFromCdSector(0x18, pArchiveTable, (0x10 * CD_SECTOR_SIZE), 0, 0);
         ArchiveCdDataSync(0);
-        func_8002954C(0x28, g_ArchiveHeader, 0x7A, 0, 0);
+        ArchiveReadFileFromCdSector(0x28, g_ArchiveHeader, 0x7A, 0, 0);
         ArchiveCdDataSync(0);
     }
 }
@@ -373,7 +375,38 @@ int ArchiveClearStreamFileSections(void) {
 }
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/libarchive", func_80028B14);
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/libarchive", func_80028E60);
+
+int func_80028E60(int sectionIndex, int maxEntries, int targetState) {
+    int i;
+    ArchiveStreamFileSectionHeader* pSectionHeader;
+    int nSections;
+    
+    i = 0;
+    while (i < maxEntries) {
+        pSectionHeader = D_8004FE2C + sectionIndex;
+        nSections = D_8004FE40;
+
+        while (1) {
+            if (pSectionHeader->state == targetState) {
+                sectionIndex++;
+                pSectionHeader++;
+                
+                if (nSections < sectionIndex)
+                    return 1;
+                
+                i++;
+                
+                if (i >= maxEntries)
+                    return 0;
+                
+                continue;
+            }
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 void ArchiveConsolidateStreamFileEntry(int sectionIndex) {
     short nSize;
@@ -396,5 +429,25 @@ void ArchiveConsolidateStreamFileEntry(int sectionIndex) {
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/libarchive", func_80028F30);
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/libarchive", func_8002945C);
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/libarchive", func_800294B4);
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/libarchive", func_8002954C);
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/libarchive", func_800295D8);
+
+s32 ArchiveReadFileFromCdSector(s32 sector, void* pDestBuffer, s32 fileSize, s32 arg3, u32 flags) {
+    if (g_ArchiveDebugTable) {
+        return -1;
+    }
+    
+    ArchiveCdDataSync(0);
+    g_ArchiveCurFileSector = sector;
+    g_ArchiveCurFileSize = fileSize;
+    return ArchiveReadFile(0, pDestBuffer, arg3, flags);
+}
+
+s32 ArchiveReadFileToBuffer(s32 index, s32 pBuffer, u32 arg2, u32 flags) {
+    if ((index <= 0) || (ArchiveDecodeSize(index) <= 0) || (pBuffer == NULL)) {
+        return -3;
+    }
+    ArchiveCdDataSync(0);
+    D_8004FE18 = g_CurArchiveOffset;
+    g_ArchiveCurFileSector = ArchiveDecodeSector(index);
+    g_ArchiveCurFileSize = ArchiveDecodeAlignedSize(index);
+    return ArchiveReadFile(index, pBuffer, arg2, flags);
+}

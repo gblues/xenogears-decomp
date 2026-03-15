@@ -1,9 +1,20 @@
 #include "common.h"
+#include "field/actor.h"
 
 // Rendering-related stuff
 
 // Allocate directions array
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/rendering", func_8001D4E8);
+/*
+Matches on decomp.me
+
+void func_8001D4E8(SpriteData* pSpriteData) {
+    if (pSpriteData->pBase->pDirTransforms == 0) {
+        pSpriteData->pBase->pDirTransforms = HeapAlloc(sizeof(SpriteDirectionTransforms), 0);
+        func_800234AC(pSpriteData);
+    }
+}
+*/
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/rendering", func_8001D53C);
 

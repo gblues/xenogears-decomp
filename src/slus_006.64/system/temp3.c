@@ -4,6 +4,7 @@
 #include "system/memory.h"
 #include "system/sound.h"
 #include "psyq/libgpu.h"
+#include "psyq/libcd.h"
 
 extern s32 D_8004F330;
 extern s32 D_8004F334;
@@ -264,7 +265,7 @@ void func_8001B53C(int index) {
     D_8005A4C0 = ArchiveDecodeAlignedSize(index + 0xB8);
     D_8005A4E0 = HeapAlloc(D_8005A4C0, 1);
     HeapPinBlock(D_8005A4E0);
-    func_800295D8(index + 0xB8, D_8005A4E0, 0, 0x80);
+    ArchiveReadFileToBuffer(index + 0xB8, D_8005A4E0, 0, CdlModeSpeed);
 }
 
 extern int g_GameHasLoadedWDS;
