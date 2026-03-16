@@ -128,11 +128,15 @@ typedef struct {
 typedef struct {
     u16 active_flag;                // 0x00 - checked for != 0
     u16 status_flags;               // 0x02 - contains bit flags of some sort
-    s8 unknown_data[0x23];          // 0x04 - 0x26
+    s8 unknown_data[0x22];          // 0x04 - 0x25
+    u8 unk_0x26;                    // 0x26
     u8 voice_number;                // 0x27 - SPU voice index
-    s8 padding[0x8];                // 0x28 - 0x2F
+    u8 unk_0x28;                    // 0x28
+    s8 padding[0x7];                // 0x29 - 0x2F
     SoundVoiceData voice_data;      // 0x30 - passed to cancel function
-    u8 unk[252];                    // Size of this struct during iteration seems to be 0x158
+    u8 unk_0x5C[0x12];             // 0x5C-0x6D
+    s16 unk_0x6E;                   // 0x6E
+    u8 unk_0x70[0xE8];             // 0x70-0x157
 } AudioElement;
 
 typedef struct AudioManager {
@@ -151,7 +155,7 @@ typedef struct AudioManager {
     u8 unk_0x1c[4];                           // 0x1c-0x1f
     s32 unk_0x20;                             // 0x20
     s32 unk_0x24;                             // 0x24
-    s32 unk_0x28;                             // 0x28
+    s32 unk_0x28;                             // 0x28                      
     s32 unk_0x2c;                             // 0x2c
     s16 unk_0x30;                             // 0x30
     s16 unk_0x32;                             // 0x32
@@ -166,7 +170,7 @@ typedef struct AudioManager {
     u8 unk_0x4c[4];                           // 0x4c-0x4f
     s32 unk_0x50;                             // 0x50
     s32 unk_0x54;                             // 0x54
-    s32 unk_0x58;                             // 0x58
+    s32 unk_0x58;                             // 0x58                             
     s32 unk_0x5c;                             // 0x5c
     s16 unk_0x60;                             // 0x60
     u8 unk_0x62[2];                           // 0x62-0x63

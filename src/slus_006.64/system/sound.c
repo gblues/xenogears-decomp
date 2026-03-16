@@ -1450,39 +1450,107 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D4E4);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D53C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D59C);
+u8* SoundScriptSetVoiceFlagsAndMode(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    pAudioElements->voice_data.flags |= 0x4000;
+    pAudioElements->voice_data.modeFlags &= 0xFFBF;
+    return pScript;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D5BC);
+int SoundScriptSkip3(int arg0) {
+    return arg0 + 3;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D5C4);
+s32 SoundScriptNop(s32 arg0) {
+    return arg0;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D5CC);
+s32 SoundScriptNop2(s32 arg0) {
+    return arg0;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D5D4);
+u8* SoundScriptCallE5BC(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    func_8003E5BC(pAudioElements->unk_0x26, pAudioElements);
+    return pScript;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D60C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D640);
+u8* SoundScriptSetAdsr4(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 temp = *pScript;
+    pAudioElements->voice_data.flags |= 0x10;
+    pAudioElements->voice_data.unkAdsr4 = temp;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D65C);
+u8* SoundScriptSetAdsrDR(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 temp = *pScript;
+    pAudioElements->voice_data.flags |= 0x20;
+    pAudioElements->voice_data.adsrDR = temp;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D678);
+u8* SoundScriptSetAdsr5(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 temp = *pScript;
+    pAudioElements->voice_data.flags |= 0x40;
+    pAudioElements->voice_data.unkAdsr5 = temp;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D694);
+u8* SoundScriptSetUnk28AndAdsr6(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 temp = *pScript;
+    pAudioElements->voice_data.flags |= 0x80;
+    pAudioElements->unk_0x28 = temp;
+    pAudioElements->voice_data.unkAdsr6 = temp;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D6B4);
+u8* SoundScriptSetAdsrSR(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 temp = *pScript;
+    pAudioElements->voice_data.flags |= 0x100;
+    pAudioElements->voice_data.adsrSR = temp;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D6D0);
+u8* SoundScriptSetAdsrDRAndSR(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    pAudioElements->voice_data.adsrDR = *pScript;
+    pAudioElements->voice_data.adsrSR = *(pScript + 1);
+    pAudioElements->voice_data.flags |= 0x120;
+    return pScript + 2;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D6F8);
+u8* SoundScriptSetAdsr1(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 temp = *pScript;
+    pAudioElements->voice_data.flags |= 0x10;
+    pAudioElements->voice_data.unkAdsr1 = temp;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D714);
+u8* SoundScriptSetAdsr2(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 temp = *pScript;
+    pAudioElements->voice_data.flags |= 0x40;
+    pAudioElements->voice_data.unkAdsr2 = temp;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D730);
+u8* SoundScriptSetAdsr3(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 temp = *pScript;
+    pAudioElements->voice_data.flags |= 0x80;
+    pAudioElements->voice_data.unkAdsr3 = temp;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D74C);
+u8* SoundScriptSetUnk6E(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    s16 temp = (s8)*pScript << 5;
+    pAudioElements->unk_0x6E = temp;
+    pAudioElements->status_flags |= 0x200;
+    return pScript + 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D770);
+u8* SoundScriptAddUnk6E(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    pAudioElements->unk_0x6E += (s8)*pScript << 5;
+    pAudioElements->status_flags |= 0x200;
+    return pScript + 1;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D79C);
 
