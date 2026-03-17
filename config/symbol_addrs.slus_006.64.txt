@@ -854,6 +854,7 @@ g_Font = 0x80059394;
 g_FontClutDest = 0x80059398;
 
 // Sound
+g_SoundScriptHandlers = 0x80050624;
 g_pSoundSpuRegisters = 0x800508E4; // Weird. This is a pointer to the hardware register, but referenced in sound.c
 g_ReverbWorkAreaSizes = 0x800508E8; // size:0x28
 g_SoundReverbType = 0x80059409;

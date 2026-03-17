@@ -230,9 +230,15 @@ long FieldGetVec1Magnitude(long x) {
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_80099AC0);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_80099EF8);
+void FieldScriptVMWriteCurCharacterID(void) {
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+        g_FieldScriptVMCurActor->characterId
+    );
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 0x3;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_80099F48);
+INCLUDE_ASM("asm/field/nonmatchings/main/misc7", FieldScriptVMWritePartyLeaderCharacterID);
 
 void FieldScriptVMHandlerGetActorFacingAngle(void) {
     FieldScriptMemoryWriteU16(

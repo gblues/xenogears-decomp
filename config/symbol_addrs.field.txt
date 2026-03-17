@@ -98,6 +98,9 @@ FieldGetVec3Magnitude = 0x80099A04;
 FieldGetVec2Magnitude = 0x80099A4C;
 FieldGetVec1Magnitude = 0x80099A8C;
 
+FieldScriptVMWriteCurCharacterID = 0x80099EF8;
+FieldScriptVMWritePartyLeaderCharacterID = 0x80099F48;
+
 FieldScriptVMHandlerGetActorFacingAngle = 0x80099FC4;
 FieldScriptVMHandlerGetActorPosition = 0x8009A024;
 
@@ -227,6 +230,8 @@ g_FieldPixelIndex = 0x800B14A8;
 g_FieldEffects = 0x800B2078; // size:0xFC
 
 g_FieldControl = 0x800B2176; // type:FieldControl size:0x6
+
+g_PartyLeaderActorIndex = 0x800B226C;
 
 g_FieldRenderContexts = 0x800B249C; // size:0x101E8
 

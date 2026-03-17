@@ -435,7 +435,7 @@ extern PolyList2* D_800C3A3C;
 
 extern s32 D_800AFE78;
 extern s32 D_800AFE7C;
-extern s32 D_800B226C;
+extern s32 g_PartyLeaderActorIndex;
 extern s32 D_800C3914;
 extern s32 D_800C3A18;
 
@@ -445,7 +445,7 @@ void func_800AB378(s8 color) {
     int y;
     int x;
     
-    pActor = g_FieldActors[D_800B226C].pActorData;
+    pActor = g_FieldActors[g_PartyLeaderActorIndex].pActorData;
     x = (pActor->position.vx >> 0x10) * D_800C3914 >> 0x10;
     y = -((pActor->position.vz >> 0x10) * D_800C3A18) >> 0x10;
     

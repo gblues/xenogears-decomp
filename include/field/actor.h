@@ -256,7 +256,7 @@ typedef struct {
     /* 0xE0  */ u_short unkE0;
     /* 0xE2  */ u_char curDoorStep;
     /* 0xE3  */ u_char unkE3; // timer?
-    /* 0xE4  */ u_short characterId;
+    /* 0xE4  */ short characterId;
     /* 0xE6  */ short defaultAnimationId;
     /* 0xE8  */ short curAnimationId;
     /* 0xEA  */ short unkAnimationId;
