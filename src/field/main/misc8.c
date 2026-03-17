@@ -1,0 +1,199 @@
+#include "common.h"
+#include "field/actor.h"
+#include "field/main.h"
+#include "field/text_box.h"
+#include "field/effects.h"
+#include "system/memory.h"
+#include "system/archive.h"
+#include "system/sound.h"
+#include "psyq/libetc.h"
+#include "psyq/libcd.h"
+
+extern int D_800ADBFC;
+void func_8008083C(int actorIndex) {
+    ActorData* pActor;
+
+    if (actorIndex < D_800ADBFC) {
+        pActor = g_FieldActors[actorIndex].pActorData;
+        if (pActor->flags134 & 0x80) {
+            HeapFree(pActor->unk110);
+        }
+        if (pActor->flags12C_0xD) {
+            HeapFree(pActor->unk114);
+        }
+        if (g_FieldActors[actorIndex].status & 0x2000) {
+            HeapFree(pActor->unk118);
+        }
+        if (pActor->unk124 != -1) {
+            HeapFree(pActor->unk120);
+        }
+        HeapFree(pActor);
+        HeapFree(g_FieldActors[actorIndex].pShadow);
+        func_800230A8(g_FieldActors[actorIndex].pSpriteData);
+    }
+}
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80080968);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800809D0);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80080A18);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80080A74);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80080F44);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_8008110C);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800815F0);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80081C54);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80081F5C);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80081F80);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800821F4);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_8008237C);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80082494);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800825AC);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80082620);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80082BB8);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80083178);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800831D0);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800831F4);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80083288);
+
+void func_80083994(void) {
+}
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_8008399C);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80084158);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_8008492C);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80084A40);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800854D0);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085560);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800855C8);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085634);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085678);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085738);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085788);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085890);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085988);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800859DC);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085B20);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085C3C);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085C90);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80085EEC);
+
+extern s32 D_8004F364;
+extern s32 D_8004F368;
+extern s16 D_8004F384;
+extern s32 D_80059560;
+extern SoundWDSEntry* D_8006251C;
+extern void* D_800B00E0; // WDS File Buffer
+
+int func_80085F30(void) {
+    void* pWdsEntry;
+
+    if (ArchiveDataSync()) {
+        return -1;
+    }
+    
+    pWdsEntry = SoundLoadWdsFile(D_800B00E0, 0);
+    D_8006251C = pWdsEntry;
+    D_80059560 = pWdsEntry;
+    func_8003BDFC(0x10);
+    HeapFree(D_800B00E0);
+    D_8004F364 = 1;
+    D_8004F384 = 0;
+    D_8004F368 = 0;
+    return 0;
+}
+
+void func_80085FB8(void) {
+    void* pWdsFileBuffer;
+
+    ArchiveSetIndex(0x1C, 0x0);
+    pWdsFileBuffer = HeapAlloc(ArchiveDecodeAlignedSize(3), 1);
+    D_800B00E0 = pWdsFileBuffer;
+    ArchiveReadFileToBuffer(3, pWdsFileBuffer, 0, CdlModeSpeed);
+    ArchiveSetIndex(4, 0);
+    D_8004F364 = 0x80;
+}
+
+void func_80086024(void) {
+    if (D_8004F368 == 0) {
+        D_8004F384 = 1;
+        SoundFreeWdsEntry(D_8006251C);
+        D_8004F368 = 1;
+    }
+    D_8004F364 = 0;
+}
+
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086078);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800860F0);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086200);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800862CC);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800863E8);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086470);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800864B4);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800864F0);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086590);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086908);
+
+// Call function from second handler table
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800869B8);
+/*
+void func_800869B8(void) {
+    u_short handlerIndex;
+
+    handlerIndex = g_FieldScriptVMCurActor->scriptInstructionPointer + 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer = handlerIndex;
+    &gEventHandlers2[g_FieldScriptVMCurScriptData + handlerIndex]();
+}
+*/
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086A1C);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086BA8);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086C34);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086D4C);
