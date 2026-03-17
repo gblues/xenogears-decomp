@@ -34,11 +34,11 @@ void srand(u_long seed) {
     g_RandomSeed = seed;
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libc", func_8003FA78);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libc", strcat);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libc", func_8003FB20);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libc", strcmp);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libc", func_8003FB84);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libc", strcpy);
 
 int strlen(char* pString) {
     int nLen;

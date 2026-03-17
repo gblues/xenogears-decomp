@@ -2,13 +2,13 @@
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", InitGeom);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80048C4C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SquareRoot0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80048CDC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", InvSquareRoot);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80048D68);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", VectorNormalS);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80048DA8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", VectorNormalSS);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80048DD8);
 
@@ -16,7 +16,7 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80048E94);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", LoadAverage12);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80048FCC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", LoadAverage0);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004901C);
 
@@ -30,9 +30,9 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", MulMatrix0);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", CompMatrix);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004947C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", ApplyMatrixLV);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_800495DC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", ApplyRotMatrix);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", PushMatrix);
 
@@ -42,7 +42,7 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", ScaleMatrixL);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetMulMatrix);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004998C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", ApplyRotMatrixLV);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", MulMatrix);
 
@@ -72,27 +72,27 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetVertex2);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetVertexTri);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80049FFC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetRGBfifo);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A010);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetIR123);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A024);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetIR0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A030);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetSZfifo3);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A044);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetSZfifo4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A05C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetSXSYfifo);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A070);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetRii);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A084);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetMAC123);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A098);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetData32);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A0A4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetDQA);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A0B0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetDQB);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", ReadGeomOffset);
 
@@ -106,57 +106,57 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetGeomOffset);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SetGeomScreen);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A15C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", LocalLight);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A180);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", DpqColor);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A19C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", NormalColor);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A1B8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", NormalColor3);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A1F4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", NormalColorDpq);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A218);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", NormalColorDpq3);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A260);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", NormalLightCol);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A280);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", NormalColorCol3);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A2C4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", ColorDpq);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A2EC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", ColorCol);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A310);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", AverageSZ3);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A320);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", AverageSZ4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A33C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", LightColor);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A364);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", DpqColorLight);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A38C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", DpqColor3);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A3C8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", Intpl);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A3EC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", Square12);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A414);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", Square0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A43C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", AverageZ3);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A45C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", AverageZ4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A480);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", OuterProduct12);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A4D8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", OuterProduct0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A530);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", Lzc);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A54C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", RotTransSV);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A57C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SquareSS12);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_8004A5B4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SquareSS0);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", SquareSL12);
 

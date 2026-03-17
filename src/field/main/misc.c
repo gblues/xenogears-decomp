@@ -1653,7 +1653,7 @@ void func_80098CAC(s32 arg0) {
         scriptArg1 = func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)) << 0x10;
         scriptArg2 = func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)) << 0x10;
         scriptArg3 = func_8009D000(6, SCRIPT_READ_U8_REL(0x8)) << 0x10;
-        g_FieldScriptVMCurActor->unk102 = func_80099A04(
+        g_FieldScriptVMCurActor->unk102 = FieldGetVec3Magnitude(
             (scriptArg1 - g_FieldScriptVMCurActor->position.vx) >> 0x10, 
             (scriptArg3 - g_FieldScriptVMCurActor->position.vy) >> 0x10, 
             (scriptArg2 - g_FieldScriptVMCurActor->position.vz) >> 0x10
@@ -1732,7 +1732,6 @@ void func_80098CAC(s32 arg0) {
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099214);
 
-//INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099980);
 void func_80099980(void) {
     g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0x17 = 0;
     g_FieldScriptVMCurActor->scripts[g_FieldScriptVMCurActor->curScriptIndex].flags_0 = 0xFFFF;
@@ -1741,21 +1740,37 @@ void func_80099980(void) {
     }
 }
 
-//INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099A04);
-void func_80099A04(long x, long y, long z) {
+long FieldGetVec3Magnitude(long x, long y, long z) {
     VECTOR vec;
-    VECTOR vec2;
+    VECTOR vecSquared;
 
     vec.vx = x;
     vec.vy = y;
     vec.vz = z;
-    func_8004A414(&vec, &vec2);
-    func_80048C4C(vec2.vx + vec2.vy + vec2.vz);
+
+    Square0(&vec, &vecSquared);
+    return SquareRoot0(vecSquared.vx + vecSquared.vy + vecSquared.vz);
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099A4C);
+long FieldGetVec2Magnitude(long x, long y) {
+    VECTOR vec;
+    VECTOR vecSquared;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099A8C);
+    vec.vx = x;
+    vec.vy = y;
+    vec.vz = 0;
+    Square0(&vec, &vecSquared);
+    return SquareRoot0(vecSquared.vx + vecSquared.vy);
+}
+
+long FieldGetVec1Magnitude(long x) {
+    VECTOR vec;
+    VECTOR vecSquared;
+
+    vec.vx = x;
+    Square0(&vec, &vecSquared);
+    return SquareRoot0(vecSquared.vx);
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80099AC0);
 

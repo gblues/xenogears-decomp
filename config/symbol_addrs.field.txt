@@ -89,6 +89,10 @@ FieldScriptVMHandlerRestoreCharacterHpAndMp = 0x80097200;
 FieldScriptVMHandlerRestoreHp = 0x80097264;
 FieldScriptVMHandlerRestoreMp = 0x800972AC;
 
+FieldGetVec3Magnitude = 0x80099A04;
+FieldGetVec2Magnitude = 0x80099A4C;
+FieldGetVec1Magnitude = 0x80099A8C;
+
 FieldScriptVMHandlerGetActorFacingAngle = 0x80099FC4;
 FieldScriptVMHandlerGetActorPosition = 0x8009A024;
 
