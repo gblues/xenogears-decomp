@@ -6,15 +6,16 @@
 
 extern int g_FrameDeltaTime;
 
+
 INCLUDE_ASM("asm/field/nonmatchings/main/main", FieldInitializeControllers);
 /*
 void FieldInitializeControllers(void) {
     FieldSetControllerBuffers(&g_C1Buffer, &g_C2Buffer);
-    func_8007AE14(3, 4);
-    func_8007ADA4(0, 0x140, 0, 0xE0);
-    func_8007AE2C(0, 0x50, 100);
-    func_8007AE2C(1, 0xFA, 100);
-    func_8007ADA4(0, 300, 10, 0xDC);
+    FieldSetMouseSpeed(3, 4);
+    func_8007ADA4(0, 0x140, 0, 0xE0); // SetMouseArea?
+    FieldSetMousePosition(0, 0x50, 100);
+    FieldSetMousePosition(1, 0xFA, 100);
+    func_8007ADA4(0, 300, 10, 0xDC); // SetMouseArea?
 }
 */
 
@@ -39,34 +40,26 @@ INCLUDE_ASM("asm/field/nonmatchings/main/main", func_80077AB4);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/main", func_80077C60);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/main", func_80077C88);
-/*
-extern void* D_8005A414;
-extern void* D_8005A418;
-extern void* D_8005A41C;
+extern void* g_PartyDataBuffers[];
 
-void func_80077C88(void) {
+void FieldPartyAllocateSkinDataBuffers(void) {
     HeapChangeCurrentUser(HEAP_USER_YOSI, NULL);
-    D_8005A414 = HeapAlloc(0x14000, 0);
-    D_8005A418 = HeapAlloc(0x14000, 0);
-    D_8005A41C = HeapAlloc(0x14000, 0);
-    HeapPinBlock(D_8005A414);
-    HeapPinBlock(D_8005A418);
-    HeapPinBlock(D_8005A41C);
+    g_PartyDataBuffers[0] = HeapAlloc(0x14000, 0);
+    g_PartyDataBuffers[1] = HeapAlloc(0x14000, 0);
+    g_PartyDataBuffers[2] = HeapAlloc(0x14000, 0);
+    HeapPinBlock(g_PartyDataBuffers[0]);
+    HeapPinBlock(g_PartyDataBuffers[1]);
+    HeapPinBlock(g_PartyDataBuffers[2]);
 }
-*/
 
-INCLUDE_ASM("asm/field/nonmatchings/main/main", func_80077D2C);
-/*
-void func_80077D2C(void) {
-    HeapUnpinBlock(D_8005A414);
-    HeapUnpinBlock(D_8005A418);
-    HeapUnpinBlock(D_8005A41C);
-    HeapFree(D_8005A414);
-    HeapFree(D_8005A418);
-    HeapFree(D_8005A41C);
+void FieldPartyFreeSkinDataBuffers(void) {
+    HeapUnpinBlock(g_PartyDataBuffers[0]);
+    HeapUnpinBlock(g_PartyDataBuffers[1]);
+    HeapUnpinBlock(g_PartyDataBuffers[2]);
+    HeapFree(g_PartyDataBuffers[0]);
+    HeapFree(g_PartyDataBuffers[1]);
+    HeapFree(g_PartyDataBuffers[2]);
 }
-*/
 
 INCLUDE_ASM("asm/field/nonmatchings/main/main", func_80077DAC);
 

@@ -17,6 +17,9 @@ FieldInitializeControllersAndMouse = 0x80071EE8;
 FieldSetClipDimensions = 0x80071F64;
 FieldInitializeRenderContexts = 0x80071FB0;
 
+FieldPartyAllocateSkinDataBuffers = 0x80077C88;
+FieldPartyFreeSkinDataBuffers = 0x80077D2C;
+
 FieldLoadTIM = 0x800771F8;
 
 FieldMatrixResetTranslation = 0x80072140;
@@ -29,6 +32,8 @@ FieldMatrixCopyTranslation = 0x80074078;
 FieldMatrixCopyTransform = 0x8007409C;
 
 FieldPollControllers = 0x80074700;
+
+FieldAddPrimitives = 0x80075458;
 
 FieldInitializeControllers = 0x800775C0;
 FieldRenderSync = 0x800775F8;

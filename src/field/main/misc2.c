@@ -97,7 +97,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc2", func_8007520C);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc2", func_800752C8);
 
-void func_80075458(u_long* ot, u_long* pPrimList, int size) {
+void FieldAddPrimitives(u_long* ot, u_long* pPrimList, int size) {
     AddPrims(ot, pPrimList + size, pPrimList);
 }
 
