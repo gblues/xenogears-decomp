@@ -16,6 +16,12 @@
 #define FIELD_SCRIPT_VM_COND_AND2 0x9
 #define FIELD_SCRIPT_VM_COND_NAND 0xA
 
+// Addresses / Slot IDs of global field script variables
+#define SCRIPT_VAR_SCENARIO_FLAG 0x0
+#define SCRIPT_VAR_EVENT_TIME 0xA
+#define SCRIPT_VAR_SYSTEM_TIME_LOW 0xC // Seconds and minutes
+#define SCRIPT_VAR_SYSTEM_TIME_HIGH 0xE // Hours
+
 // Is Yielding maybe?
 extern int D_800B00C0;
 

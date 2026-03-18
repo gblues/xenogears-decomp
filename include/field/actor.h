@@ -17,6 +17,12 @@
 #define ACTOR_MAX_NUM_SCRIPTS 0x8
 
 
+#define ACTOR_TYPE_UNKNOWN 0x0
+#define ACTOR_TYPE_PEOPLE 0x1
+#define ACTOR_TYPE_ROBOT 0x2
+#define ACTOR_TYPE_PLAYER 0x3
+
+
 typedef struct {
     u_short currentIP; // Instruction Pointer
     u_char waitTimer; // Used for sleep() logic in scripts
@@ -204,10 +210,12 @@ typedef struct {
 
 typedef struct {
     // TODO: Fix the horrible naming of these bitfields.
+
+    // MFlag
     /* 0x0 */ u_int scriptFlags_0x0: 1; // isDisabled?
     u_int scriptFlags_0x1: 7;
     u_int scriptFlags_0x8: 1;
-    u_int scriptFlags_0x9: 7;
+    u_int type: 7;
     u_int scriptFlags_0xX: 1;
     u_int scriptFlags_0xA: 1; // isDialogActivationDisabled?
     u_int scriptFlags_0x10: 1;
@@ -219,11 +227,17 @@ typedef struct {
     u_int scriptFlags_0x17: 1;
     u_int scriptFlags_0x18: 1;
     u_int scriptFlags_0x19: 6;
+
+    // MFlag2
     u_int flags;
-    /* 0x8  */ u_short walkmeshTriIds[4];
-    /* 0x10 */ short walkmeshId;
+
+    /* 0x8  */ u_short walkmeshTriIds[4]; // Pri 0 - 3
+    /* 0x10 */ short walkmeshId; // pol
     /* 0x12 */ short pad_0x12;
-    /* 0x14 */ u_int curWalkmeshTriMaterial;
+    /* 0x14 */ u_int curWalkmeshTriMaterial; // ID
+        // 0x20: P
+        // 0x40: G
+        // 0x80: C
     /* 0x18 */ u_short width; //xWidth
     /* 0x1A */ u_short height;
     /* 0x1C */ u_short zWidth;

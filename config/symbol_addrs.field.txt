@@ -231,7 +231,7 @@ g_FieldEffects = 0x800B2078; // size:0xFC
 
 g_FieldControl = 0x800B2176; // type:FieldControl size:0x6
 
-g_PartyLeaderActorIndex = 0x800B226C;
+g_PlayerActorIndex = 0x800B226C;
 
 g_FieldRenderContexts = 0x800B249C; // size:0x101E8
 

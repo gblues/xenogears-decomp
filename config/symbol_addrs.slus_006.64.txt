@@ -147,6 +147,18 @@ HeapDerefPtr = 0x80032E7C;
 LZSSHeapDecompress = 0x80032e88;
 LZSSDecompress = 0x80032eb4;
 
+ResolveArchiveEntryPointers = 0x8003342C;
+ResolveFileEntryPointers = 0x80033474;
+
+GetSystemFontFile = 0x800334B8;
+GetSystemDataFile = 0x800334C8;
+SystemFreeFont = 0x800334D8;
+SystemFreeData = 0x80033518;
+SystemInitializeFont = 0x80033558;
+SystemInitializeData = 0x800335F4;
+SystemInitialize = 0x80033668;
+SystemTransferPaletteToVRAM = 0x80033698;
+
 // Controllers
 ControllerGetButtonState = 0x8003569C;
 ControllerGetType = 0x80035734;
@@ -847,6 +859,14 @@ D_80059344 = 0x80059344;
 g_HeapDebugDumpFileHandle = 0x80059348;
 g_HeapUserContentNames = 0x80059FA4;
 g_HeapDelayedFreeBlocksHead = 0x80059FCC;
+
+// System
+g_SystemPaletteData = 0x80050190;
+g_SystemPalette1 = 0x800595D4;
+g_SystemPalette2 = 0x80059414;
+g_SystemDataEntries = 0x80059360;
+g_SystemDataFile = 0x80059368;
+g_SystemFontFile = 0x8005936C;
 
 // Font
 g_FontClutData = 0x80050598;
