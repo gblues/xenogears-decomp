@@ -173,6 +173,8 @@ FieldDisplay = 0x800A6924;
 FieldImageConvert24BitColorTo15Bit = 0x800A7744;
 FieldImageConvert24BitTo15Bit = 0x800A77C4;
 
+FieldInitializeParticleBanks = 0x800A94A4;
+
 FieldScriptVMGetInstructionArgumentS16 = 0x800ACD7C;
 FieldScriptVMGetInstructionArgument = 0x800ACDB8;
 FieldScriptVMGetArgument = 0x800ACDEC;
@@ -211,13 +213,16 @@ D_800AFE24 = 0x800AFE24; // size:0xC
 D_800AFE3C = 0x800AFE3C; // size:0x8
 D_800AFE54 = 0x800AFE54; // size:0x10
 
+g_FieldParticleBankIndex = 0x800B0044;
+g_FieldParticleBanks = 0x800B02CC; // type:ParticleBank size:0x78
+
+g_pFieldControllerBuffer1 = 0x800B0054;
+g_pFieldControllerBuffer2 = 0x800B0058;
 g_FieldMouseSpeedX = 0x800B005C;
 g_FieldMouseSpeedY = 0x800B0060;
 g_FieldMousePositionsX = 0x800B0068;
 g_FieldMousePositionsY = 0x800B0070;
 
-g_pFieldControllerBuffer1 = 0x800B0054;
-g_pFieldControllerBuffer2 = 0x800B0058;
 
 g_FieldScriptVMCurActor = 0x800B0078;
 

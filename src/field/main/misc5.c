@@ -5,6 +5,7 @@
 #include "psyq/libgpu.h"
 #include "field/effects.h"
 #include "field/graphics.h"
+#include "field/particles.h"
 
 //
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A55B8);
@@ -278,7 +279,56 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A93CC);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A9460);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A94A4);
+static inline SetVector(SVECTOR* pVec, s16 value) {
+    pVec->vx = value;
+    pVec->vy = value;
+    pVec->vz = value;
+}
+
+void FieldInitializeParticleBanks(s16 targetActorID) {
+    int i;
+    int j;
+    SVECTOR* pVec;
+
+    g_FieldParticleBankIndex = 0;
+
+    for (i = 0; i < NUM_PARTICLE_BANKS; i++) {
+        g_FieldParticleBanks[i].targetActorID = targetActorID;
+        g_FieldParticleBanks[i].unk0 = 0x0;
+        g_FieldParticleBanks[i].swait = 0x0;
+        g_FieldParticleBanks[i].ewait = 0x80;
+        g_FieldParticleBanks[i].max = 0x0;
+        SetVector(&g_FieldParticleBanks[i].pos, 0x0);
+        pVec = &g_FieldParticleBanks[i].epos;
+        pVec->vy = -1000;
+        pVec->vx = 0;
+        pVec->vz = 0;
+        g_FieldParticleBanks[i].speed = 0x8000;
+        g_FieldParticleBanks[i].unk50 = 0x800;
+        g_FieldParticleBanks[i].speedMultiplier = 0x1;
+        SetVector(&g_FieldParticleBanks[i].gravity, 0x0);
+        g_FieldParticleBanks[i].erange = 0x100;
+        g_FieldParticleBanks[i].pewait = 0x1C;
+        g_FieldParticleBanks[i].srange = 0x0;   
+        g_FieldParticleBanks[i].flags = 0x0;
+        g_FieldParticleBanks[i].rotAngle = 0x0;
+        g_FieldParticleBanks[i].pswait = 0x1;
+        g_FieldParticleBanks[i].shape = 0x0;
+        SetVector(&g_FieldParticleBanks[i].scale, 456);
+        SetVector(&g_FieldParticleBanks[i].scaleOffset, 0x20);
+        g_FieldParticleBanks[i].colorRed = 128;
+        g_FieldParticleBanks[i].colorGreen = 32;
+        g_FieldParticleBanks[i].colorBlue = 0;
+        g_FieldParticleBanks[i].colOfsRed = -4;
+        g_FieldParticleBanks[i].colOfsGreen = -1;
+        g_FieldParticleBanks[i].colOfsBlue = 0;
+        for (j = 0; j < 8; j++) {
+            g_FieldParticleBanks[i].unk30[j].unk0 = 0x0;
+            g_FieldParticleBanks[i].unk30[j].unk2 = 0x0;
+        } 
+    }
+}
+
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A9688);
 
