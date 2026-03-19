@@ -283,7 +283,28 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A92AC);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A9374);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A93CC);
+
+void func_800A93CC(s32 index) {
+    int i, j;
+    ParticleBank* pCurBank;
+
+    if (g_FieldParticleStatuses[index] != 1) {
+        return;
+    }
+
+    pCurBank = g_FieldParticleBanks[index];
+    for (i = 0; i < NUM_PARTICLE_BANKS; i++, pCurBank++) {
+        if (pCurBank->max == 0) 
+            continue;
+        
+        pCurBank->ewait = 0;
+        for (j = 0; j < pCurBank->max; j++) {
+            Unk *temp = &pCurBank->unk2C[j];
+            temp->unk4 = 1;
+        }
+    }
+}
+
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A9460);
 
