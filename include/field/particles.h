@@ -4,6 +4,7 @@
 #include "psyq/libgte.h"
 
 #define NUM_PARTICLE_BANKS 0x8
+#define NUM_PARTICLES 0x40
 
 typedef struct {
     /* 0x0 */ u16 unk0;
@@ -45,6 +46,10 @@ typedef struct {
 } ParticleBank; // Size: 0x78
 
 extern int g_FieldParticleBankIndex;
-extern ParticleBank g_FieldParticleBanks[NUM_PARTICLE_BANKS];
+extern ParticleBank g_FieldDefaultParticleBanks[NUM_PARTICLE_BANKS];
+
+extern s16 g_FieldParticleActorIDs[NUM_PARTICLES];
+extern u8 g_FieldParticleStatuses[NUM_PARTICLES];
+extern ParticleBank g_FieldParticleBanks[NUM_PARTICLES];
 
 #endif

@@ -241,6 +241,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A84C0);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A8BA4);
 
+// https://decomp.me/scratch/3xYjM
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A8EAC);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A90B4);
@@ -248,10 +249,10 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A90B4);
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A915C);
 
 /*
-Almost matches
+Matches, but g_FieldStoredImageDest seems to be part of some struct which needs recovery first.
 
 extern int D_800ADB34;
-extern RECT g_FieldStoredImageDest;
+extern RECT g_FieldStoredImageDest[];
 extern u_long* D_800AFC70;
 
 void func_800A915C(void) {
@@ -259,8 +260,8 @@ void func_800A915C(void) {
         D_800ADB34 = 1;
         HeapChangeCurrentUser(HEAP_USER_YOSI, NULL);
         D_800AFC70 = HeapAlloc(0x8000, 0x1);
-        setRECT(&g_FieldStoredImageDest, 0x3C0, 0x100, 0x40, 0x100);
-        StoreImage(&g_FieldStoredImageDest, D_800AFC70);
+        setRECT(&g_FieldStoredImageDest[0], 0x3C0, 0x100, 0x40, 0x100);
+        StoreImage(&g_FieldStoredImageDest[0], D_800AFC70);
         DrawSync(0);
     }
 }
@@ -269,7 +270,14 @@ void func_800A915C(void) {
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A91F0);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A9274);
+void FieldInitializeParticles(void) {
+    int i;
+
+    for (i = 0; i < NUM_PARTICLES; i++) {
+        g_FieldParticleStatuses[i] = 0;
+        g_FieldParticleActorIDs[i] = -1;
+    }
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A92AC);
 
@@ -279,13 +287,13 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A93CC);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A9460);
 
-static inline SetVector(SVECTOR* pVec, s16 value) {
+static inline SetVector(SVECTOR* pVec, short value) {
     pVec->vx = value;
     pVec->vy = value;
     pVec->vz = value;
 }
 
-void FieldInitializeParticleBanks(s16 targetActorID) {
+void FieldInitializeDefaultParticleBanks(short targetActorID) {
     int i;
     int j;
     SVECTOR* pVec;
@@ -293,38 +301,38 @@ void FieldInitializeParticleBanks(s16 targetActorID) {
     g_FieldParticleBankIndex = 0;
 
     for (i = 0; i < NUM_PARTICLE_BANKS; i++) {
-        g_FieldParticleBanks[i].targetActorID = targetActorID;
-        g_FieldParticleBanks[i].unk0 = 0x0;
-        g_FieldParticleBanks[i].swait = 0x0;
-        g_FieldParticleBanks[i].ewait = 0x80;
-        g_FieldParticleBanks[i].max = 0x0;
-        SetVector(&g_FieldParticleBanks[i].pos, 0x0);
-        pVec = &g_FieldParticleBanks[i].epos;
+        g_FieldDefaultParticleBanks[i].targetActorID = targetActorID;
+        g_FieldDefaultParticleBanks[i].unk0 = 0x0;
+        g_FieldDefaultParticleBanks[i].swait = 0x0;
+        g_FieldDefaultParticleBanks[i].ewait = 0x80;
+        g_FieldDefaultParticleBanks[i].max = 0x0;
+        SetVector(&g_FieldDefaultParticleBanks[i].pos, 0x0);
+        pVec = &g_FieldDefaultParticleBanks[i].epos;
         pVec->vy = -1000;
         pVec->vx = 0;
         pVec->vz = 0;
-        g_FieldParticleBanks[i].speed = 0x8000;
-        g_FieldParticleBanks[i].unk50 = 0x800;
-        g_FieldParticleBanks[i].speedMultiplier = 0x1;
-        SetVector(&g_FieldParticleBanks[i].gravity, 0x0);
-        g_FieldParticleBanks[i].erange = 0x100;
-        g_FieldParticleBanks[i].pewait = 0x1C;
-        g_FieldParticleBanks[i].srange = 0x0;   
-        g_FieldParticleBanks[i].flags = 0x0;
-        g_FieldParticleBanks[i].rotAngle = 0x0;
-        g_FieldParticleBanks[i].pswait = 0x1;
-        g_FieldParticleBanks[i].shape = 0x0;
-        SetVector(&g_FieldParticleBanks[i].scale, 456);
-        SetVector(&g_FieldParticleBanks[i].scaleOffset, 0x20);
-        g_FieldParticleBanks[i].colorRed = 128;
-        g_FieldParticleBanks[i].colorGreen = 32;
-        g_FieldParticleBanks[i].colorBlue = 0;
-        g_FieldParticleBanks[i].colOfsRed = -4;
-        g_FieldParticleBanks[i].colOfsGreen = -1;
-        g_FieldParticleBanks[i].colOfsBlue = 0;
+        g_FieldDefaultParticleBanks[i].speed = 0x8000;
+        g_FieldDefaultParticleBanks[i].unk50 = 0x800;
+        g_FieldDefaultParticleBanks[i].speedMultiplier = 0x1;
+        SetVector(&g_FieldDefaultParticleBanks[i].gravity, 0x0);
+        g_FieldDefaultParticleBanks[i].erange = 0x100;
+        g_FieldDefaultParticleBanks[i].pewait = 0x1C;
+        g_FieldDefaultParticleBanks[i].srange = 0x0;   
+        g_FieldDefaultParticleBanks[i].flags = 0x0;
+        g_FieldDefaultParticleBanks[i].rotAngle = 0x0;
+        g_FieldDefaultParticleBanks[i].pswait = 0x1;
+        g_FieldDefaultParticleBanks[i].shape = 0x0;
+        SetVector(&g_FieldDefaultParticleBanks[i].scale, 456);
+        SetVector(&g_FieldDefaultParticleBanks[i].scaleOffset, 0x20);
+        g_FieldDefaultParticleBanks[i].colorRed = 128;
+        g_FieldDefaultParticleBanks[i].colorGreen = 32;
+        g_FieldDefaultParticleBanks[i].colorBlue = 0;
+        g_FieldDefaultParticleBanks[i].colOfsRed = -4;
+        g_FieldDefaultParticleBanks[i].colOfsGreen = -1;
+        g_FieldDefaultParticleBanks[i].colOfsBlue = 0;
         for (j = 0; j < 8; j++) {
-            g_FieldParticleBanks[i].unk30[j].unk0 = 0x0;
-            g_FieldParticleBanks[i].unk30[j].unk2 = 0x0;
+            g_FieldDefaultParticleBanks[i].unk30[j].unk0 = 0x0;
+            g_FieldDefaultParticleBanks[i].unk30[j].unk2 = 0x0;
         } 
     }
 }
@@ -334,10 +342,21 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A9688);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A987C);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A98B4);
+int FieldParticlesFindFreeIndex(void) {
+    int i;
+
+    for (i = 0; i < NUM_PARTICLES; i++) {
+        if (g_FieldParticleStatuses[i] == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A98E8);
 
+
+// https://decomp.me/scratch/R8fzT
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A99A8);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A9B1C);

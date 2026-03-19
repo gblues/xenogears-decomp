@@ -173,7 +173,9 @@ FieldDisplay = 0x800A6924;
 FieldImageConvert24BitColorTo15Bit = 0x800A7744;
 FieldImageConvert24BitTo15Bit = 0x800A77C4;
 
-FieldInitializeParticleBanks = 0x800A94A4;
+FieldParticlesFindFreeIndex = 0x800A98B4;
+FieldInitializeParticles = 0x800A9274;
+FieldInitializeDefaultParticleBanks = 0x800A94A4;
 
 FieldScriptVMGetInstructionArgumentS16 = 0x800ACD7C;
 FieldScriptVMGetInstructionArgument = 0x800ACDB8;
@@ -214,7 +216,7 @@ D_800AFE3C = 0x800AFE3C; // size:0x8
 D_800AFE54 = 0x800AFE54; // size:0x10
 
 g_FieldParticleBankIndex = 0x800B0044;
-g_FieldParticleBanks = 0x800B02CC; // type:ParticleBank size:0x78
+g_FieldDefaultParticleBanks = 0x800B02CC; // type:ParticleBank size:0x78
 
 g_pFieldControllerBuffer1 = 0x800B0054;
 g_pFieldControllerBuffer2 = 0x800B0058;
@@ -226,11 +228,15 @@ g_FieldMousePositionsY = 0x800B0070;
 
 g_FieldScriptVMCurActor = 0x800B0078;
 
+g_FieldParticleActorIDs = 0x800B0108;
+
 D_800B0188 = 0x800B0188; // size:0x140
 
 g_FieldZoomFadeEffect = 0x800B11AC; // size:0x2F8
 
 g_FieldPixelIndex = 0x800B14A8;
+
+g_FieldParticleStatuses = 0x800B14B0;
 
 g_FieldEffects = 0x800B2078; // size:0xFC
 
@@ -248,6 +254,8 @@ g_FieldTextBoxes = 0x800C2698; // type:FieldTextBox size:0x498
 
 g_Field24BitImageData = 0x800C3904;
 g_Field15BitImageData = 0x800C390C;
+
+g_FieldParticleBanks = 0x800C3918;
 
 g_FieldScriptMemory = 0x800C3A68;
 
