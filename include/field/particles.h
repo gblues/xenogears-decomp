@@ -2,6 +2,7 @@
 #define _XENO_FIELD_PARTICLES_H
 
 #include "psyq/libgte.h"
+#include "psyq/libgpu.h"
 
 #define NUM_PARTICLE_BANKS 0x8
 #define NUM_PARTICLES 0x40
@@ -37,7 +38,7 @@ typedef struct {
 
 typedef struct {
     /* 0x0   */ u16 unk0;
-    /* 0x2   */ u16 swait;
+    /* 0x2   */ s16 swait;
     /* 0x4   */ s16 ewait;
     /* 0x6   */ s16 max;
     /* 0x8   */ u32 speed;
@@ -68,6 +69,12 @@ typedef struct {
     /* 0x72  */ u8 unk72[4];
     /* 0x76  */ s16 rotAngle;
 } ParticleBank; // Size: 0x78
+
+typedef struct { 
+    ParticleBank banks[8]; 
+} ParticleBanks;
+
+extern int g_FieldParticleCurActor;
 
 extern int g_FieldParticleBankIndex;
 extern ParticleBank g_FieldDefaultParticleBanks[NUM_PARTICLE_BANKS];

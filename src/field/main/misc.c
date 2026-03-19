@@ -238,6 +238,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089880);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089A80);
 
+// Particle-related handler
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089AE4);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089B54);

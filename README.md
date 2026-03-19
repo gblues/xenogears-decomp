@@ -11,7 +11,7 @@ This project is an in-progress matching decompilation of Xenogears for Playstati
 <img src="https://i.imgur.com/FfAa7QA.png" />
 
 ## Thanks
-This project leans on the work of a lot of work done by others before.
+This project leans on a lot of work done by others before.
 -  [splat](https://github.com/ethteck/splat) - For splitting the binaries
 -  [spimdiasm](https://github.com/Decompollaborate/spimdisasm) - For disassembling the binaries
 -  [The silent hill decompilation](https://github.com/Vatuu/silent-hill-decomp/tree/master) - As a project structure template this project could be adapted from.

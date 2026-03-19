@@ -173,15 +173,22 @@ FieldDisplay = 0x800A6924;
 FieldImageConvert24BitColorTo15Bit = 0x800A7744;
 FieldImageConvert24BitTo15Bit = 0x800A77C4;
 
-FieldParticlesFindFreeIndex = 0x800A98B4;
 FieldInitializeParticles = 0x800A9274;
+FieldParticlesFree = 0x800A92AC;
+FieldParticleResetEWait = 0x800A9374;
+FieldParticlesFreeAll = 0x800A9460;
 FieldInitializeDefaultParticleBanks = 0x800A94A4;
+FieldParticlesFindFreeIndex = 0x800A98B4;
+FieldInitializeParticleBanks = 0x800A99A8;
 
 FieldScriptVMGetInstructionArgumentS16 = 0x800ACD7C;
 FieldScriptVMGetInstructionArgument = 0x800ACDB8;
 FieldScriptVMGetArgument = 0x800ACDEC;
 
 g_FieldCurRenderContextIndex = 0x800ADB08;
+
+g_FieldParticleCurActor = 0x800ADB44;
+
 g_FieldRenderContextUseOT2 = 0x800ADB4C;
 
 g_FrameDeltaTime = 0x800ADBA4;

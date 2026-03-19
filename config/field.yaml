@@ -76,6 +76,8 @@ segments:
       - [0x31C40, c, scripts/virtual_machine]
       - [0x34CE4, c, effects/distortion]
       - [0x35AC8, c, main/misc5]
+      - [0x39784, c, effects/particles]
+      - [0x3A02C, c, main/misc9]
       - [0x3D334, asm]
       - [0x3DF78, data]
       - { vram: 0x800af5f0, type: bss }
