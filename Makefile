@@ -37,7 +37,6 @@ objdiff-config:
 	$(PYTHON) $(OBJDIFF_DIR)/objdiff_generate.py $(OBJDIFF_DIR)/config.yaml
 
 report: objdiff-config
-	$(MAKE) clean; \
 	@$(OBJDIFF) report generate > $(BUILD_DIR)/progress.json
 
 clean:
