@@ -38,7 +38,6 @@ jobs:
       
       - name: Build
         run: |
-          make generate
           make build
 
       - name: Check match

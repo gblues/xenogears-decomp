@@ -1,0 +1,61 @@
+[directories]
+config = 'config'
+linker = 'linker'
+code = 'src'
+assembly = 'asm'
+build = 'build'
+
+[compilation]
+binary = "slus_006.64"
+overlays = ["field"]
+target = 'mips-linux-gnu'
+
+[[build_preset]]
+name = "Default"
+# Every other preset will inhert the build variables from Default unless they override it
+build_variables = {
+    gcc = "gcc-2.7.2-psx",
+    cc_flags = "-mips1 -mcpu=3000 -w -funsigned-char -fpeephole -ffunction-cse -fpcc-struct-return -fcommon -fverbose-asm -msoft-float -mgas -fgnu-linker -quiet",
+    cpp_flags = "-D_LANGUAGE_C -DUSE_INCLUDE_ASM -P -MMD -MP -undef -Wall -lang-c -nostdinc",
+    ld_flags = "-nostdlib --no-check-sections",
+    maspsx_flags = "--use-comm-section --run-assembler",
+    optimization_flag = "-O2",
+    gp_flag = "-G8",
+    endianness = "-EL"
+}
+
+[[build_preset]]
+name = "PSY-Q"
+build_variables = {
+    maspsx_flags = "--aspsx-version=2.56 --expand-div --use-comm-section --run-assembler",
+    optimization_flag = "-O3",
+    gp_flag = "-G0"
+}
+paths = [ "{binary}/psyq" ]
+
+[[build_preset]]
+name = "XenoLibrary"
+build_variables = {
+    gcc = "gcc-2.6.0-psx"
+}
+paths = [
+    "{binary}/system/libarchive.",
+    "{binary}/system/sound."
+]
+
+[[build_preset]]
+name = "XenoGraphics"
+build_variables = {
+    gcc = "gcc-2.7.2-cdk-psx",
+    maspsx_flags = "--aspsx-version=2.67 --use-comm-section --run-assembler"
+}
+paths = [
+    "{binary}/system/animation_scripts."
+]
+
+[[build_preset]]
+name = "XenoMain"
+build_variables = {
+    gp_flag = "-G0"
+}
+paths = [ "{binary}/main/main_loop." ]

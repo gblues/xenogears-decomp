@@ -222,6 +222,7 @@ typedef struct {
 int g_GfxCurContext;
 extern Image* g_GfxImageList[2];
 
+// GfxShapeTransfer
 void func_80025044(void) {
     Image* pListHead;
     Image* pImage;
@@ -301,6 +302,7 @@ void func_80025180(void* pData) {
 }
 */
 
+// GfxQueueShapeTransfer
 // Add Image to current g_GfxImageList[g_GfxCurContext] linked list
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_800251C8);
 /*
@@ -319,6 +321,7 @@ int g_GfxCurContext; // Cur index?
 void* g_GfxCurWorkBufferEnd;
 ImageEntry* g_GfxCurWorkBuffer;
 
+// GfxQueueShapeTransfer
 void func_800251C8(u_long* addr, int x, int y, int width, int height) {
     ImageEntry* pCurrent;
     ImageEntry* pNext;
@@ -470,11 +473,3 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_800273C4);
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_800278F8);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80027D40);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80027D64);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80027EAC);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_8002800C);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_8002804C);

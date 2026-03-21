@@ -11,3 +11,5 @@ expected/
 notes/
 .venv/
 objdiff.json
+build.ninja
+.ninja_log
