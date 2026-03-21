@@ -5,7 +5,7 @@ typedef struct {
     /* 0x0  */ u16 x;
     /* 0x2  */ u16 y;
     /* 0x4  */ u16 modulus;
-    /* 0x6  */ u16 unk6;
+    /* 0x6  */ u16 width;
     /* 0x8  */ u16 height;
     /* 0xA  */ u16 numLines;
     /* 0xC  */ u16 destX;

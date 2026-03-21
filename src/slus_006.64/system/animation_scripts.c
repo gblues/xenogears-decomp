@@ -18,10 +18,6 @@ void* func_8001FBA4(SpriteData* pSpriteData, u8* pIndex) {
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_8001FBE4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80021AD8);
-/*
-Matches on GCC 2.7.2-970404, ASPSX 2.67
-
 s32 func_80021AD8(s32 color, s32 value) {
     color += value;
     if (color >= 0x100) {
@@ -31,7 +27,6 @@ s32 func_80021AD8(s32 color, s32 value) {
     }
     return color;
 }
-*/
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80021B04);
 
@@ -41,20 +36,10 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80021B
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80021B48);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80021B6C);
-/*
-Matches on GCC 2.7.2-970404, ASPSX 2.67
-NOTE: Required SpriteData to have own field for prim
-
 void func_80021B6C(SpriteData* pSpriteData) {
     pSpriteData->prim |= 1;
     func_8001F6B0(pSpriteData);
 }
-*/
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", SpriteSetColor);
-/*
-Matches on GCC 2.7.2-970404, ASPSX 2.67
 
 void SpriteSetColor(SpriteData *pSpriteData, u8 red, u8 green, u8 blue) {
     pSpriteData->red = red;
@@ -63,7 +48,6 @@ void SpriteSetColor(SpriteData *pSpriteData, u8 red, u8 green, u8 blue) {
     pSpriteData->prim &= 0xFE;
     func_8001F6B0(pSpriteData);
 }
-*/
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80021BCC);
 
@@ -111,10 +95,6 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80021F
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80021FE0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", SpriteSetScale);
-/*
-Matches on GCC 2.7.2-970404, ASPSX 2.67
-
 void SpriteSetScale(SpriteData* pSpriteData, short scale) {
     SpriteDataI1* pBase = pSpriteData->pBase;
     if (pBase) {
@@ -125,11 +105,6 @@ void SpriteSetScale(SpriteData* pSpriteData, short scale) {
         pSpriteData->field_0x3C_6 = 0x1;
     }
 }
-*/
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80022038);
-/*
-Matches on GCC 2.7.2-970404, ASPSX 2.67
 
 // Recompute transform matrix if flag is set
 void func_80022038(SpriteData* pSpriteData) {
@@ -138,11 +113,6 @@ void func_80022038(SpriteData* pSpriteData) {
         pSpriteData->field_0x3C_6 = 0x0;
     }
 }
-*/
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", SpriteComputeTransformMatrix);
-/*
-Matches on GCC 2.7.2-970404, ASPSX 2.67
 
 extern MATRIX D_80018644;
 
@@ -175,7 +145,6 @@ void SpriteComputeTransformMatrix(SpriteData* pSpriteData) {
         ScaleMatrix(&pSpriteData->pBase->transformMatrix, &scale);
     }
 }
-*/
 
 // Set animation package
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/animation_scripts", func_80022224);
@@ -184,7 +153,6 @@ extern s32 func_8001EE68(void*);
 extern void func_80022224(SpriteAnimPackage*, void*, SVEC2, SVEC2, u32);
 extern u8 D_800591AD;
 
-// >= ASPSX 2.56, likely GCC 2.7.2-970404, ASPSX 2.67
 void func_800222BC(SpriteData* pSprite, SpriteAnimPackageFileHeader* pAnimPackageFile) {
     SpriteAnimPackage* pAnimPackage;
     SVEC2 unused[2];

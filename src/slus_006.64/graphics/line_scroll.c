@@ -1,14 +1,9 @@
-// [GEARS] Compiler: gcc-2.6.0-psx
-// [GEARS] MASPSX: --expand-div
-
 #include "common.h"
+#include "system/graphics.h"
 #include "system/memory.h"
+#include "psyq/libgpu.h"
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/graphics/line_scroll", func_80027D64);
-/*
-
-// GfxLineScrollInitialize
-LineScroll* func_80027D64(LineScroll* pLineScroll, 
+LineScroll* GfxLineScrollInitialize(LineScroll* pLineScroll, 
     u16 x, u16 y, u16 modulus, s16 width, s16 numLines, u16 destX, u16 destY, s8* pData
 ) {
     u_short* pWork;
@@ -36,14 +31,8 @@ LineScroll* func_80027D64(LineScroll* pLineScroll,
     }
     return pLineScroll;
 }
-*/
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/graphics/line_scroll", func_80027EAC);
-/*
-Matches on GCC 2.6.0
-
-// GfxLineScrollUpdate
-void func_80027EAC(LineScroll* pLineScroll) {
+void GfxLineScrollUpdate(LineScroll* pLineScroll) {
     RECT srcRect;
     int i;
     u16 destY;
@@ -78,18 +67,13 @@ void func_80027EAC(LineScroll* pLineScroll) {
         srcRect.y += pLineScroll->height;
     }
 }
-*/
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/graphics/line_scroll", func_8002800C);
-/*
-// LineScrollFree
-void func_8002800C(LineScroll* pLineScroll) {
+void GfxLineScrollFree(LineScroll* pLineScroll) {
     if (pLineScroll->unk14) {
         HeapFree(pLineScroll->unk14);
         pLineScroll->unk14 = NULL;
     }
 }
-*/
 
 
 // NOTE: Probably part of libarchive, not line_scroll

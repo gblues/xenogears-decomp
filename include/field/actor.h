@@ -97,12 +97,8 @@ typedef struct {
 } SpriteDirectionTransforms;
 
 typedef struct {
-    /* 0x0  */ s16 rotationX;
-    /* 0x2  */ s16 rotationY;
-    /* 0x4  */ s16 rotationZ;
-    /* 0x6  */ s16 scaleX;
-    /* 0x8  */ s16 scaleY;
-    /* 0xA  */ s16 scaleZ;
+    /* 0x0  */ SVEC rotation;
+    /* 0x6  */ SVEC scale;
     /* 0xC  */ MATRIX transformMatrix;
     /* 0x2C */ void* pFramesData;
     /* 0x30 */ void* pCurRenderFramesData;

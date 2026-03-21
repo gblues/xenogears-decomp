@@ -73,6 +73,10 @@ GfxAllocateWorkBuffers = 0x80024F64;
 GfxFreeWorkBuffers = 0x80024FB8;
 GfxSetCurrentOT = 0x80024FE4;
 
+GfxLineScrollInitialize = 0x80027D64;
+GfxLineScrollUpdate = 0x80027EAC;
+GfxLineScrollFree = 0x8002800C;
+
 // Archive / Filesystem
 ArchiveInit = 0x80028230;
 ArchiveReset = 0x800283D4;

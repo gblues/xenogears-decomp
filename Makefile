@@ -24,7 +24,7 @@ build:
 	ninja -t clean; \
 	ninja -j$(NUMPROC)
 
-check: build
+check: clean build
 	@sha256sum --ignore-missing --check $(CONFIG_DIR)/checksum.sha
 
 objdiff-config:

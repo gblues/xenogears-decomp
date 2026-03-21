@@ -59,3 +59,13 @@ build_variables = {
     gp_flag = "-G0"
 }
 paths = [ "{binary}/main/main_loop." ]
+
+[[build_preset]]
+name = "XenoGraphicsLibrary"
+build_variables = {
+    gcc = "gcc-2.6.0-psx",
+    maspsx_flags = "--expand-div --use-comm-section --run-assembler",
+}
+paths = [
+    "{binary}/graphics/line_scroll.",
+]
