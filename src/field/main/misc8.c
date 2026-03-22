@@ -162,7 +162,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086078);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800860F0);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086200);
+INCLUDE_ASM("asm/field/nonmatchings/main/misc8", FieldActorWorldToScreenPosition);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800862CC);
 
@@ -177,6 +177,26 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800864F0);
 INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086590);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086908);
+/*
+extern VECTOR g_CameraEye;
+extern VECTOR g_CameraAT;
+extern s16 D_800B22E0;
+extern s32 g_PlayerActorIndex;
+
+void func_80086908(void) {
+    switch (D_800B22E0) {
+        case 0:
+            func_80086590(&g_FieldActors[g_PlayerActorIndex].pActorData->position);
+            return;
+        case 1:
+            func_80086590(&g_CameraEye);
+            return;
+        case 2:
+            func_80086590(&g_CameraAT);
+            return;
+    }
+}
+*/
 
 // Call function from second handler table
 INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800869B8);

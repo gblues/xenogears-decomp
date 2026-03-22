@@ -5,16 +5,259 @@
 #include "psyq/libgpu.h"
 #include "field/effects.h"
 #include "field/graphics.h"
+#include "field/particles.h"
 
 
+extern u8 D_800AF474[8];
+extern s16 D_800AF98E;
+extern s32 D_800B00B4;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc9", func_800A9B1C);
+int FieldParticleUpdateColor(int color, int delta) {
+    int newColor;
+
+    if (delta < 0) {
+        newColor = color + delta;
+        if (newColor < 0) {
+            newColor = 0;
+        }
+    } else {
+        newColor = color + delta;
+        if (newColor >= 256) {
+            newColor = 255;
+        }
+    }
+    
+    return newColor;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc9", func_800A9B54);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc9", func_800A9F18);
+// Particle Updating
+void func_800A9F18(ParticleBank* pParticleBank, ParticlePrimitive* pPrim, MATRIX* pMatrix) {
+    VECTOR sp18;
+    SVECTOR rotationVec;
+    MATRIX matrix;
+    MATRIX transformMatrix;
+    VECTOR sp70;
+    VECTOR sp80;
+    VECTOR sp90;
+    VECTOR spA0;
+    long flag;
+    FieldActor* pFieldActors;
+    int var_s5;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc9", func_800AA6B4);
+    if (pPrim->swait != 0) {
+        pPrim->swait--;
+        if (pPrim->swait != 0) {
+            return;
+        }
+        
+        matrix.t[2] = 0;
+        matrix.t[1] = 0;
+        matrix.t[0] = 0;
+        
+        var_s5 = 0;
+        switch (PARTICLE_FLAG_TYPE(pParticleBank->flags)) {
+            case 3:
+                rotationVec.vx = 0;
+                rotationVec.vy = g_FieldActors[pParticleBank->targetActorID].pActorData->rotationZ;
+                rotationVec.vz = 0;
+                RotMatrix(&rotationVec, &matrix);
+                pFieldActors = g_FieldActors;
+                sp70.vx = pFieldActors[pParticleBank->targetActorID].pActorData->position.vx >> 0x10;
+                sp70.vy = pFieldActors[pParticleBank->targetActorID].pActorData->position.vy >> 0x10;
+                sp70.vz = pFieldActors[pParticleBank->targetActorID].pActorData->position.vz >> 0x10;
+                pParticleBank->unk50 = pFieldActors[pParticleBank->targetActorID].pActorData->scaleX;
+                var_s5 = 1;
+                break;
+            case 0:
+                rotationVec.vx = 0;
+                rotationVec.vy = g_FieldActors[pParticleBank->targetActorID].pActorData->rotationZ;
+                rotationVec.vz = 0;
+                RotMatrix(&rotationVec, &matrix);
+                pFieldActors = g_FieldActors;
+                sp70.vx = pFieldActors[pParticleBank->targetActorID].pActorData->position.vx >> 0x10;
+                sp70.vy = pFieldActors[pParticleBank->targetActorID].pActorData->position.vy >> 0x10;
+                sp70.vz = pFieldActors[pParticleBank->targetActorID].pActorData->position.vz >> 0x10;
+                pParticleBank->unk50 = 0x1000;
+                break;
+            case 1:
+                func_801E72CC(&matrix, &transformMatrix, pParticleBank->unk72, pParticleBank->unk74);
+                SetRotMatrix(&matrix);
+                SetTransMatrix(&matrix);
+                rotationVec.vx = pParticleBank->pos.vx;
+                rotationVec.vy = pParticleBank->pos.vy;
+                rotationVec.vz = pParticleBank->pos.vz;
+                RotTrans(&rotationVec, &sp70, &flag);
+                pParticleBank->unk50 = 0x1000;
+                break;
+            case 2:
+                matrix = g_FieldActors[pParticleBank->targetActorID].childMatrix;
+                SetRotMatrix(&matrix);
+                SetTransMatrix(&matrix);
+                rotationVec.vx = pParticleBank->pos.vx;
+                rotationVec.vy = pParticleBank->pos.vy;
+                rotationVec.vz = pParticleBank->pos.vz;
+                RotTrans(&rotationVec, &sp70, &flag);
+                pParticleBank->unk50 = 0x1000;
+                break;
+        }
+        
+        matrix.t[2] = 0;
+        matrix.t[1] = 0;
+        matrix.t[0] = 0;
+        SetRotMatrix(&matrix);
+        SetTransMatrix(&matrix);
+        rotationVec.vx = pPrim->unk18.vx;
+        rotationVec.vy = pPrim->unk18.vy;
+        rotationVec.vz = pPrim->unk18.vz;
+        ApplyRotMatrix(&rotationVec, &sp18);
+        func_80048D7C(&sp18, &pPrim->unk18);
+        pPrim->unk18.vx = ((pPrim->unk18.vx * pParticleBank->speed) >> 0xC) * pParticleBank->speedMultiplier;
+        pPrim->unk18.vy = ((pPrim->unk18.vy * pParticleBank->speed) >> 0xC) * pParticleBank->speedMultiplier;
+        pPrim->unk18.vz = ((pPrim->unk18.vz * pParticleBank->speed) >> 0xC) * pParticleBank->speedMultiplier;
+        
+        if (var_s5 == 1) {
+            pPrim->unk8.vx = (pPrim->unk8.vx * pParticleBank->unk50) >> 0xC;
+            pPrim->unk8.vy = (pPrim->unk8.vy * pParticleBank->unk50) >> 0xC;
+            pPrim->unk8.vz = (pPrim->unk8.vz * pParticleBank->unk50) >> 0xC;
+        }
+        
+        SetRotMatrix(&matrix);
+        SetTransMatrix(&matrix);
+        rotationVec.vx = pPrim->unk8.vx;
+        rotationVec.vy = pPrim->unk8.vy;
+        rotationVec.vz = pPrim->unk8.vz;
+        RotTrans(&rotationVec, &sp18, &flag);
+        
+        if (var_s5 == 1) {
+            rotationVec.vx = D_800B00B4 - 0x400;
+            rotationVec.vy = -D_800AF98E;
+            rotationVec.vz = 0;
+            RotMatrixZYX(&rotationVec, &transformMatrix);
+            SetRotMatrix(&transformMatrix);
+            SetTransMatrix(&transformMatrix);
+            sp80.vx = 0;
+            sp80.vy = sp18.vy;
+            sp80.vz = 0;
+            ApplyRotMatrixLV(&sp80, &sp90);
+            sp18.vx += sp90.vx;
+            sp18.vz += sp90.vz;
+            sp18.vy = sp90.vy;
+            pPrim->unk8.vx = (sp70.vx + sp18.vx) * (0x1000000 / pParticleBank->unk50);
+            pPrim->unk8.vy = (sp70.vy + sp18.vy) * (0x1000000 / pParticleBank->unk50);
+            pPrim->unk8.vz = (sp70.vz + sp18.vz) * (0x1000000 / pParticleBank->unk50);
+            return;
+        }
+        
+        pPrim->unk8.vx = ((sp70.vx + sp18.vx) << 0xC);
+        pPrim->unk8.vy = ((sp70.vy + sp18.vy) << 0xC);
+        pPrim->unk8.vz = ((sp70.vz + sp18.vz) << 0xC);    
+        return;
+    } 
+    
+    pPrim->unk18.vx += pPrim->gravity.vx;
+    pPrim->unk18.vy += pPrim->gravity.vy;
+    pPrim->unk18.vz += pPrim->gravity.vz;
+    pPrim->unk8.vx += pPrim->unk18.vx;
+    pPrim->unk8.vy += pPrim->unk18.vy;
+    pPrim->unk8.vz += pPrim->unk18.vz;
+    pPrim->scale.vx += pPrim->scaleOffset.vx;
+    pPrim->scale.vy += pPrim->scaleOffset.vy;
+    pPrim->scale.vz += pPrim->scaleOffset.vz;
+    pPrim->color.r = FieldParticleUpdateColor(pPrim->color.r, pPrim->colorOfs.r);
+    pPrim->color.g = FieldParticleUpdateColor(pPrim->color.g, pPrim->colorOfs.g);
+    pPrim->color.b = FieldParticleUpdateColor(pPrim->color.b, pPrim->colorOfs.b);
+    
+    spA0.vx = pParticleBank->unk50;
+    spA0.vy = pParticleBank->unk50;
+    spA0.vz = pParticleBank->unk50;
+    if (pPrim->ewait != 1) {
+        func_800A9B54(pPrim, pMatrix, pPrim->unk6, 
+            PARTICLE_FLAG_1(pParticleBank->flags), 
+            &spA0, 
+            PARTICLE_FLAG_TYPE(pParticleBank->flags)
+        );
+    }
+    
+    pPrim->ewait--;
+    if (pPrim->ewait == 0) {
+        pPrim->unk0 = 0;
+    }
+}
+
+void func_800AA6B4(ParticleBank* pParticleBank, ParticlePrimitive* pPrim, int* pTimer) {
+    VECTOR _unused;
+    VECTOR sp20;
+    VECTOR sp30;
+    int angle;
+    int factor;
+    u16 rotAngle;
+    int direction;
+    u_int rotation;
+
+    pPrim->unk0 = 1;
+    pPrim->swait = pParticleBank->pswait + *pTimer;
+    *pTimer += pParticleBank->pswait;
+    pPrim->ewait = pParticleBank->pewait;
+    
+    if (pParticleBank->flags & 1) {
+        rotAngle = rand() & 0xFFF;
+    } else {
+        rotAngle = pParticleBank->rotAngle;
+    }
+    pPrim->unk6 = rotAngle;
+    
+    if (!(pParticleBank->flags & 0x80)) {
+        factor = FieldParticlesRandRange(pParticleBank->srange);
+    } else {
+        factor = pParticleBank->srange;
+    }
+    
+    angle = FieldParticlesRandRange(0xFFF);
+    sp20.vx = (rsin(angle) * factor) >> 0xC;
+    if (!(pParticleBank->flags & 0x40)) {
+        sp20.vz = (rcos(angle) * factor) >> 0xC;
+    } else {
+        sp20.vz = 0;
+    }
+
+    rotation = D_800AF98E + g_FieldActors[pParticleBank->targetActorID].pActorData->rotationZ & 0xFFF;
+    direction = D_800AF474[rotation >> 9];
+    
+    sp20.vx += pParticleBank->pos.vx + pParticleBank->directions[direction].x;
+    sp20.vz += pParticleBank->pos.vz + pParticleBank->directions[direction].z;
+    sp20.vy = pParticleBank->pos.vy;
+    pPrim->unk8.vx = sp20.vx;
+    pPrim->unk8.vz = sp20.vz;
+    pPrim->unk8.vy = sp20.vy;
+    
+    factor = FieldParticlesRandRange(pParticleBank->erange);
+    sp30.vx = pParticleBank->epos.vx + ((rsin(angle) * factor) >> 0xC);
+    sp30.vz = pParticleBank->epos.vz + ((rcos(angle) * factor) >> 0xC);
+    sp30.vy = pParticleBank->epos.vy;
+    
+    pPrim->unk18.vx = (sp30.vx - sp20.vx);
+    pPrim->unk18.vy = (sp30.vy - sp20.vy);
+    pPrim->unk18.vz = (sp30.vz - sp20.vz);
+    
+    pPrim->gravity.vx = pParticleBank->gravity.vx;
+    pPrim->gravity.vy = pParticleBank->gravity.vy;
+    pPrim->gravity.vz = pParticleBank->gravity.vz;
+    pPrim->scale.vx = pParticleBank->scale.vx;
+    pPrim->scale.vy = pParticleBank->scale.vy;
+    pPrim->scale.vz = pParticleBank->scale.vz;
+    pPrim->scaleOffset.vx = pParticleBank->scaleOffset.vx;
+    pPrim->scaleOffset.vy = pParticleBank->scaleOffset.vy;
+    pPrim->scaleOffset.vz = pParticleBank->scaleOffset.vz;
+    pPrim->color.r = pParticleBank->color.r;
+    pPrim->color.g = pParticleBank->color.g;
+    pPrim->color.b = pParticleBank->color.b;
+    pPrim->colorOfs.r = pParticleBank->colorOfs.r;
+    pPrim->colorOfs.g = pParticleBank->colorOfs.g;
+    pPrim->colorOfs.b = pParticleBank->colorOfs.b;
+}
+// ------------------------------------
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc9", func_800AA9DC);
 

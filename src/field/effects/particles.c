@@ -2,6 +2,12 @@
 #include "system/memory.h"
 #include "field/particles.h"
 
+extern s32 D_800ADB34;
+extern MATRIX g_CameraMatrix;
+extern s32 g_FieldSystemMode;
+extern u8 D_8006FDC8[]; // "PARTICLE  "
+
+
 void FieldInitializeParticles(void) {
     int i;
 
@@ -18,7 +24,7 @@ void FieldParticlesFree(int index) {
     if (g_FieldParticleStatuses[index] == 1) {
         for (i = 0, pCurBank = g_FieldParticleBanks[index]; i < NUM_PARTICLE_BANKS; i++, pCurBank++) {
             if (pCurBank->max != 0) {
-                HeapFree(pCurBank->unk2C);
+                HeapFree(pCurBank->pPrimitives);
             }            
         }
         HeapFree(g_FieldParticleBanks[index]);
@@ -58,8 +64,8 @@ void func_800A93CC(int index) {
         
         pCurBank->ewait = 0;
         for (j = 0; j < pCurBank->max; j++) {
-            Unk *temp = &pCurBank->unk2C[j];
-            temp->unk4 = 1;
+            ParticlePrimitive* pPrim = &pCurBank->pPrimitives[j];
+            pPrim->ewait = 1;
         }
     }
 }
@@ -110,22 +116,81 @@ void FieldInitializeDefaultParticleBanks(short targetActorID) {
         g_FieldDefaultParticleBanks[i].shape = 0x0;
         SetVector(&g_FieldDefaultParticleBanks[i].scale, 456);
         SetVector(&g_FieldDefaultParticleBanks[i].scaleOffset, 0x20);
-        g_FieldDefaultParticleBanks[i].colorRed = 128;
-        g_FieldDefaultParticleBanks[i].colorGreen = 32;
-        g_FieldDefaultParticleBanks[i].colorBlue = 0;
-        g_FieldDefaultParticleBanks[i].colOfsRed = -4;
-        g_FieldDefaultParticleBanks[i].colOfsGreen = -1;
-        g_FieldDefaultParticleBanks[i].colOfsBlue = 0;
+        g_FieldDefaultParticleBanks[i].color.r = 128;
+        g_FieldDefaultParticleBanks[i].color.g = 32;
+        g_FieldDefaultParticleBanks[i].color.b = 0;
+        g_FieldDefaultParticleBanks[i].colorOfs.r = -4;
+        g_FieldDefaultParticleBanks[i].colorOfs.g = -1;
+        g_FieldDefaultParticleBanks[i].colorOfs.b = 0;
+
         for (j = 0; j < 8; j++) {
-            g_FieldDefaultParticleBanks[i].unk30[j].unk0 = 0x0;
-            g_FieldDefaultParticleBanks[i].unk30[j].unk2 = 0x0;
+            g_FieldDefaultParticleBanks[i].directions[j].x = 0x0;
+            g_FieldDefaultParticleBanks[i].directions[j].z = 0x0;
         } 
     }
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/effects/particles", func_800A9688);
+void func_800A9688(void) {
+    MATRIX cameraMat;
+    int timer;
+    int maxElements;
+    int bInUse;
+    int primIndex;
+    ParticleBank* pCurBank;
+    int i, j;
 
-INCLUDE_ASM("asm/field/nonmatchings/effects/particles", func_800A987C);
+    if (D_800ADB34 == 0) {
+        cameraMat = g_CameraMatrix;
+
+        for (i = 0; i < NUM_PARTICLES; i++) {
+            bInUse = 0;
+            if (g_FieldParticleStatuses[i] == 1) {
+                for (j = 0, pCurBank = g_FieldParticleBanks[i]; j < NUM_PARTICLE_BANKS; pCurBank++, j++) {
+                    timer = 0;
+                    if (pCurBank->max == 0)
+                        continue;
+                    
+                    if (pCurBank->swait == 0) {
+                        for (primIndex = 0; primIndex < pCurBank->max; primIndex++) {
+                            if (pCurBank->pPrimitives[primIndex].unk0 == 0) {
+                                if (pCurBank->ewait != 0) {
+                                    func_800AA6B4(pCurBank, &pCurBank->pPrimitives[primIndex], &timer);
+                                    func_800A9F18(pCurBank, &pCurBank->pPrimitives[primIndex], &cameraMat);
+                                    bInUse = 1;
+                                }
+                            } else {
+                                func_800A9F18(pCurBank, &pCurBank->pPrimitives[primIndex], &cameraMat);
+                                bInUse = 1;
+                            }
+                        }
+                            
+                        if (pCurBank->ewait) {
+                            if (pCurBank->ewait != 0x7FFF) {
+                                 pCurBank->ewait--;
+                            }
+                            bInUse = 1;
+                        }
+                    } else {
+                        bInUse = 1;
+                        pCurBank->swait--;
+                    }
+                }
+                
+                if (bInUse == 0) {
+                    FieldParticlesFree(i);
+                }
+            }
+        }
+        
+        if (g_FieldSystemMode == 0) {
+            func_80281B00(&D_8006FDC8);
+        }
+    }
+}
+
+int FieldParticlesRandRange(int range) {
+    return ((rand() * range) + 1) >> 15;
+}
 
 int FieldParticlesFindFreeIndex(void) {
     int i;
@@ -183,11 +248,11 @@ int FieldInitializeParticleBanks(int actorIndex) {
         if (pCurrent->max == 0)
             continue;
         
-        pCurrent->unk2C = HeapAlloc(pCurrent->max * sizeof(Unk), 0);
+        pCurrent->pPrimitives = HeapAlloc(pCurrent->max * sizeof(ParticlePrimitive), 0);
         for (j = 0; j < pCurrent->max; j++) {
-            pCurrent->unk2C[j].unk0 = 0;
+            pCurrent->pPrimitives[j].unk0 = 0;
             func_800A8EAC(
-                &pCurrent->unk2C[j], 
+                &pCurrent->pPrimitives[j], 
                 pCurrent->shape, 
                 (((pCurrent->flags << 0x10) >> 0x18) + 1) & 3
             );
