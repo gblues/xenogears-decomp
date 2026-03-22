@@ -175,15 +175,23 @@ FieldDisplay = 0x800A6924;
 FieldImageConvert24BitColorTo15Bit = 0x800A7744;
 FieldImageConvert24BitTo15Bit = 0x800A77C4;
 
+
+FieldInitializeParticlePrimitive = 0x800A8EAC;
 FieldInitializeParticles = 0x800A9274;
 FieldParticlesFree = 0x800A92AC;
-FieldParticleResetEWait = 0x800A9374;
+FieldParticlesStop = 0x800A9374;
+FieldParticlesStopBanks = 0x800A93CC;
 FieldParticlesFreeAll = 0x800A9460;
 FieldInitializeDefaultParticleBanks = 0x800A94A4;
+FieldParticlesTickAndRender = 0x800A9688;
 FieldParticlesRandRange = 0x800A987C;
 FieldParticlesFindFreeIndex = 0x800A98B4;
+FieldParticleActorStop = 0x800A98E8;
 FieldInitializeParticleBanks = 0x800A99A8;
 FieldParticleUpdateColor = 0x800A9B1C;
+FieldParticleRender = 0x800A9B54;
+FieldParticleUpdateAndRender = 0x800A9F18;
+FieldParticleStart = 0x800AA6B4;
 
 FieldScriptVMGetInstructionArgumentS16 = 0x800ACD7C;
 FieldScriptVMGetInstructionArgument = 0x800ACDB8;
@@ -216,7 +224,7 @@ g_CameraAT = 0x800AF890; // type:VECTOR size:0x10
 D_800AF8F0 = 0x800AF8F0; // type:VECTOR size:0x10
 g_FieldCameraTargetPosition = 0x800AF900; // type:VECTOR size:0x10
 
-g_CameraMatrix = 0x800AFA64; // type:MATRIX size:0x20
+g_WorldToScreenMatrix = 0x800AFA64; // type:MATRIX size:0x20
 
 g_FieldNumActors = 0x800AFB0C;
 g_FieldActors = 0x800AFB10;

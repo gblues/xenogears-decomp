@@ -241,7 +241,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A84C0);
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A8BA4);
 
 // https://decomp.me/scratch/3xYjM
-INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A8EAC);
+INCLUDE_ASM("asm/field/nonmatchings/main/misc5", FieldInitializeParticlePrimitive);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc5", func_800A90B4);
 

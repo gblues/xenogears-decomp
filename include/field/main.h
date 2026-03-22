@@ -6,6 +6,8 @@
 
 #define setRGB(obj, _color) obj.r0 = obj.g0 = obj.b0 = _color
 
+#define FIELD_OT_MAX_SIZE 4096
+
 typedef struct {
     DRAWENV drawEnvs[2];
     DISPENV dispEnv;
