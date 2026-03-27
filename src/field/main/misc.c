@@ -220,19 +220,13 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800888A4);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800889BC);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088B68);
-
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088C1C);
-
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088CF8);
-
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088D18);
-
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088D38);
-
-
+// Start of particle handlers
 extern s32 D_800ADB40;
+extern s32 D_800ADB8C;
 extern s32 D_800B2374;
+extern s32 D_800B2378;
+extern s32 D_800B237C;
+extern s32 D_800B2380;
 
 typedef struct {
     /* 0x0 */ int bankIndex;
@@ -241,6 +235,31 @@ typedef struct {
 
 extern ParticleBankHandle D_800B2384;
 extern s32 g_FieldScriptMaxInstructionCount;
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088B68);
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088C1C);
+
+void func_80088CF8() {
+    FieldScriptSetParticleBankDirections(0);
+}
+
+void func_80088D18() {
+    FieldScriptSetParticleBankDirections(4);
+}
+
+void FieldScriptSetParticleBankDirections(int index) {
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index].x = func_8009CF78(1, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index].z = func_8009CFBC(3, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 1].x = func_8009D000(5, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 1].z = func_8009D044(7, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 2].x = func_8009D088(9, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 2].z = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 3].x = func_8009D110(0xD, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 3].z = func_8009D154(0xF, SCRIPT_READ_U8_REL(0x11));
+    g_FieldScriptMaxInstructionCount += 4;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 0x12;
+}
 
 void FieldScriptInitializeParticleBank(void) {
     D_800B2384.bankIndex = FieldScriptVMGetArgument(1);
@@ -268,11 +287,43 @@ void FieldScriptSetParticleBankPosition(void) {
     g_FieldScriptVMCurActor->scriptInstructionPointer += 0xE;
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089374);
+void FieldScriptSetParticleBankPhysics(void) {
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].speed = func_8009CF78(1, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vx = func_8009CFBC(3, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vy = func_8009D000(5, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vz = func_8009D044(7, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].srange = func_8009D088(9, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].erange = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0xD));
+    g_FieldScriptMaxInstructionCount += 4;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 0xE;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089574);
+void FieldScriptSetParticleBankParameters(void) {
+    int flags;
+    int flags_2;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800896D4);
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pswait = FieldScriptVMGetArgument(1);
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pewait = FieldScriptVMGetArgument(3);
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].shape = FieldScriptVMGetArgument(5);
+    flags = FieldScriptVMGetArgument(7);
+    flags_2 = (FieldScriptVMGetArgument(9) * 2);
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].flags = flags | flags_2 | D_800B2378;
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].unk72 = D_800B237C;
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].unk74 = D_800B2380;
+    g_FieldScriptMaxInstructionCount += 4;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 0xB;
+}
+
+void FieldScriptSetParticleBankScale(void) {
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scale.vx = func_8009CF78(1, SCRIPT_READ_U8_REL(0x9));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scale.vy = func_8009CFBC(3, SCRIPT_READ_U8_REL(0x9));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scale.vz = 0;
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scaleDelta.vx = func_8009D000(5, SCRIPT_READ_U8_REL(0x9));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scaleDelta.vy = func_8009D044(7, SCRIPT_READ_U8_REL(0x9));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scaleDelta.vz = 0;
+    g_FieldScriptMaxInstructionCount += 4;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 0xA;
+}
 
 void FieldScriptSetParticleBankColor(void) {
     g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.r  = func_8009CF78(1, SCRIPT_READ_U8_REL(0xD));
@@ -285,13 +336,20 @@ void FieldScriptSetParticleBankColor(void) {
     g_FieldScriptVMCurActor->scriptInstructionPointer += 0xE;
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089A80);
+void FieldScriptParticlesInitialize(void) {
+    g_FieldScriptMaxInstructionCount += 4;
+    if (D_800ADB8C == 0) {
+        FieldInitializeParticleBanks(D_800AFD1C);
+    }
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 1;
+}
 
 void FieldScriptStopParticleActor(void) {
     g_FieldScriptMaxInstructionCount += 4;
     FieldParticleActorStop(D_800AFD1C, SCRIPT_READ_U8_REL(0x1));
     g_FieldScriptVMCurActor->scriptInstructionPointer += 2;
 }
+// End of particle handlers
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089B54);
 
