@@ -71,9 +71,9 @@ void func_8009DC4C(void) {
         pActor->move.vy = 0;
         pActor->move.vz = 0;
         pActor->scriptFlags_0x0 = 1;
-        nNewRotation = pActor->rotationX | 0x8000;
-        pActor->rotationY = nNewRotation;
-        pActor->rotationX = nNewRotation;
+        nNewRotation = pActor->rotation.vx | 0x8000;
+        pActor->rotation.vy = nNewRotation;
+        pActor->rotation.vx = nNewRotation;
         if (func_8009CD18(&nTextBoxIndex) == 0) {
             g_FieldTextBoxes[nTextBoxIndex].status = 0;
         }
@@ -479,17 +479,17 @@ void func_8009F0A0(void) {
 void func_8009F424(void) {
     int nRotation;
     
-    nRotation = g_FieldScriptVMCurActor->rotationY;
+    nRotation = g_FieldScriptVMCurActor->rotation.vy;
     g_FieldScriptVMCurActor->unk102++;
     if (!(g_FieldScriptVMCurActor->unk102 & 0xF)) {
         if (!(rand() & 0x1)) {
-            nRotation = PSX_ANGLE(g_FieldScriptVMCurActor->rotationY + PSX_DEGREES(45));
+            nRotation = PSX_ANGLE(g_FieldScriptVMCurActor->rotation.vy + PSX_DEGREES(45));
         } else {
-            nRotation = PSX_ANGLE(g_FieldScriptVMCurActor->rotationY - PSX_DEGREES(45));
+            nRotation = PSX_ANGLE(g_FieldScriptVMCurActor->rotation.vy - PSX_DEGREES(45));
         }
     }
     D_800B00C0 = 1;
-    g_FieldScriptVMCurActor->rotationX = nRotation;
+    g_FieldScriptVMCurActor->rotation.vx = nRotation;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 
@@ -500,26 +500,26 @@ void func_8009F4CC(void) {
     int nDeltaRotation;
     int delta;
 
-    nRotation = g_FieldScriptVMCurActor->rotationY;
+    nRotation = g_FieldScriptVMCurActor->rotation.vy;
     g_FieldScriptVMCurActor->unk102++;
     if (!(g_FieldScriptVMCurActor->unk102 & 0xF)) {
         nRand = rand();
         if (nRand & 0x30) {
-            nSpecialRotation = g_FieldScriptVMCurActor->rotationY | ~0x7FFF;
+            nSpecialRotation = g_FieldScriptVMCurActor->rotation.vy | ~0x7FFF;
             nRotation = nSpecialRotation;
-            g_FieldScriptVMCurActor->rotationY = nSpecialRotation;
+            g_FieldScriptVMCurActor->rotation.vy = nSpecialRotation;
         } else {
             delta = PSX_DEGREES(45);
             if (!(nRand & 1)) {
-                nDeltaRotation = g_FieldScriptVMCurActor->rotationY + delta;
+                nDeltaRotation = g_FieldScriptVMCurActor->rotation.vy + delta;
             } else {
-                nDeltaRotation = g_FieldScriptVMCurActor->rotationY - delta;
+                nDeltaRotation = g_FieldScriptVMCurActor->rotation.vy - delta;
             }
             nRotation = PSX_ANGLE(nDeltaRotation);
         }
     }
     D_800B00C0 = 1;
-    g_FieldScriptVMCurActor->rotationX = nRotation;
+    g_FieldScriptVMCurActor->rotation.vx = nRotation;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 

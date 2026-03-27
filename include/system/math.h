@@ -12,4 +12,7 @@
 // Convert value to PSX Angle format
 #define PSX_ANGLE(value) value & 0xFFF
 
+// Convert PSX Angle to index of 8-directional movement
+#define PSX_ANGLE_TO_DIRECTION_8(angle) (angle >> 9)
+
 #endif

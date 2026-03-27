@@ -3,6 +3,8 @@
 
 #include "psyq/libgte.h"
 
+#define ACTOR_ID_INVALID 0xFF
+
 #define ACTOR_STATUS_INVISIBLE 0x20
 
 #define NUM_8DIR_MOVEMENT_DIRECTIONS 0x8
@@ -284,9 +286,7 @@ typedef struct {
     /* 0x100 */ u_char unk100;
     /* 0x101 */ u_char unk101;
     /* 0x102 */ short unk102;
-    /* 0x104 */ short rotationX; // 0xFFF mask: rotation
-    /* 0x106 */ short rotationY;
-    /* 0x108 */ short rotationZ;
+    /* 0x104 */ SVECTOR rotation; // 0xFFF mask: rotation
     /* 0x10A */ short unk10A;
     /* 0x10C */ u_char unk10C;
     /* 0x10D */ u_char unk10D;

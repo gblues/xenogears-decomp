@@ -10,7 +10,7 @@ extern s32 g_FieldSystemMode;
 extern u8 D_8006FDC8[]; // "PARTICLE  "
 extern s32 D_80050100;
 extern u8 D_800AF474[8];
-extern s16 D_800AF98E;
+extern s16 g_CameraCurAngleY;
 extern s32 D_800B00B4;
 
 static inline SetVector(SVECTOR* pVec, short value) {
@@ -387,7 +387,7 @@ void FieldParticleUpdateAndRender(ParticleBank* pParticleBank, ParticlePrimitive
         switch (PARTICLE_FLAG_TYPE(pParticleBank->flags)) {
             case 3:
                 rotationVec.vx = 0;
-                rotationVec.vy = g_FieldActors[pParticleBank->targetActorID].pActorData->rotationZ;
+                rotationVec.vy = g_FieldActors[pParticleBank->targetActorID].pActorData->rotation.vz;
                 rotationVec.vz = 0;
                 RotMatrix(&rotationVec, &matrix);
                 pFieldActors = g_FieldActors;
@@ -399,7 +399,7 @@ void FieldParticleUpdateAndRender(ParticleBank* pParticleBank, ParticlePrimitive
                 break;
             case 0:
                 rotationVec.vx = 0;
-                rotationVec.vy = g_FieldActors[pParticleBank->targetActorID].pActorData->rotationZ;
+                rotationVec.vy = g_FieldActors[pParticleBank->targetActorID].pActorData->rotation.vz;
                 rotationVec.vz = 0;
                 RotMatrix(&rotationVec, &matrix);
                 pFieldActors = g_FieldActors;
@@ -460,7 +460,7 @@ void FieldParticleUpdateAndRender(ParticleBank* pParticleBank, ParticlePrimitive
         if (var_s5 == 1) {
             delta = PSX_DEGREES(90);
             rotationVec.vx = D_800B00B4 - delta;
-            rotationVec.vy = -D_800AF98E;
+            rotationVec.vy = -g_CameraCurAngleY;
             rotationVec.vz = 0;
             RotMatrixZYX(&rotationVec, &transformMatrix);
             SetRotMatrix(&transformMatrix);
@@ -531,7 +531,7 @@ void FieldParticleStart(ParticleBank* pParticleBank, ParticlePrimitive* pPrim, i
     pPrim->ewait = pParticleBank->pewait;
     
     if (PARTICLE_FLAG_RANDROT(pParticleBank->flags)) {
-        rotAngle = rand() & 0xFFF;
+        rotAngle = PSX_ANGLE(rand());
     } else {
         rotAngle = pParticleBank->rotAngle;
     }
@@ -551,7 +551,7 @@ void FieldParticleStart(ParticleBank* pParticleBank, ParticlePrimitive* pPrim, i
         initialPosition.vz = 0;
     }
 
-    rotation = D_800AF98E + g_FieldActors[pParticleBank->targetActorID].pActorData->rotationZ & 0xFFF;
+    rotation = g_CameraCurAngleY + PSX_ANGLE(g_FieldActors[pParticleBank->targetActorID].pActorData->rotation.vz);
     direction = D_800AF474[rotation >> 9];
     
     initialPosition.vx += pParticleBank->pos.vx + pParticleBank->directions[direction].x;
