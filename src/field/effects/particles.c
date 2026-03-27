@@ -1,11 +1,11 @@
 #include "common.h"
 #include "system/memory.h"
+#include "system/math.h"
 #include "field/main.h"
 #include "field/actor.h"
 #include "field/particles.h"
 
 extern s32 D_800ADB34;
-extern MATRIX g_WorldToScreenMatrix;
 extern s32 g_FieldSystemMode;
 extern u8 D_8006FDC8[]; // "PARTICLE  "
 extern s32 D_80050100;
@@ -145,7 +145,7 @@ void FieldParticlesTickAndRender(void) {
     int i, j;
 
     if (D_800ADB34 == 0) {
-        matWorldToScreen = g_WorldToScreenMatrix;
+        matWorldToScreen = g_Scene.worldToScreenMatrix;
 
         for (i = 0; i < NUM_PARTICLES; i++) {
             bInUse = 0;
@@ -369,6 +369,7 @@ void FieldParticleUpdateAndRender(ParticleBank* pParticleBank, ParticlePrimitive
     long flag;
     FieldActor* pFieldActors;
     int var_s5;
+    int delta;
 
     if (pPrim->swait != 0) {
         // Tick down the particle's start delay
@@ -438,7 +439,7 @@ void FieldParticleUpdateAndRender(ParticleBank* pParticleBank, ParticlePrimitive
         rotationVec.vy = pPrim->velocity.vy;
         rotationVec.vz = pPrim->velocity.vz;
         ApplyRotMatrix(&rotationVec, &sp18);
-        func_80048D7C(&sp18, &pPrim->velocity);
+        VectorNormal(&sp18, &pPrim->velocity);
         pPrim->velocity.vx = ((pPrim->velocity.vx * pParticleBank->speed) >> 0xC) * pParticleBank->speedMultiplier;
         pPrim->velocity.vy = ((pPrim->velocity.vy * pParticleBank->speed) >> 0xC) * pParticleBank->speedMultiplier;
         pPrim->velocity.vz = ((pPrim->velocity.vz * pParticleBank->speed) >> 0xC) * pParticleBank->speedMultiplier;
@@ -457,7 +458,8 @@ void FieldParticleUpdateAndRender(ParticleBank* pParticleBank, ParticlePrimitive
         RotTrans(&rotationVec, &sp18, &flag);
         
         if (var_s5 == 1) {
-            rotationVec.vx = D_800B00B4 - 0x400;
+            delta = PSX_DEGREES(90);
+            rotationVec.vx = D_800B00B4 - delta;
             rotationVec.vy = -D_800AF98E;
             rotationVec.vz = 0;
             RotMatrixZYX(&rotationVec, &transformMatrix);
@@ -476,9 +478,9 @@ void FieldParticleUpdateAndRender(ParticleBank* pParticleBank, ParticlePrimitive
             return;
         }
         
-        pPrim->position.vx = ((sp70.vx + sp18.vx) << 0xC);
-        pPrim->position.vy = ((sp70.vy + sp18.vy) << 0xC);
-        pPrim->position.vz = ((sp70.vz + sp18.vz) << 0xC);    
+        pPrim->position.vx = ((sp70.vx + sp18.vx) << 12);
+        pPrim->position.vy = ((sp70.vy + sp18.vy) << 12);
+        pPrim->position.vz = ((sp70.vz + sp18.vz) << 12);    
         return;
     } 
     

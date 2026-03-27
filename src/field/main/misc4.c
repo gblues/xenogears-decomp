@@ -159,21 +159,21 @@ void func_8007A7F4(Quad* pPart, int x, int y, int tex) {
     nIndexTex = tex * 0x6,
 
     // Set Position 0, 1, 2, and 3
-    pPart->vecs[0].vx = D_800ADCE0[x].x;
-    pPart->vecs[0].vy = 0x0;
-    pPart->vecs[0].vz = D_800ADD28[y].x;
+    pPart->vertices[0].vx = D_800ADCE0[x].x;
+    pPart->vertices[0].vy = 0x0;
+    pPart->vertices[0].vz = D_800ADD28[y].x;
 
-    pPart->vecs[1].vx = D_800ADCE0[x].y;
-    pPart->vecs[1].vy = 0;
-    pPart->vecs[1].vz = D_800ADD28[y].y;
+    pPart->vertices[1].vx = D_800ADCE0[x].y;
+    pPart->vertices[1].vy = 0;
+    pPart->vertices[1].vz = D_800ADD28[y].y;
 
-    pPart->vecs[2].vx = D_800ADCE0[x].z;
-    pPart->vecs[2].vy = 0;
-    pPart->vecs[2].vz = D_800ADD28[y].z;
+    pPart->vertices[2].vx = D_800ADCE0[x].z;
+    pPart->vertices[2].vy = 0;
+    pPart->vertices[2].vz = D_800ADD28[y].z;
 
-    pPart->vecs[3].vx = D_800ADCE0[x].w;
-    pPart->vecs[3].vy = 0;
-    pPart->vecs[3].vz = D_800ADD28[y].w;
+    pPart->vertices[3].vx = D_800ADCE0[x].w;
+    pPart->vertices[3].vy = 0;
+    pPart->vertices[3].vz = D_800ADD28[y].w;
     
     setRGB0(&pPart->polys[0], 0x80, 0x80, 0x80);
     
@@ -205,21 +205,21 @@ void func_8007AA44(Quad* pQuad) {
     pPoly2 = &pQuad->polys[1];
     
     SetPolyFT4(pPoly);
-    pQuad->vecs[3].vx = -0x18;
-    pQuad->vecs[3].vz = -0x18;
-    pQuad->vecs[3].vy = 0;
+    pQuad->vertices[3].vx = -0x18;
+    pQuad->vertices[3].vz = -0x18;
+    pQuad->vertices[3].vy = 0;
 
-    pQuad->vecs[2].vx = 0x18;
-    pQuad->vecs[2].vy = 0;
-    pQuad->vecs[2].vz = -0x18;
+    pQuad->vertices[2].vx = 0x18;
+    pQuad->vertices[2].vy = 0;
+    pQuad->vertices[2].vz = -0x18;
 
-    pQuad->vecs[1].vx = -0x18;
-    pQuad->vecs[1].vy = 0;
-    pQuad->vecs[1].vz = 0x18;
+    pQuad->vertices[1].vx = -0x18;
+    pQuad->vertices[1].vy = 0;
+    pQuad->vertices[1].vz = 0x18;
 
-    pQuad->vecs[0].vx = 0x18;
-    pQuad->vecs[0].vy = 0;
-    pQuad->vecs[0].vz = 0x18;
+    pQuad->vertices[0].vx = 0x18;
+    pQuad->vertices[0].vy = 0;
+    pQuad->vertices[0].vz = 0x18;
 
     setRGB0(pPoly, 0x80, 0x80, 0x80);
     pPoly->tpage = GetTPage(0, 2, 0x280, 0x1E0);
@@ -238,26 +238,32 @@ void func_8007AA44(Quad* pQuad) {
     *pPoly2 = *pPoly;
 }
 
-// Draw Quad / Actor primitive
-void func_8007AB6C(u_long* ot, Quad* pQuad, MATRIX* matrix, int renderContext) {
+void FieldRenderQuad(u_long* ot, Quad* pQuad, MATRIX* pMatTransform, int renderContext) {
     long nInterpolation;
     long nFlag;
     POLY_FT4* pPoly;
 
     pPoly = &pQuad->polys[renderContext];
     PushMatrix();
-    SetRotMatrix(matrix);
-    SetTransMatrix(matrix);
+
+    // Set our GTE transform matrix (RTM and TRV)
+    SetRotMatrix(pMatTransform);
+    SetTransMatrix(pMatTransform);
+
+    // Transform our vertices to screen coordinates
     RotAverage4(
-        &pQuad->vecs[0], &pQuad->vecs[1], &pQuad->vecs[2], &pQuad->vecs[3], 
-        &pPoly->x0, &pPoly->x1, &pPoly->x2, &pPoly->x3, 
+        &pQuad->vertices[0], &pQuad->vertices[1], &pQuad->vertices[2], &pQuad->vertices[3], 
+        (long*)&pPoly->x0, (long*)&pPoly->x1, (long*)&pPoly->x2, (long*)&pPoly->x3, 
         &nInterpolation, &nFlag
     );
+
+    // Queue our primitive for rendering
     addPrim(ot + 1, pPoly);
+
     PopMatrix();
 }
 
-void func_8007AC58(u_long* ot, Quad* pQuad, MATRIX* matrix, int renderContext) {
+void func_8007AC58(u_long* ot, Quad* pQuad, MATRIX* pMatTransform, int renderContext) {
     int nInterpolation;
     int nFlag;
     int nPosY;
@@ -267,11 +273,15 @@ void func_8007AC58(u_long* ot, Quad* pQuad, MATRIX* matrix, int renderContext) {
 
     pPoly = &pQuad->polys[renderContext];
     PushMatrix();
-    SetRotMatrix(matrix);
-    SetTransMatrix(matrix);
+
+    // Set our GTE transform matrix (RTM and TRV)
+    SetRotMatrix(pMatTransform);
+    SetTransMatrix(pMatTransform);
+
+    // Transform our vertices to screen coordinates
     RotAverage4(
-        &pQuad->vecs[0], &pQuad->vecs[1], &pQuad->vecs[2], &pQuad->vecs[3], 
-        &pPoly->x0, &pPoly->x1, &pPoly->x2, &pPoly->x3, 
+        &pQuad->vertices[0], &pQuad->vertices[1], &pQuad->vertices[2], &pQuad->vertices[3], 
+        (long*)&pPoly->x0, (long*)&pPoly->x1, (long*)&pPoly->x2, (long*)&pPoly->x3, 
         &nInterpolation, &nFlag
     );
     
@@ -287,7 +297,9 @@ void func_8007AC58(u_long* ot, Quad* pQuad, MATRIX* matrix, int renderContext) {
         nPosX2, nPosY
     );
     
+    // Queue our primitive for rendering
     addPrim(ot + 1, pPoly);
+
     PopMatrix();
 }
 

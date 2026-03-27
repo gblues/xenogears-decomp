@@ -1,5 +1,6 @@
 #include "common.h"
 #include "main/game.h"
+#include "system/math.h"
 #include "field/main.h"
 #include "field/actor.h"
 #include "field/script_vm.h"
@@ -851,19 +852,18 @@ void func_80093A04(void) {
 // These are likely part of a struct
 extern s8 D_800B21D0[];
 extern s8 D_800B21D1[];
-extern s32 D_800AF9D8[];
 
 extern s32 D_800ADBDC;
 extern s32 D_800ADBE4;
 extern s32 D_800B00C0;
 
 void func_80093A68(void) {
-    D_800AF9D8[0] &= 0x7FFF;
+    g_Scene.unk48 &= 0x7FFF;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 
 void func_80093A98(void) {
-    D_800AF9D8[0] |= 0x8000;
+    g_Scene.unk48 |= 0x8000;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 
@@ -871,7 +871,7 @@ void func_80093AC8(void) {
     g_FieldControl.isRandomEncountersEnabled = 0;
     D_800B21D0[0] = 0;
     D_800B21D1[0] = 0;
-    D_800AF9D8[0] &= 0x3FFF;
+    g_Scene.unk48 &= 0x3FFF;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 
@@ -879,7 +879,7 @@ void func_80093B10(void) {
     g_FieldControl.isRandomEncountersEnabled = -1;
     D_800B21D0[0] = 1;
     D_800B21D1[0] = 1;
-    D_800AF9D8[0] |= 0xC000;
+    g_Scene.unk48 |= 0xC000;
     if ((D_800ADBDC == 0) || (D_800ADBE4 == 0)) {
         D_800B00C0 = 1; // Stop script VM execution?
         g_FieldScriptVMCurActor->scriptInstructionPointer--;
@@ -1033,6 +1033,7 @@ extern ActorData* D_800B06B8;
 void func_80094158() {
     ActorData* pActor;
     int angle;
+    int delta;
 
     if (!g_FieldScriptVMCurActor->scriptFlags_0x13) {
         if (!g_FieldScriptVMCurActor->flags12C_0x5) {
@@ -1055,7 +1056,8 @@ void func_80094158() {
                         D_800B06B8->position.vy = g_FieldScriptVMCurActor->unkD0.vz >> 0x10;
                         break;
                     default:
-                        angle = (D_800B06B8->curTriNormal.vx >> 0x10) + FieldScriptVMGetArgument(5) - 0x400;
+                        delta = PSX_DEGREES(90);
+                        angle = (D_800B06B8->curTriNormal.vx >> 0x10) + FieldScriptVMGetArgument(5) - delta;
                         g_FieldScriptVMCurActor->unkD0.vx += rsin(angle) * FieldScriptVMGetArgument(1);
                         g_FieldScriptVMCurActor->unkD0.vz -= rcos(angle) * FieldScriptVMGetArgument(1);
                         D_800B06B8->position.vx = g_FieldScriptVMCurActor->unkD0.vx >> 0x10;
@@ -1078,6 +1080,7 @@ void func_80094158() {
 void func_800943AC(void) {
     ActorData* temp_a1;
     int angle;
+    int delta;
     
     if (g_FieldScriptVMCurActor->scriptFlags_0x13) {
         if (!g_FieldScriptVMCurActor->flags12C_0x5) {
@@ -1097,7 +1100,8 @@ void func_800943AC(void) {
                         D_800B06B8->position.vy = g_FieldScriptVMCurActor->unkD0.vz >> 0x10;
                         break;
                     default:
-                        angle = (D_800B06B8->curTriNormal.vx >> 0x10) + FieldScriptVMGetArgument(5) - 0x400;
+                        delta = PSX_DEGREES(90);
+                        angle = (D_800B06B8->curTriNormal.vx >> 0x10) + FieldScriptVMGetArgument(5) - delta;
                         g_FieldScriptVMCurActor->unkD0.vx -= rsin(angle) * FieldScriptVMGetArgument(1);
                         g_FieldScriptVMCurActor->unkD0.vz += rcos(angle) * FieldScriptVMGetArgument(1);
                         D_800B06B8->position.vx = g_FieldScriptVMCurActor->unkD0.vx >> 0x10;

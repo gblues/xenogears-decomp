@@ -1,5 +1,6 @@
 #include "common.h"
 #include "main/game.h"
+#include "system/math.h"
 #include "field/script_vm.h"
 #include "field/actor.h"
 #include "field/text_box.h"
@@ -482,9 +483,9 @@ void func_8009F424(void) {
     g_FieldScriptVMCurActor->unk102++;
     if (!(g_FieldScriptVMCurActor->unk102 & 0xF)) {
         if (!(rand() & 0x1)) {
-            nRotation = (g_FieldScriptVMCurActor->rotationY + 0x200) & 0xFFF;
+            nRotation = PSX_ANGLE(g_FieldScriptVMCurActor->rotationY + PSX_DEGREES(45));
         } else {
-            nRotation = (g_FieldScriptVMCurActor->rotationY - 0x200) & 0xFFF;
+            nRotation = PSX_ANGLE(g_FieldScriptVMCurActor->rotationY - PSX_DEGREES(45));
         }
     }
     D_800B00C0 = 1;
@@ -497,6 +498,7 @@ void func_8009F4CC(void) {
     int nRotation;
     int nRand;
     int nDeltaRotation;
+    int delta;
 
     nRotation = g_FieldScriptVMCurActor->rotationY;
     g_FieldScriptVMCurActor->unk102++;
@@ -507,12 +509,13 @@ void func_8009F4CC(void) {
             nRotation = nSpecialRotation;
             g_FieldScriptVMCurActor->rotationY = nSpecialRotation;
         } else {
+            delta = PSX_DEGREES(45);
             if (!(nRand & 1)) {
-                nDeltaRotation = g_FieldScriptVMCurActor->rotationY + 0x200;
+                nDeltaRotation = g_FieldScriptVMCurActor->rotationY + delta;
             } else {
-                nDeltaRotation = g_FieldScriptVMCurActor->rotationY - 0x200;
+                nDeltaRotation = g_FieldScriptVMCurActor->rotationY - delta;
             }
-            nRotation = nDeltaRotation & 0xFFF;
+            nRotation = PSX_ANGLE(nDeltaRotation);
         }
     }
     D_800B00C0 = 1;
@@ -600,17 +603,17 @@ extern int D_8004F34C;
 void func_8009FD10(int arg0) {
     switch (arg0) { 
         case 0:
-            FieldScriptMemoryWriteU16(0x2A, D_8004F34C & 0xFFF);
+            FieldScriptMemoryWriteU16(0x2A, PSX_ANGLE(D_8004F34C));
             FieldScriptMemoryWriteU16(0x2C, 0);
             FieldScriptMemoryWriteU16(0x2E, 0);
             break;
         case 1:
-            FieldScriptMemoryWriteU16(0x30, D_8004F34C & 0xFFF);
+            FieldScriptMemoryWriteU16(0x30, PSX_ANGLE(D_8004F34C));
             FieldScriptMemoryWriteU16(0x32, 0);
             FieldScriptMemoryWriteU16(0x34, 0);
             break;
         case 2:
-            FieldScriptMemoryWriteU16(0x36, D_8004F34C & 0xFFF);
+            FieldScriptMemoryWriteU16(0x36, PSX_ANGLE(D_8004F34C));
             FieldScriptMemoryWriteU16(0x38, 0);
             FieldScriptMemoryWriteU16(0x3A, 0);
             break;

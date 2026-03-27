@@ -125,7 +125,7 @@ void func_80098CAC(s32 arg0) {
         if ((scriptArg1 >> 0x10) != (g_FieldScriptVMCurActor->position.vx >> 0x10) || 
             (scriptArg2 >> 0x10) != (g_FieldScriptVMCurActor->position.vz >> 0x10)
         ) {
-            rotation = -func_8004B32C(
+            rotation = -ratan2(
                 g_FieldScriptVMCurActor->unkD0.vz >> 0x10, 
                 g_FieldScriptVMCurActor->unkD0.vx >> 0x10
             );

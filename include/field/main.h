@@ -8,6 +8,35 @@
 
 #define FIELD_OT_MAX_SIZE 4096
 
+
+typedef struct {
+    // There could potentially be more fields to the struct here
+
+    /* 0x0   */ MATRIX viewMatrix;
+    /* 0x20  */ MATRIX camRotationMatrix;
+    /* 0x40  */ SVECTOR camRotation;
+    /* 0x48  */ s32 unk48; // Flags related to random encounters?
+    /* 0x4C  */ u8 unk4C[0x8];
+    /* 0x54  */ SVECTOR sceneAngle;
+    /* 0x5C  */ u8 unk5C[0x8];
+    /* 0x64  */ u8 dollySet;
+    /* 0x65  */ u8 dollyStop;
+    /* 0x66  */ u16 _pad66;
+    /* 0x68  */ u32 sceneScrZ;
+    /* 0x6C  */ u16 sceneDIP;
+    /* 0x6E  */ u16 sceneScale;
+    /* 0x70  */ u8 unk70[0x54];
+    /* 0xC4  */ SVECTOR worldRotation;
+    /* 0xCC  */ SVECTOR worldTranslation;
+    /* 0xD4  */ MATRIX worldToScreenMatrix;
+    /* 0xF4  */ MATRIX unkF4;
+    /* 0x114 */ MATRIX worldRotationMatrix;
+} FieldScene; // Size: 0x134
+
+extern FieldScene g_Scene;
+extern s32 g_WorldScale;
+
+
 typedef struct {
     DRAWENV drawEnvs[2];
     DISPENV dispEnv;
@@ -19,7 +48,7 @@ typedef struct {
 } RenderContext;
 
 typedef struct {
-    SVECTOR vecs[4];
+    SVECTOR vertices[4];
     POLY_FT4 polys[2];
 } Quad;
 

@@ -8,6 +8,8 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", InvSquareRoot);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", VectorNormalS);
 
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", VectorNormal);
+
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", VectorNormalSS);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", func_80048DD8);
@@ -187,3 +189,5 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", RotMatrixX);
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", RotMatrixY);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", RotMatrixZ);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/psyq/libgte", ratan2);

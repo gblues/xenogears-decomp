@@ -525,6 +525,7 @@ InitGeom = 0x80048BC4;
 SquareRoot0 = 0x80048C4C;
 InvSquareRoot = 0x80048CDC;
 VectorNormalS = 0x80048D68;
+VectorNormal = 0x80048D7C;
 VectorNormalSS = 0x80048DA8;
 LoadAverage12 = 0x80048F7C;
 LoadAverage0 = 0x80048FCC;
@@ -611,6 +612,7 @@ RotMatrixZYX = 0x8004ABBC;
 RotMatrixX = 0x8004AE4C;
 RotMatrixY = 0x8004AFEC;
 RotMatrixZ = 0x8004B18C;
+ratan2 = 0x8004B32C;
 
 // PSY-Q Interrupts (libetc)
 Vsync = 0x8004B54C;

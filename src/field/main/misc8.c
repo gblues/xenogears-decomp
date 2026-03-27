@@ -179,7 +179,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086590);
 INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086908);
 /*
 extern VECTOR g_CameraEye;
-extern VECTOR g_CameraAT;
+extern VECTOR g_CameraAt;
 extern s16 D_800B22E0;
 extern s32 g_PlayerActorIndex;
 
@@ -192,7 +192,7 @@ void func_80086908(void) {
             func_80086590(&g_CameraEye);
             return;
         case 2:
-            func_80086590(&g_CameraAT);
+            func_80086590(&g_CameraAt);
             return;
     }
 }

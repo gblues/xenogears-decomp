@@ -25,6 +25,13 @@ FieldPartyFreeSkinDataBuffers = 0x80077D2C;
 FieldLoadTIM = 0x800771F8;
 
 FieldMatrixResetTranslation = 0x80072140;
+FieldComputeSceneMatrices = 0x80072150;
+FieldMatrixCreateWorldToScreen = 0x800722F4;
+
+FieldMatrixLookAt = 0x80073750;
+
+FieldMathInterpolateAngle = 0x80073930;
+FieldMathUpdateAngle = 0x80073988;
 
 FieldClearAndSwapOTagInternal = 0x80073F50;
 FieldClearAndSwapOTag = 0x80073FE0;
@@ -49,6 +56,7 @@ FieldSwapRenderContext = 0x800796FC;
 FieldRenderSyncAndFlush = 0x8007999C;
 
 FieldClampPolyFT4UVs = 0x8007A44C;
+FieldRenderQuad = 0x8007AB6C;
 
 FieldSetControllerBuffers = 0x8007AD8C;
 FieldSetMouseSpeed = 0x8007AE14;
@@ -220,11 +228,15 @@ g_FieldScriptVMHandlers = 0x800AE2A0;
 g_FieldNumPartyMembersMasks = 0x800AEA2C;
 
 g_CameraEye = 0x800AF880; // type:VECTOR size:0x10
-g_CameraAT = 0x800AF890; // type:VECTOR size:0x10
+g_CameraAt = 0x800AF890; // type:VECTOR size:0x10
+g_CameraUp = 0x800AF8A0; // type:VECTOR size:0x10
+g_CameraEye2 = 0x800AF8B0; // type:VECTOR size:0x10
+g_CameraAt2 = 0x800AF8C0; // type:VECTOR size:0x10
 D_800AF8F0 = 0x800AF8F0; // type:VECTOR size:0x10
 g_FieldCameraTargetPosition = 0x800AF900; // type:VECTOR size:0x10
 
-g_WorldToScreenMatrix = 0x800AFA64; // type:MATRIX size:0x20
+g_Scene = 0x800AF990; // type:FieldScene size:0x134
+g_WorldScale = 0x800AFAC4;
 
 g_FieldNumActors = 0x800AFB0C;
 g_FieldActors = 0x800AFB10;
