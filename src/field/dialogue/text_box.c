@@ -123,7 +123,7 @@ int func_8009CD18(int* pTextBoxIndex) {
 
 u32 func_8009CD7C(int bytecodeOffset) {
     u32 nActorIndex = FieldScriptVMGetActorIndex(bytecodeOffset);
-    if (nActorIndex == 0xFF) {
+    if (nActorIndex == ACTOR_ID_INVALID) {
         return D_8005A444;
     }
     return nActorIndex;
@@ -131,7 +131,7 @@ u32 func_8009CD7C(int bytecodeOffset) {
 
 u32 FieldScriptVMGetActorIndex(int bytecodeOffset) {
     u32 actorID = SCRIPT_READ_U8_REL(bytecodeOffset);
-    if (actorID == 0xFF) {
+    if (actorID == ACTOR_ID_INVALID) {
         actorID = D_8005A444;  
     } else if (actorID == 0xFE) {
         actorID = D_8005A448;

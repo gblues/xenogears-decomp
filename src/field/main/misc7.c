@@ -246,6 +246,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc7", FieldScriptVMWritePartyLeaderCh
 void FieldScriptVMHandlerGetActorDirection(void) {
     int delta = PSX_DEGREES(22.5);
 
+    // The direction is likely offset by two due to how g_FieldAngleToDirectionLUT is set up.
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(1) & 0xFFFF,
         (PSX_ANGLE_TO_DIRECTION_8(g_FieldScriptVMCurActor->rotation.vy + delta) + 2) & MASK_8DIR_MOVEMENT_NUM_DIRECTIONS
@@ -372,6 +373,7 @@ void FieldScriptAtan2(void) {
 }
 
 int FieldScriptGetCurActorDirection(void) {
+    // The direction is likely offset by two due to how g_FieldAngleToDirectionLUT is set up.
     int halfDirection = PSX_DEGREES(22.5);
     return (PSX_ANGLE_TO_DIRECTION_8(g_FieldScriptVMCurActor->rotation.vy + halfDirection) + 2) & MASK_8DIR_MOVEMENT_NUM_DIRECTIONS;
 }

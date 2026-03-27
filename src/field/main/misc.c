@@ -1168,7 +1168,7 @@ extern void func_80072254(int);
 void func_800947B0(void) {
     FieldActor* pActor;
 
-    if (FieldScriptVMGetActorIndex(2) != 0xFF) {
+    if (FieldScriptVMGetActorIndex(2) != ACTOR_ID_INVALID) {
         pActor = &g_FieldActors[FieldScriptVMGetActorIndex(2)];
         switch (SCRIPT_READ_U8_REL(1)) {
             case 0:
@@ -1317,19 +1317,16 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80095FB8);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8009601C);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", FieldScriptVMCheckControllerInput);
-/*
 void FieldScriptVMCheckControllerInput(u_short buttonState) {
     u_short nButtonMask;
     
     nButtonMask = FieldScriptVMGetInstructionArgument(1);
-    if (buttonState & nButtonMask) {
+    if (nButtonMask & buttonState) {
         g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
     } else {
         g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(3);
     }
 }
-*/
 
 void func_800960E4(int value) {
     u_short nArgument;

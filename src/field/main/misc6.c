@@ -34,7 +34,7 @@ void func_8009DAC4(void) {
     ActorData* pActor;
     FieldActor* pFieldActor;
 
-    if (FieldScriptVMGetActorIndex(1) != 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) != ACTOR_ID_INVALID) {
         pActor = g_FieldActors[FieldScriptVMGetActorIndex(1)].pActorData;
         pActor->scriptFlags_0x0 = 0x1;
         pActor->flags |= 0x100000;
@@ -50,7 +50,7 @@ void func_8009DAC4(void) {
 void FieldScriptVMHandlerEnableActorVM(void) {
     ActorData* pActor;
 
-    if (FieldScriptVMGetActorIndex(1) != 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) != ACTOR_ID_INVALID) {
         pActor = g_FieldActors[FieldScriptVMGetActorIndex(1)].pActorData;
         pActor->scriptFlags_0x0 = 0;
     }
@@ -62,7 +62,7 @@ void func_8009DC4C(void) {
     int nTextBoxIndex;
     short nNewRotation;
 
-    if (FieldScriptVMGetActorIndex(1) != 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) != ACTOR_ID_INVALID) {
         pActor = g_FieldActors[FieldScriptVMGetActorIndex(1)].pActorData;
         pActor->moveModified.vx = 0;
         pActor->moveModified.vy = 0;
@@ -104,7 +104,7 @@ void FieldScriptVMHandlerSleep(void) {
 void FieldScriptVMHandlerShowActorById(void) {
     FieldActor* pFieldActor;
 
-    if (FieldScriptVMGetActorIndex(1) != 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) != ACTOR_ID_INVALID) {
         pFieldActor = &g_FieldActors[FieldScriptVMGetActorIndex(1)];
         if (!(pFieldActor->pActorData->flags & 0x100000)) {
             pFieldActor->status &= ~ACTOR_STATUS_INVISIBLE;
@@ -117,7 +117,7 @@ void FieldScriptVMHandlerShowActorById(void) {
 void FieldScriptVMHandlerHideActorById(void) {
     FieldActor* pFieldActor;
 
-    if (FieldScriptVMGetActorIndex(1) != 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) != ACTOR_ID_INVALID) {
         pFieldActor = &g_FieldActors[FieldScriptVMGetActorIndex(1)];
         pFieldActor->status |= ACTOR_STATUS_INVISIBLE;
     }
@@ -135,7 +135,7 @@ void FieldScriptVMHandlerShowActor(void) {
 void func_8009DF78(void) {
     FieldActor* pFieldActor;
 
-    if (FieldScriptVMGetActorIndex(1) != 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) != ACTOR_ID_INVALID) {
         pFieldActor = &g_FieldActors[FieldScriptVMGetActorIndex(1)];
         pFieldActor->pActorData->flags |= 0x02000000;
         pFieldActor->pActorData->flags |= 0x800;
@@ -369,7 +369,7 @@ void func_8009ED68(void) {
     int actorIndex;
     int i;
 
-    if (FieldScriptVMGetActorIndex(1) == 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) == ACTOR_ID_INVALID) {
         g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
         return;
     }
@@ -421,7 +421,7 @@ void func_8009F0A0(void) {
     s32 actorIndex;
     int i;
 
-    if (FieldScriptVMGetActorIndex(1) == 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) == ACTOR_ID_INVALID) {
         g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
         return;
     }

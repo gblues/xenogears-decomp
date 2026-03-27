@@ -85,7 +85,7 @@ void FieldScriptVMHandlerSetPartyMemberHp(void) {
     int targetHp;
     int characterHp;
 
-    if (g_GamePartyMembers[SCRIPT_READ_U8_REL(3)] != 0xFF) {
+    if (g_GamePartyMembers[SCRIPT_READ_U8_REL(3)] != CHARACTER_ID_NONE) {
         targetHp = FieldScriptVMGetArgument(2);
         characterHp = g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].maxHp;
         if (characterHp < targetHp) {
@@ -101,7 +101,7 @@ void FieldScriptVMHandlerSetPartyMemberMp(void) {
     int targetMp;
     int characterMp;
 
-    if (g_GamePartyMembers[SCRIPT_READ_U8_REL(3)] != 0xFF) {
+    if (g_GamePartyMembers[SCRIPT_READ_U8_REL(3)] != CHARACTER_ID_NONE) {
         targetMp = FieldScriptVMGetArgument(2);
         characterMp = g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].maxMp;
         if (characterMp < targetMp) {
