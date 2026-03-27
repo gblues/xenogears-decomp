@@ -5,6 +5,7 @@
 #include "field/actor.h"
 #include "field/script_vm.h"
 #include "field/text_box.h"
+#include "field/particles.h"
 
 void FieldScriptMemoryWriteU16(int, int);
 
@@ -195,7 +196,11 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008825C);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800882B8);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088360);
+void FieldScriptSetCharacterGear(void) {
+    int characterId = FieldScriptVMGetArgument(1);
+    g_GameState->characters[characterId].gearId = FieldScriptVMGetArgument(3);
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800883D4);
 
@@ -225,9 +230,43 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088D18);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80088D38);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089004);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089174);
+extern s32 D_800ADB40;
+extern s32 D_800B2374;
+
+typedef struct {
+    /* 0x0 */ int bankIndex;
+    /* 0x4 */ u8 unk4[0xC];
+} ParticleBankHandle;
+
+extern ParticleBankHandle D_800B2384;
+extern s32 g_FieldScriptMaxInstructionCount;
+
+void FieldScriptInitializeParticleBank(void) {
+    D_800B2384.bankIndex = FieldScriptVMGetArgument(1);
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].speedMultiplier = 1;
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].targetActorID = D_800B2374;
+    D_800ADB40 = g_FieldDefaultParticleBanks[D_800B2384.bankIndex].targetActorID;
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].unk0 = 0;
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].rotAngle = 0;
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].max = FieldScriptVMGetArgument(3);
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].swait = FieldScriptVMGetArgument(5);
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].ewait = FieldScriptVMGetArgument(7);
+    func_8008861C();
+    g_FieldScriptMaxInstructionCount += 4;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 9;
+}
+
+void FieldScriptSetParticleBankPosition(void) {
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vx = func_8009CF78(1, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vy  = func_8009CFBC(3, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vz = func_8009D000(5, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vx = func_8009D044(7, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vy = func_8009D088(9, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vz = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0xD));
+    g_FieldScriptMaxInstructionCount += 4;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 0xE;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089374);
 
@@ -235,12 +274,24 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089574);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800896D4);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089880);
+void FieldScriptSetParticleBankColor(void) {
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.r  = func_8009CF78(1, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.g = func_8009CFBC(3, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.b = func_8009D000(5, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.r = func_8009D044(7, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.g = func_8009D088(9, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.b = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0xD));
+    g_FieldScriptMaxInstructionCount += 4;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 0xE;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089A80);
 
-// Particle-related handler
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089AE4);
+void FieldScriptStopParticleActor(void) {
+    g_FieldScriptMaxInstructionCount += 4;
+    FieldParticleActorStop(D_800AFD1C, SCRIPT_READ_U8_REL(0x1));
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 2;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80089B54);
 

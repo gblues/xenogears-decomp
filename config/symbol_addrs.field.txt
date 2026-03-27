@@ -3,6 +3,15 @@ FieldActorWorldToScreenPosition = 0x80086200;
 
 FieldSetScreenDimensions = 0x80086D8C;
 
+FieldScriptSetCharacterGear = 0x80088360;
+
+FieldScriptInitializeParticleBank = 0x80089004;
+FieldScriptSetParticleBankPosition = 0x80089174;
+
+FieldScriptSetParticleBankColor = 0x80089880;
+
+FieldScriptStopParticleActor = 0x80089AE4;
+
 FieldLZSSDecompress = 0x8007008C;
 
 FieldFree = 0x800700B0;
