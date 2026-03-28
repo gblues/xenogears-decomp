@@ -663,21 +663,89 @@ void FieldScriptVMHandlerDecreasePartyGearHp(void) {
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008DE64);
+void FieldScriptSetParentActor(void) {
+    int actorIndex = FieldScriptVMGetActorIndex(1);
+    if (actorIndex != ACTOR_ID_INVALID) {
+        g_FieldScriptVMCurActor->parentActorId = actorIndex;
+    }
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 2;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008DEBC);
+INCLUDE_ASM("asm/field/nonmatchings/main/misc", FieldScriptWriteActorFlags1);
+/*
+Matches as long as g_FieldActors is NOT volatile.
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008DF44);
+void FieldScriptWriteActorFlags1(void) {
+    ActorData* pActorData;
+    int actorIndex;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008DFCC);
+    actorIndex = FieldScriptVMGetActorIndex(1);
+    if (actorIndex != ACTOR_ID_INVALID) {
+        pActorData = g_FieldActors[actorIndex].pActorData;
+        FieldScriptMemoryWriteU16(
+            FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+            pActorData->scriptFlags
+        );
+    }
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
+}
+*/
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008E054);
+INCLUDE_ASM("asm/field/nonmatchings/main/misc", FieldScriptWriteActorFlags2);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008E0DC);
+INCLUDE_ASM("asm/field/nonmatchings/main/misc", FieldScriptWriteActorFlags3);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008E148);
+INCLUDE_ASM("asm/field/nonmatchings/main/misc", FieldScriptWriteActorFlags4);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008E1B4);
+// TODO: These two handlers could use more semantic names since they're likely used
+// in certain situations.
+void FieldScriptVMConditionalJump6(unsigned short flag) {
+    unsigned short argument = FieldScriptVMGetInstructionArgument(1);
+    if (argument & flag) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
+    } else {
+        g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(4);
+    }
+}
+
+void FieldScriptVMConditionalJump5(unsigned short flag) {
+    unsigned short argument = FieldScriptVMGetInstructionArgument(1);
+    if (argument & flag) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
+    } else {
+        g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(3);
+    }
+}
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc", FieldScriptWriteActorDistance);
+/*
+Matches as long as g_FieldActors is NOT volatile.
+
+void FieldScriptWriteActorDistance(void) {
+    ActorData* pActorA;
+    ActorData* pActorB;
+    int actorIndexA;
+    int actorIndexB;
+    int distance;
+
+    distance = 0;
+    actorIndexA = FieldScriptVMGetActorIndex(3);
+    actorIndexB = FieldScriptVMGetActorIndex(4);
+    if ((actorIndexA != ACTOR_ID_INVALID) && (actorIndexB != ACTOR_ID_INVALID)) {
+        pActorA = g_FieldActors[actorIndexA].pActorData;
+        pActorB = g_FieldActors[actorIndexB].pActorData;
+        distance = FieldGetVec2Magnitude(
+            (pActorA->position.vx >> 0x10) - (pActorB->position.vx >> 0x10), 
+            (pActorA->position.vz >> 0x10) - (pActorB->position.vz >> 0x10)
+        );
+    }
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+        distance
+    );
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
+}
+*/
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008E298);
 
@@ -775,9 +843,22 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FC4C);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FD40);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FDD0);
-
 extern VECTOR D_800AF8F0; // Override target position for camera?
+extern VECTOR g_FieldCameraTargetPosition;
+extern VECTOR g_CameraEye;
+extern VECTOR g_CameraEye2;
+extern VECTOR g_CameraAt;
+extern VECTOR g_CameraAt2;
+
+// g_CameraAt2 refers to the target position for the camera
+void func_8008FDD0(void) {
+    D_800AF8F0.vx = g_CameraAt2.vx;
+    D_800AF8F0.vy = g_CameraAt2.vy;
+    D_800AF8F0.vz = g_CameraAt2.vz;
+    g_FieldScriptMaxInstructionCount++;
+    g_FieldScriptVMCurActor->scriptInstructionPointer++;
+}
+
 void func_8008FE2C(void) {
     D_800AF8F0.vx = func_8009CF78(1, SCRIPT_READ_U8_REL(7)) << 0x10;
     D_800AF8F0.vz = func_8009CFBC(3, SCRIPT_READ_U8_REL(7)) << 0x10; 
@@ -786,7 +867,6 @@ void func_8008FE2C(void) {
     g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
 }
 
-extern VECTOR g_FieldCameraTargetPosition;
 void FieldScriptVMHandlerSetCameraTargetToActor(void) {
     ActorData* pActor = g_FieldActors[func_8009CD7C(1)].pActorData;
     g_FieldCameraTargetPosition.vx = pActor->position.vx;
@@ -810,13 +890,77 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090300);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800903BC);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090A10);
+// Write the current interpolated value
+void FieldScriptWriteCurCameraTarget(void) {
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+        g_CameraAt.vx >> 0x10
+    );
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
+        g_CameraAt.vz >> 0x10
+    );
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
+        g_CameraAt.vy >> 0x10
+    );
+    g_FieldScriptMaxInstructionCount++;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090A94);
+// Write the current interpolated value
+void FieldScriptWriteCurCameraPosition(void) {
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+        g_CameraEye.vx >> 0x10
+    );
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
+        g_CameraEye.vz >> 0x10
+    );
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
+        g_CameraEye.vy >> 0x10
+    );
+    g_FieldScriptMaxInstructionCount++;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090B18);
+// Write the target / desired value
+void FieldScriptWriteCameraTweenTarget(void) {
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+        g_CameraAt2.vx >> 0x10
+    );
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
+        g_CameraAt2.vz >> 0x10
+    );
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
+        g_CameraAt2.vy >> 0x10
+    );
+    g_FieldScriptMaxInstructionCount++;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090B9C);
+// Write the target / desired value
+void FieldScriptWriteCameraTweenPosition(void) {
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+        g_CameraEye2.vx >> 0x10
+    );
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
+        g_CameraEye2.vz >> 0x10
+    );
+    FieldScriptMemoryWriteU16(
+        FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
+        g_CameraEye2.vy >> 0x10
+    );
+    g_FieldScriptMaxInstructionCount++;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090C20);
 

@@ -90,7 +90,21 @@ FieldPartyMemberDecreaseGearHp = 0x8008DBF0;
 FieldScriptVMHandlerIncreasePartyGearHp = 0x8008DC74;
 FieldScriptVMHandlerDecreasePartyGearHp = 0x8008DD6C;
 
+FieldScriptSetParentActor = 0x8008DE64;
+FieldScriptWriteActorFlags1 = 0x8008DEBC;
+FieldScriptWriteActorFlags2 = 0x8008DF44;
+FieldScriptWriteActorFlags3 = 0x8008DFCC;
+FieldScriptWriteActorFlags4 = 0x8008E054;
+FieldScriptVMConditionalJump6 = 0x8008E0DC;
+FieldScriptVMConditionalJump5 = 0x8008E148;
+FieldScriptWriteActorDistance = 0x8008E1B4;
+
 FieldScriptVMHandlerSetCameraTargetToActor = 0x8008FF04;
+
+FieldScriptWriteCurCameraTarget = 0x80090A10;
+FieldScriptWriteCurCameraPosition = 0x80090A94;
+FieldScriptWriteCameraTweenTarget = 0x80090B18;
+FieldScriptWriteCameraTweenPosition = 0x80090B9C;
 
 FieldScriptVMHandlerSetControllerBtnMask = 0x80092628;
 
