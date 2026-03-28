@@ -1368,12 +1368,14 @@ u8* SoundScriptDefaultHandler(u8* pScript, AudioManager* pAudioManager, AudioEle
     return pScript;
 }
 
+// Rest note handler?
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003CD08);
 
-u8* SoundScriptSetUnk5C(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    u8 temp = *pScript;
-    pAudioElements->active_flag |= 0x100;
-    pAudioElements->unk_0x5C = temp;
+// Fermata / Hold note
+u8* SoundScriptFermata(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 fermataDuration = *pScript;
+    pAudioElements->active_flag |= SOUND_CHANNEL_HOLD_NOTE;
+    pAudioElements->fermataDuration = fermataDuration;
     return pScript + 1;
 }
 
@@ -1393,27 +1395,28 @@ u8* SoundScriptNop4(u8* pScript, AudioManager* pAudioManager, AudioElement* pAud
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003CD8C);
 
-u8* SoundScriptSetUnk18AndUnk23(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->unk_0x18 = pScript;
-    pAudioElements->unk_0x23 = pAudioElements->unk_0x66;
+u8* SoundScriptSaveOctaveAndIP(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    pAudioElements->savedScriptIP = pScript;
+    pAudioElements->savedOctave = pAudioElements->octave;
     return pScript;
 }
 
-u8* SoundScriptSetUnk66Multiply12(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->unk_0x66 = *pScript * 12;
+u8* SoundScriptSetOctave(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    pAudioElements->octave = *pScript * NUM_NOTES_PER_OCTAVE;
     return pScript + 1;
 }
 
-u8* SoundScriptAddUnk66(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->unk_0x66 += 12;
+u8* SoundScriptRaiseOctave(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    pAudioElements->octave += NUM_NOTES_PER_OCTAVE;
     return pScript;
 }
 
-u8* SoundScriptSubUnk66(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->unk_0x66 -= 12;
+u8* SoundScriptLowerOctave(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    pAudioElements->octave -= NUM_NOTES_PER_OCTAVE;
     return pScript;
 }
 
+// Time signature handler?
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003CE68);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003CE9C);
@@ -1428,8 +1431,10 @@ u8* SoundScriptAddManagerUnk1a(u8* pScript, AudioManager* pAudioManager, AudioEl
     return pScript + 1;
 }
 
+// Loop start handler?
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003CEF0);
 
+// Loop end handler?
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003CF38);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003CFA4);
@@ -1440,6 +1445,7 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D034);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D070);
 
+// Set tempo handler?
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D0E8);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D110);
@@ -1461,10 +1467,11 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D298);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D2D0);
 
+// Percussion On handler?
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D300);
 
-u8* SoundScriptClearActiveFlag10(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->active_flag &= 0xFFEF;
+u8* SoundScriptPercussionOff(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    pAudioElements->active_flag &= ~SOUND_CHANNEL_PERCUSSION_ACTIVE;
     return pScript;
 }
 
@@ -1474,7 +1481,7 @@ u8* SoundScriptSetActiveFlag800(u8* pScript, AudioManager* pAudioManager, AudioE
 }
 
 u8* SoundScriptClearActiveFlag800(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->active_flag &= 0xF7FF;
+    pAudioElements->active_flag &= ~0x800;
     return pScript;
 }
 
@@ -1494,7 +1501,7 @@ u8* SoundScriptSetVoiceFlags2000AndMode(u8* pScript, AudioManager* pAudioManager
 
 u8* SoundScriptSetVoiceFlags2000ClearMode(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
     pAudioElements->voice_data.flags |= 0x2000;
-    pAudioElements->voice_data.modeFlags &= 0xFFDF;
+    pAudioElements->voice_data.modeFlags &= ~0x20;
     return pScript;
 }
 
@@ -1504,7 +1511,7 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D53C);
 
 u8* SoundScriptSetVoiceFlags4000ClearMode(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
     pAudioElements->voice_data.flags |= 0x4000;
-    pAudioElements->voice_data.modeFlags &= 0xFFBF;
+    pAudioElements->voice_data.modeFlags &= ~0x40;
     return pScript;
 }
 
@@ -1520,6 +1527,7 @@ s32 SoundScriptNop2(s32 arg0) {
     return arg0;
 }
 
+// ADSR / Envelope Reset Handler?
 u8* SoundScriptCallE5BC(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
     func_8003E5BC(pAudioElements->unk_0x26, pAudioElements);
     return pScript;
@@ -1527,28 +1535,28 @@ u8* SoundScriptCallE5BC(u8* pScript, AudioManager* pAudioManager, AudioElement* 
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003D60C);
 
-u8* SoundScriptSetAdsr4(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    u8 temp = *pScript;
+u8* SoundScriptSetAttackTime(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 attackTime = *pScript;
     pAudioElements->voice_data.flags |= 0x10;
-    pAudioElements->voice_data.unkAdsr4 = temp;
+    pAudioElements->voice_data.unkAdsr4 = attackTime;
     return pScript + 1;
 }
 
-u8* SoundScriptSetAdsrDR(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    u8 temp = *pScript;
+u8* SoundScriptSetDecayTime(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 decayTime = *pScript;
     pAudioElements->voice_data.flags |= 0x20;
-    pAudioElements->voice_data.adsrDR = temp;
+    pAudioElements->voice_data.adsrDR = decayTime;
     return pScript + 1;
 }
 
-u8* SoundScriptSetAdsr5(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+u8* SoundScriptSetSustain(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
     u8 temp = *pScript;
     pAudioElements->voice_data.flags |= 0x40;
     pAudioElements->voice_data.unkAdsr5 = temp;
     return pScript + 1;
 }
 
-u8* SoundScriptSetUnk28AndAdsr6(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+u8* SoundScriptSetRelease(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
     u8 temp = *pScript;
     pAudioElements->voice_data.flags |= 0x80;
     pAudioElements->unk_0x28 = temp;
@@ -1556,13 +1564,14 @@ u8* SoundScriptSetUnk28AndAdsr6(u8* pScript, AudioManager* pAudioManager, AudioE
     return pScript + 1;
 }
 
-u8* SoundScriptSetAdsrSR(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+u8* SoundScriptSetSustainLevel(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
     u8 temp = *pScript;
     pAudioElements->voice_data.flags |= 0x100;
     pAudioElements->voice_data.adsrSR = temp;
     return pScript + 1;
 }
 
+// Set decay and sustain?
 u8* SoundScriptSetAdsrDRAndSR(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
     pAudioElements->voice_data.adsrDR = *pScript;
     pAudioElements->voice_data.adsrSR = *(pScript + 1);
@@ -1570,24 +1579,24 @@ u8* SoundScriptSetAdsrDRAndSR(u8* pScript, AudioManager* pAudioManager, AudioEle
     return pScript + 2;
 }
 
-u8* SoundScriptSetAdsr1(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    u8 temp = *pScript;
+u8* SoundScriptSetAttackMode(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 attackMode = *pScript;
     pAudioElements->voice_data.flags |= 0x10;
-    pAudioElements->voice_data.unkAdsr1 = temp;
+    pAudioElements->voice_data.unkAdsr1 = attackMode;
     return pScript + 1;
 }
 
-u8* SoundScriptSetAdsr2(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    u8 temp = *pScript;
+u8* SoundScriptSetSustainMode(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 sustainMode = *pScript;
     pAudioElements->voice_data.flags |= 0x40;
-    pAudioElements->voice_data.unkAdsr2 = temp;
+    pAudioElements->voice_data.unkAdsr2 = sustainMode;
     return pScript + 1;
 }
 
-u8* SoundScriptSetAdsr3(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    u8 temp = *pScript;
+u8* SoundScriptSetReleaseMode(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
+    u8 releaseMode = *pScript;
     pAudioElements->voice_data.flags |= 0x80;
-    pAudioElements->voice_data.unkAdsr3 = temp;
+    pAudioElements->voice_data.unkAdsr3 = releaseMode;
     return pScript + 1;
 }
 
@@ -1616,7 +1625,7 @@ u8* SoundScriptToggleUnk04Bit2(u8* pScript, AudioManager* pAudioManager, AudioEl
 }
 
 u8* SoundScriptClearUnk04Bit1(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->unk_0x04 &= 0xFFFE;
+    pAudioElements->unk_0x04 &= ~0x1;
     return pScript;
 }
 
@@ -1635,13 +1644,15 @@ u8* SoundScriptSetUnkCEAndF6(u8* pScript, AudioManager* pAudioManager, AudioElem
 }
 
 u8* SoundScriptClearUnkCEAndF6(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->unk_0xCE &= 0xFFFE;
-    pAudioElements->unk_0xF6 &= 0xFFFE;
+    pAudioElements->unk_0xCE &= ~0x1;
+    pAudioElements->unk_0xF6 &= ~0x1;
     return pScript;
 }
 
+// Set volume handler / Dynamic?
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003DB2C);
 
+// Crescendo?
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003DB58);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/sound", func_8003DB98);
@@ -1661,11 +1672,12 @@ u8* SoundScriptSetUnkCEAndUnk116(u8* pScript, AudioManager* pAudioManager, Audio
 }
 
 u8* SoundScriptClearUnkCEAndUnk116(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
-    pAudioElements->unk_0xCE &= 0xFFFD;
-    pAudioElements->unk_0x116 &= 0xFFFE;
+    pAudioElements->unk_0xCE &= ~0x2;
+    pAudioElements->unk_0x116 &= ~0x1;
     return pScript;
 }
 
+// Pan / Balance handler?
 u8* SoundScriptSetUnk74(u8* pScript, AudioManager* pAudioManager, AudioElement* pAudioElements) {
     pAudioElements->unk_0x74 = *pScript << 8;
     pAudioElements->status_flags |= 0x100;

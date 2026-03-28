@@ -6,6 +6,8 @@
 
 #define NUM_VOICES 24
 
+#define NUM_NOTES_PER_OCTAVE 12
+
 #define CHANNEL_RIGHT 0
 #define CHANNEL_LEFT  1
 
@@ -125,48 +127,64 @@ typedef struct {
     s16 targetValue;      // 0xA - Final value when counter reaches 0
 } AudioInterpolator;
 
+// AudioElement.active_flags
+#define SOUND_CHANNEL_PERCUSSION_ACTIVE 0x10
+#define SOUND_CHANNEL_NOTE_ACTIVE 0x80
+#define SOUND_CHANNEL_HOLD_NOTE 0x100
+#define SOUND_CHANNEL_REST_NOTE 0x400
+#define SOUND_CHANNEL_CHANGE_INSTRUMENT 0x8000
+
+// AudioElement.status_flags
+#define SOUND_STATUS_REST_NOTE 0x2
+#define SOUND_STATUS_VOLUME_CHANGE 0x100
+#define SOUND_STATUS_PLAYING_NTOE 0x200
+
 typedef struct {
-    u16 active_flag;                // 0x00
-    u16 status_flags;               // 0x02
-    u16 unk_0x04;                   // 0x04
-    s8 unk_0x06[0x12];             // 0x06-0x17
-    u32 unk_0x18;                   // 0x18-0x1B
-    s8 unk_0x1C[0x07];            // 0x1C-0x22
-    u8 unk_0x23;                    // 0x23
-    s8 unk_0x24[0x02];            // 0x24-0x25
-    u8 unk_0x26;                    // 0x26
-    u8 voice_number;                // 0x27
-    u8 unk_0x28;                    // 0x28
-    s8 padding[0x07];              // 0x29-0x2F
-    SoundVoiceData voice_data;      // 0x30-0x5B
-    s16 unk_0x5C;                   // 0x5C-0x5D
-    u8 unk_0x5E[0x04];            // 0x5E-0x61
-    u16 unk_0x62;                   // 0x62-0x63
-    u8 unk_0x64[0x02];            // 0x64-0x65
-    u16 unk_0x66;                   // 0x66-0x67
-    u8 unk_0x68[0x06];            // 0x68-0x6D
-    s16 unk_0x6E;                   // 0x6E-0x6F
-    u8 unk_0x70[0x04];            // 0x70-0x73
-    u16 unk_0x74;                   // 0x74-0x75
-    u8 unk_0x76[0x58];            // 0x76-0xCD
-    u16 unk_0xCE;                   // 0xCE-0xCF
-    u8 unk_0xD0[0x26];            // 0xD0-0xF5
-    u16 unk_0xF6;                   // 0xF6-0xF7
-    u8 unk_0xF8[0x1E];            // 0xF8-0x115
-    u16 unk_0x116;                  // 0x116-0x117
-    u8 unk_0x118[0x1E];           // 0x118-0x135
-    u16 unk_0x136;                  // 0x136-0x137
-    u8 unk_0x138[0x20];           // 0x138-0x157
+    /* 0x0   */ u16 active_flag;
+    /* 0x2   */ u16 status_flags;
+    /* 0x4   */ u16 unk_0x04; // Instrument flags?
+    /* 0x6   */ s8 unk_0x06[0xE];
+    /* 0x14  */ u32 unk14;
+    /* 0x18  */ u8* savedScriptIP;
+    /* 0x1C  */ s8 unk_0x1C[0x07];
+    /* 0x23  */ u8 savedOctave;
+    /* 0x24  */ s16 unk_0x24; // loops?
+    /* 0x26  */ u8 unk_0x26;
+    /* 0x27  */ u8 voice_number;
+    /* 0x28  */ u8 unk_0x28; // instrument number?
+    /* 0x29  */ s8 unk29;
+    /* 0x2A  */ s16 unk2A;
+    /* 0x2C  */ u32 unk2C; // SoundWDSEntry* ?
+    /* 0x30  */ SoundVoiceData voice_data;
+    /* 0x5C  */ s16 fermataDuration;
+    /* 0x5E  */ u8 unk_0x5E[0x04];
+    /* 0x62  */ u16 unk_0x62;
+    /* 0x64  */ u8 unk_0x64[0x02];
+    /* 0x66  */ u16 octave;
+    /* 0x68  */ u32 unk68; // Final note to play?
+    /* 0x6C  */ u16 unk_0x6C;
+    /* 0x6E  */ s16 unk_0x6E;
+    /* 0x70  */ u8 unk_0x70[0x04];
+    /* 0x74  */ u16 unk_0x74; // Pan?
+    /* 0x76  */ u8 unk_0x76[0x58];
+    /* 0xCE  */ u16 unk_0xCE;
+    /* 0xD0  */ u8 unk_0xD0[0x26];
+    /* 0xF6  */ u16 unk_0xF6;
+    /* 0xF8  */ u8 unk_0xF8[0x1E];
+    /* 0x116 */ u16 unk_0x116;
+    /* 0x118 */ u8 unk_0x118[0x1E];
+    /* 0x136 */ u16 unk_0x136;
+    /* 0x138 */ u8 unk_0x138[0x20];
 } AudioElement;
 
 typedef struct AudioManager {
-    struct AudioManager* next;                // 0x0
-    struct AudioManager* unk_Manager_0x4;     // 0x4
-    s32 unk_0x8;                              // 0x8
-    s32 unk_0xc;                              // 0xc
-    s16 unk_Flags;                            // 0x10
-    s8 unk2[2];                               // 0x12
-    u8 elementCount;                          // 0x14
+    /* 0x0  */ struct AudioManager* next;
+    /* 0x4  */ struct AudioManager* unk_Manager_0x4;
+    /* 0x8  */ s32 unk_0x8; // Seq file pointer?
+    /* 0xC  */ s32 unk_0xc; // Pointer to percussion data?
+    /* 0x10 */ s16 unk_Flags;
+    /* 0x12 */ s8 unk2[2];
+    /* 0x14 */ u8 elementCount;
     u8 unk_0x15[3];                           // 0x15-0x17
     u8 unk_0x18;                              // 0x18
     u8 unk_0x19;                              // 0x19
