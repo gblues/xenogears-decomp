@@ -109,9 +109,9 @@ void func_80098CAC(s32 arg0) {
     animationId = 1;
     g_FieldScriptVMCurActor->scriptFlags_0xX = 1;
     if (SCRIPT_READ_U8_REL(1) == 0) {
-        scriptArg1 = CONV_FROM_GTE(func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)));
-        scriptArg2 = CONV_FROM_GTE(func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)));
-        scriptArg3 = CONV_FROM_GTE(func_8009D000(6, SCRIPT_READ_U8_REL(0x8)));
+        scriptArg1 = CONV_FROM_GTE(FieldScriptArgument1(2, SCRIPT_READ_U8_REL(0x8)));
+        scriptArg2 = CONV_FROM_GTE(FieldScriptArgument2(4, SCRIPT_READ_U8_REL(0x8)));
+        scriptArg3 = CONV_FROM_GTE(FieldScriptArgument3(6, SCRIPT_READ_U8_REL(0x8)));
         g_FieldScriptVMCurActor->unk102 = FieldGetVec3Magnitude(
             CONV_TO_GTE(scriptArg1 - g_FieldScriptVMCurActor->position.vx), 
             CONV_TO_GTE(scriptArg3 - g_FieldScriptVMCurActor->position.vy), 
@@ -143,9 +143,9 @@ void func_80098CAC(s32 arg0) {
                 prevPosition.x = g_FieldScriptVMCurActor->position.vx;
                 prevPosition.y = g_FieldScriptVMCurActor->position.vy;
                 prevPosition.z = g_FieldScriptVMCurActor->position.vz;
-                g_FieldScriptVMCurActor->position.vx = CONV_FROM_GTE(func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)));
-                g_FieldScriptVMCurActor->position.vz = CONV_FROM_GTE(func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)));
-                g_FieldScriptVMCurActor->position.vy = CONV_FROM_GTE(func_8009D000(6, SCRIPT_READ_U8_REL(0x8)));
+                g_FieldScriptVMCurActor->position.vx = CONV_FROM_GTE(FieldScriptArgument1(2, SCRIPT_READ_U8_REL(0x8)));
+                g_FieldScriptVMCurActor->position.vz = CONV_FROM_GTE(FieldScriptArgument2(4, SCRIPT_READ_U8_REL(0x8)));
+                g_FieldScriptVMCurActor->position.vy = CONV_FROM_GTE(FieldScriptArgument3(6, SCRIPT_READ_U8_REL(0x8)));
                 g_FieldScriptVMCurActor->moveModified.vx = g_FieldScriptVMCurActor->position.vx - prevPosition.x;
                 g_FieldScriptVMCurActor->moveModified.vy = g_FieldScriptVMCurActor->position.vy - prevPosition.y;
                 g_FieldScriptVMCurActor->moveModified.vz = g_FieldScriptVMCurActor->position.vz - prevPosition.z;
@@ -234,11 +234,8 @@ long FieldGetVec1Magnitude(long x) {
 INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_80099AC0);
 
 void FieldScriptVMWriteCurCharacterID(void) {
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        g_FieldScriptVMCurActor->characterId
-    );
-    g_FieldScriptVMCurActor->scriptInstructionPointer += 0x3;
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), g_FieldScriptVMCurActor->characterId);
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc7", FieldScriptVMWritePartyLeaderCharacterID);
@@ -248,7 +245,7 @@ void FieldScriptVMHandlerGetActorDirection(void) {
 
     // The direction is likely offset by two due to how g_FieldAngleToDirectionLUT is set up.
     FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(1) & 0xFFFF,
+        SCRIPT_IMM_ARG(1),
         (PSX_ANGLE_TO_DIRECTION_8(g_FieldScriptVMCurActor->rotation.vy + delta) + 2) & MASK_8DIR_MOVEMENT_NUM_DIRECTIONS
     );
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
@@ -256,19 +253,10 @@ void FieldScriptVMHandlerGetActorDirection(void) {
 
 void FieldScriptVMHandlerGetActorPosition(void) {
     int nActorIndex = FieldScriptVMGetActorIndex(1);
-    if (nActorIndex != 0xFF) {
-        FieldScriptMemoryWriteU16(
-            FieldScriptVMGetInstructionArgument(2) & 0xFFFF, 
-            g_FieldActors[nActorIndex].childMatrix.t[0]
-        );
-        FieldScriptMemoryWriteU16(
-            FieldScriptVMGetInstructionArgument(4) & 0xFFFF, 
-            g_FieldActors[nActorIndex].childMatrix.t[2]
-        );
-        FieldScriptMemoryWriteU16(
-            FieldScriptVMGetInstructionArgument(6) & 0xFFFF, 
-            g_FieldActors[nActorIndex].childMatrix.t[1]
-        );
+    if (nActorIndex != ACTOR_ID_INVALID) {
+        FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG_ALIGNED(1), g_FieldActors[nActorIndex].childMatrix.t[0]);
+        FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG_ALIGNED(2), g_FieldActors[nActorIndex].childMatrix.t[2]);
+        FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG_ALIGNED(3), g_FieldActors[nActorIndex].childMatrix.t[1]);
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
 }
@@ -305,11 +293,7 @@ int FieldGetCameraDirection(void) {
 }
 
 void FieldScriptWriteCameraDirection(void) {
-    int address = FieldScriptVMGetInstructionArgument(1) & 0xFFFF;
-    FieldScriptMemoryWriteU16(
-        address, 
-        FieldGetCameraDirection() & 0xFFFF
-    );
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), FieldGetCameraDirection() & 0xFFFF);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }
 
@@ -334,9 +318,9 @@ void FieldScriptCos(void) {
     int nFactor;
     int address;
 
-    address = FieldScriptVMGetInstructionArgument(1) & 0xFFFF;
-    angle = func_8009CFBC(3, SCRIPT_READ_U8_REL(7));
-    nFactor = func_8009D000(5,  SCRIPT_READ_U8_REL(7)); // ?
+    address = SCRIPT_IMM_ARG(1);
+    angle = FieldScriptArgument2(ARG(2), SCRIPT_READ_U8_REL(7));
+    nFactor = FieldScriptArgument3(ARG(3),  SCRIPT_READ_U8_REL(7)); // ?
     nValue = rcos(angle) * nFactor;
     FieldScriptMemoryWriteU16(address, nValue >> 12);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
@@ -348,9 +332,9 @@ void FieldScriptSin(void) {
     int nFactor;
     int address;
 
-    address = FieldScriptVMGetInstructionArgument(1) & 0xFFFF;
-    angle = func_8009CFBC(3, SCRIPT_READ_U8_REL(7));
-    nFactor = func_8009D000(5,  SCRIPT_READ_U8_REL(7));
+    address = SCRIPT_IMM_ARG(1);
+    angle = FieldScriptArgument2(ARG(2), SCRIPT_READ_U8_REL(7));
+    nFactor = FieldScriptArgument3(ARG(3),  SCRIPT_READ_U8_REL(7));
     nValue = rsin(angle) * nFactor;
     FieldScriptMemoryWriteU16(address, nValue >> 12);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
@@ -361,9 +345,9 @@ void FieldScriptAtan2(void) {
     int y;
     int address;
     
-    address = FieldScriptVMGetInstructionArgument(1) & 0xFFFF;
-    y = func_8009CFBC(3, SCRIPT_READ_U8_REL(7));
-    x = func_8009D000(5, SCRIPT_READ_U8_REL(7));
+    address = SCRIPT_IMM_ARG(1);
+    y = FieldScriptArgument2(ARG(2), SCRIPT_READ_U8_REL(7));
+    x = FieldScriptArgument3(ARG(3), SCRIPT_READ_U8_REL(7));
     
     FieldScriptMemoryWriteU16(
         address & 0xFFFF, 

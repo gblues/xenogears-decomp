@@ -219,7 +219,7 @@ void func_8009E248(void) {
 }
 
 void func_8009E2C8(void) {
-    func_8009E810(func_8009CF78(1, SCRIPT_READ_U8_REL(3)));
+    func_8009E810(FieldScriptArgument1(1, SCRIPT_READ_U8_REL(3)));
     g_FieldScriptVMCurActor->scriptFlags_0x10 = 0x1;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
 }
@@ -232,8 +232,8 @@ short func_8009E330(int offset) {
 void func_8009E35C(void) {
     g_FieldScriptVMCurActor->walkmeshId = SCRIPT_READ_U8_REL(5);
     func_8009E574(
-        func_8009CF78(1, SCRIPT_READ_U8_REL(6)), 
-        func_8009CFBC(3, SCRIPT_READ_U8_REL(6))
+        FieldScriptArgument1(1, SCRIPT_READ_U8_REL(6)), 
+        FieldScriptArgument2(3, SCRIPT_READ_U8_REL(6))
     );
     g_FieldScriptVMCurActor->flags &= ~0x200000;
     g_FieldScriptVMCurActor->scriptFlags_0xX = 0x0;
@@ -254,8 +254,8 @@ void func_8009E428(void) {
 
 void func_8009E4BC(void) {
     func_8009E574(
-        func_8009CF78(1, SCRIPT_READ_U8_REL(5)), 
-        func_8009CFBC(3, SCRIPT_READ_U8_REL(5))
+        FieldScriptArgument1(1, SCRIPT_READ_U8_REL(5)), 
+        FieldScriptArgument2(3, SCRIPT_READ_U8_REL(5))
     );
     g_FieldScriptVMCurActor->flags &= ~0x200000;
     g_FieldScriptVMCurActor->scriptFlags_0xX = 0x0;
@@ -310,14 +310,14 @@ void func_8009E91C(void) {
         g_FieldScriptVMCurActor->unk114 = HeapAlloc(0x10, 0x0);
     }
     g_FieldScriptVMCurActor->flags12C |= 0x1000;
-    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f0 = func_8009CF78(0x1, SCRIPT_READ_U8_REL(0x11));
-    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f1 = func_8009CFBC(0x3, SCRIPT_READ_U8_REL(0x11));
-    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f2 = func_8009D000(0x5, SCRIPT_READ_U8_REL(0x11));
-    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f3 = func_8009D044(0x7, SCRIPT_READ_U8_REL(0x11));
-    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f4 = func_8009D088(0x9, SCRIPT_READ_U8_REL(0x11));
-    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f5 = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0x11));
-    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f6 = func_8009D110(0xD, SCRIPT_READ_U8_REL(0x11));
-    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f7 = func_8009D154(0xF, SCRIPT_READ_U8_REL(0x11));
+    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f0 = FieldScriptArgument1(0x1, SCRIPT_READ_U8_REL(0x11));
+    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f1 = FieldScriptArgument2(0x3, SCRIPT_READ_U8_REL(0x11));
+    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f2 = FieldScriptArgument3(0x5, SCRIPT_READ_U8_REL(0x11));
+    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f3 = FieldScriptArgument4(0x7, SCRIPT_READ_U8_REL(0x11));
+    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f4 = FieldScriptArgument5(0x9, SCRIPT_READ_U8_REL(0x11));
+    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f5 = FieldScriptArgument6(0xB, SCRIPT_READ_U8_REL(0x11));
+    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f6 = FieldScriptArgument7(0xD, SCRIPT_READ_U8_REL(0x11));
+    ((Tmp*)g_FieldScriptVMCurActor->unk114)->f7 = FieldScriptArgument8(0xF, SCRIPT_READ_U8_REL(0x11));
     
     g_FieldScriptVMCurActor->scriptInstructionPointer += 0x12;
 }

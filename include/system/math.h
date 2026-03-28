@@ -17,7 +17,7 @@
 
 
 
-// Possible a bad name, but often the game shifts vector values down by 16 bytes
+// Possible bad names, but often the game shifts vector values down by 16 bytes
 // before they are used with GTE and/or GPU-related functions.
 #define CONV_TO_GTE(number) (number >> 0x10)
 #define CONV_FROM_GTE(number) (number << 0x10)

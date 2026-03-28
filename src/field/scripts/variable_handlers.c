@@ -4,10 +4,10 @@
 
 void func_8009CF70(void) {}
 
-// If 0x80 on the high byte of the insn argument is set, treat it as an immediate.
-// Else, as a variable
-int func_8009CF78(int index, int value) {
-    if ((value & 0x80) == 0) {
+// If the argument bit is set, treat the argument as an immediate,
+// if not, the argument is loaded from the script VM's RAM.
+int FieldScriptArgument1(int index, int mask) {
+    if ((mask & 0x80) == 0) {
         return FieldScriptVMGetVariableValue(
             FieldScriptVMGetInstructionArgument(index) & 0xFFFF
         ); 
@@ -15,8 +15,8 @@ int func_8009CF78(int index, int value) {
     return FieldScriptVMGetInstructionArgumentS16(index);
 }
 
-int func_8009CFBC(int index, int value) {
-    if ((value & 0x40) == 0) {
+int FieldScriptArgument2(int index, int mask) {
+    if ((mask & 0x40) == 0) {
         return FieldScriptVMGetVariableValue(
             FieldScriptVMGetInstructionArgument(index) & 0xFFFF
         ); 
@@ -24,8 +24,8 @@ int func_8009CFBC(int index, int value) {
     return FieldScriptVMGetInstructionArgumentS16(index);
 }
 
-int func_8009D000(int index, int value) {
-    if ((value & 0x20) == 0) {
+int FieldScriptArgument3(int index, int mask) {
+    if ((mask & 0x20) == 0) {
         return FieldScriptVMGetVariableValue(
             FieldScriptVMGetInstructionArgument(index) & 0xFFFF
         ); 
@@ -33,8 +33,8 @@ int func_8009D000(int index, int value) {
     return FieldScriptVMGetInstructionArgumentS16(index);
 }
 
-int func_8009D044(int index, int value) {
-    if ((value & 0x10) == 0) {
+int FieldScriptArgument4(int index, int mask) {
+    if ((mask & 0x10) == 0) {
         return FieldScriptVMGetVariableValue(
             FieldScriptVMGetInstructionArgument(index) & 0xFFFF
         ); 
@@ -42,8 +42,8 @@ int func_8009D044(int index, int value) {
     return FieldScriptVMGetInstructionArgumentS16(index);
 }
 
-int func_8009D088(int index, int value) {
-    if ((value & 0x8) == 0) {
+int FieldScriptArgument5(int index, int mask) {
+    if ((mask & 0x8) == 0) {
         return FieldScriptVMGetVariableValue(
             FieldScriptVMGetInstructionArgument(index) & 0xFFFF
         ); 
@@ -51,8 +51,8 @@ int func_8009D088(int index, int value) {
     return FieldScriptVMGetInstructionArgumentS16(index);
 }
 
-int func_8009D0CC(int index, int value) {
-    if ((value & 0x4) == 0) {
+int FieldScriptArgument6(int index, int mask) {
+    if ((mask & 0x4) == 0) {
         return FieldScriptVMGetVariableValue(
             FieldScriptVMGetInstructionArgument(index) & 0xFFFF
         ); 
@@ -60,8 +60,8 @@ int func_8009D0CC(int index, int value) {
     return FieldScriptVMGetInstructionArgumentS16(index);
 }
 
-int func_8009D110(int index, int value) {
-    if ((value & 0x2) == 0) {
+int FieldScriptArgument7(int index, int mask) {
+    if ((mask & 0x2) == 0) {
         return FieldScriptVMGetVariableValue(
             FieldScriptVMGetInstructionArgument(index) & 0xFFFF
         ); 
@@ -69,8 +69,8 @@ int func_8009D110(int index, int value) {
     return FieldScriptVMGetInstructionArgumentS16(index);
 }
 
-int func_8009D154(int index, int value) {
-    if ((value & 0x1) == 0) {
+int FieldScriptArgument8(int index, int mask) {
+    if ((mask & 0x1) == 0) {
         return FieldScriptVMGetVariableValue(
             FieldScriptVMGetInstructionArgument(index) & 0xFFFF
         ); 
@@ -141,7 +141,7 @@ void FieldScriptVMHandlerVariableUnsetBit(void) {
     int nBit;
 
     nVariableValue = FieldScriptVMGetVariableValue(FieldScriptVMGetInstructionArgument(1) & 0xFFFF);
-    nBit = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nBit = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     nVariableValue = nVariableValue & ~(1 << nBit);
     FieldScriptMemoryWriteU16(FieldScriptVMGetInstructionArgument(1) & 0xFFFF, nVariableValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
@@ -152,7 +152,7 @@ void FieldScriptVMHandlerVariableXOR(void) {
     int nArgument;
 
     nVariableValue = FieldScriptVMGetVariableValue(FieldScriptVMGetInstructionArgument(1) & 0xFFFF);
-    nArgument = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nArgument = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     nVariableValue = nVariableValue ^ nArgument;
     FieldScriptMemoryWriteU16(FieldScriptVMGetInstructionArgument(1) & 0xFFFF, nVariableValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
@@ -163,7 +163,7 @@ void FieldScriptVMHandlerVariableOR(void) {
     int nArgument;
 
     nVariableValue = FieldScriptVMGetVariableValue((u_short) FieldScriptVMGetInstructionArgument(1));
-    nArgument = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nArgument = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     nVariableValue = nVariableValue | nArgument;
     FieldScriptMemoryWriteU16((u_short) FieldScriptVMGetInstructionArgument(1), nVariableValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
@@ -174,7 +174,7 @@ void FieldScriptVMHandlerVariableAND(void) {
     int nArgument;
 
     nVariableValue = FieldScriptVMGetVariableValue((u_short) FieldScriptVMGetInstructionArgument(1));
-    nArgument = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nArgument = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     nVariableValue = nVariableValue & nArgument;
     FieldScriptMemoryWriteU16((u_short) FieldScriptVMGetInstructionArgument(1), nVariableValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
@@ -185,7 +185,7 @@ void FieldScriptVMHandlerVariableSetBit(void) {
     int nBit;
 
     nVariableValue = FieldScriptVMGetVariableValue((u_short) FieldScriptVMGetInstructionArgument(1));
-    nBit = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nBit = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     nVariableValue |= (1 << nBit);
     FieldScriptMemoryWriteU16((u_short) FieldScriptVMGetInstructionArgument(1), nVariableValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
@@ -196,7 +196,7 @@ void FieldScriptVMHandlerVariableMul(void) {
     int nArgument;
 
     nVariableValue = FieldScriptVMGetVariableValue((u_short) FieldScriptVMGetInstructionArgument(1));
-    nArgument = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nArgument = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     nVariableValue = nVariableValue * nArgument;
     FieldScriptMemoryWriteU16((u_short) FieldScriptVMGetInstructionArgument(1), nVariableValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
@@ -208,7 +208,7 @@ void FieldScriptVMHandlerVariableDiv(void) {
     int nVariableAddress;
 
     nVariableValue = FieldScriptVMGetVariableValue((u_short) FieldScriptVMGetInstructionArgument(1));
-    nArgument = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nArgument = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     
     // Handle division by zero
     if (nArgument == 0) {
@@ -226,7 +226,7 @@ void FieldScriptVMHandlerVariableSub(void) {
     int nArgument;
 
     nVariableValue = FieldScriptVMGetVariableValue((u_short) FieldScriptVMGetInstructionArgument(1));
-    nArgument = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nArgument = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     nVariableValue -= nArgument;
     FieldScriptMemoryWriteU16((u_short) FieldScriptVMGetInstructionArgument(1), nVariableValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
@@ -237,7 +237,7 @@ void FieldScriptVMHandlerVariableAdd(void) {
     int nArgument;
 
     nVariableValue = FieldScriptVMGetVariableValue((u_short) FieldScriptVMGetInstructionArgument(1));
-    nArgument = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nArgument = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     nVariableValue += nArgument;
     FieldScriptMemoryWriteU16((u_short) FieldScriptVMGetInstructionArgument(1), nVariableValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
@@ -264,7 +264,7 @@ void FieldScriptVMHandlerVariableAssign(void) {
     int nValue;
 
     nVariableAddress = FieldScriptVMGetInstructionArgument(1) & 0xFFFF;
-    nValue = func_8009CFBC(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
+    nValue = FieldScriptArgument2(3, *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + 5]);
     FieldScriptMemoryWriteU16(nVariableAddress, nValue);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
 }

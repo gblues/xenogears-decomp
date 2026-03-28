@@ -417,4 +417,8 @@ extern void* g_FieldSpriteData;
 #define SCRIPT_READ_U8(idx) *(u8*)&g_FieldScriptVMCurScriptData[idx]
 #define SCRIPT_READ_U8_REL(idx) *(u8*)&g_FieldScriptVMCurScriptData[g_FieldScriptVMCurActor->scriptInstructionPointer + idx]
 
+#define ARG(index) ((index * 2) - 1)
+#define SCRIPT_IMM_ARG(index) (FieldScriptVMGetInstructionArgument(ARG(index)) & 0xFFFF)
+#define SCRIPT_IMM_ARG_ALIGNED(index) (FieldScriptVMGetInstructionArgument(index*2) & 0xFFFF)
+
 #endif

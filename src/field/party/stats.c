@@ -45,8 +45,8 @@ void FieldScriptVMHandlerDecreasePartyHp(void) {
     int amount;
     int i;
 
-    amount = func_8009CF78(1, SCRIPT_READ_U8_REL(3));
-    mask = g_FieldNumPartyMembersMasks[SCRIPT_READ_U8_REL(3) & 0x3];
+    amount = FieldScriptArgument1(ARG(1), SCRIPT_READ_U8_REL(ARG(2)));
+    mask = g_FieldNumPartyMembersMasks[SCRIPT_READ_U8_REL(ARG(2)) & 0x3];
 
     for (i = 0; i < MAX_PARTY_MEMBERS; i++) {
         if ((g_GamePartyMembers[i] != CHARACTER_ID_NONE) && (mask & 1)) {
@@ -61,20 +61,20 @@ void FieldScriptVMHandlerDecreasePartyHp(void) {
 INCLUDE_ASM("asm/field/nonmatchings/party/stats", func_80096AF4);
 
 void FieldScriptVMHandlerWritePartyMemberHp(void) {
-    if (g_GamePartyMembers[SCRIPT_READ_U8_REL(3)] != CHARACTER_ID_NONE) {
+    if (g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))] != CHARACTER_ID_NONE) {
         FieldScriptMemoryWriteU16(
-            FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-            g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(3)]].hp
+            SCRIPT_IMM_ARG(1), 
+            g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))]].hp
         );
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
 }
 
 void FieldScriptVMHandlerWritePartyMemberMp(void) {
-    if (g_GamePartyMembers[SCRIPT_READ_U8_REL(3)] != CHARACTER_ID_NONE) {
+    if (g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))] != CHARACTER_ID_NONE) {
         FieldScriptMemoryWriteU16(
-            FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-            g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(3)]].mp
+            SCRIPT_IMM_ARG(1), 
+            g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))]].mp
         );
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
@@ -117,7 +117,7 @@ void FieldScriptVMHandlerIncreasePartyMp(void) {
     int amount;
     int i;
 
-    amount = func_8009CF78(1, SCRIPT_READ_U8_REL(3));
+    amount = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(3));
     mask = g_FieldNumPartyMembersMasks[SCRIPT_READ_U8_REL(3) & 0x3];
 
     for (i = 0; i < MAX_PARTY_MEMBERS; i++) {
@@ -134,7 +134,7 @@ void FieldScriptVMHandlerDecreasePartyMp(void) {
     int amount;
     int i;
 
-    amount = func_8009CF78(1, SCRIPT_READ_U8_REL(3));
+    amount = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(3));
     mask = g_FieldNumPartyMembersMasks[SCRIPT_READ_U8_REL(3) & 0x3];
 
     for (i = 0; i < MAX_PARTY_MEMBERS; i++) {

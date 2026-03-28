@@ -112,12 +112,12 @@ void func_80087420(void) {
     int arg1, arg2, arg3, arg4, arg5, arg6;
     int value1, value2;
 
-    arg1 = FieldScriptVMGetArgument(1);
-    arg2 = FieldScriptVMGetArgument(3);
-    arg3 = FieldScriptVMGetArgument(5);
-    arg4 = FieldScriptVMGetArgument(7);
-    arg5 = FieldScriptVMGetArgument(9);
-    arg6 = FieldScriptVMGetArgument(0xB);
+    arg1 = FieldScriptVMGetArgument(ARG(1));
+    arg2 = FieldScriptVMGetArgument(ARG(2));
+    arg3 = FieldScriptVMGetArgument(ARG(3));
+    arg4 = FieldScriptVMGetArgument(ARG(4));
+    arg5 = FieldScriptVMGetArgument(ARG(5));
+    arg6 = FieldScriptVMGetArgument(ARG(6));
 
     value1 = CONV_TO_GTE(
         CONV_FROM_GTE(arg5) / arg3 * arg1
@@ -127,11 +127,11 @@ void func_80087420(void) {
     );
     
     FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(0xD) & 0xFFFF, 
+        SCRIPT_IMM_ARG(7), 
         value1
     );
     FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(0xF) & 0xFFFF, 
+        SCRIPT_IMM_ARG(8), 
         value2
     );
     
@@ -152,7 +152,7 @@ extern u8 D_80050622;
 
 void func_80087800(void) {
     FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+        SCRIPT_IMM_ARG(1), 
         D_80050622
     );
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
@@ -253,14 +253,14 @@ void func_80088D18() {
 }
 
 void FieldScriptSetParticleBankDirections(int index) {
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index].x = func_8009CF78(1, SCRIPT_READ_U8_REL(0x11));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index].z = func_8009CFBC(3, SCRIPT_READ_U8_REL(0x11));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 1].x = func_8009D000(5, SCRIPT_READ_U8_REL(0x11));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 1].z = func_8009D044(7, SCRIPT_READ_U8_REL(0x11));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 2].x = func_8009D088(9, SCRIPT_READ_U8_REL(0x11));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 2].z = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0x11));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 3].x = func_8009D110(0xD, SCRIPT_READ_U8_REL(0x11));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 3].z = func_8009D154(0xF, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index].x = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index].z = FieldScriptArgument2(3, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 1].x = FieldScriptArgument3(5, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 1].z = FieldScriptArgument4(7, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 2].x = FieldScriptArgument5(9, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 2].z = FieldScriptArgument6(0xB, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 3].x = FieldScriptArgument7(0xD, SCRIPT_READ_U8_REL(0x11));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].directions[index + 3].z = FieldScriptArgument8(0xF, SCRIPT_READ_U8_REL(0x11));
     g_FieldScriptMaxInstructionCount += 4;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 0x12;
 }
@@ -281,23 +281,23 @@ void FieldScriptInitializeParticleBank(void) {
 }
 
 void FieldScriptSetParticleBankPosition(void) {
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vx = func_8009CF78(1, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vy  = func_8009CFBC(3, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vz = func_8009D000(5, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vx = func_8009D044(7, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vy = func_8009D088(9, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vz = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vx = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vy  = FieldScriptArgument2(3, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].pos.vz = FieldScriptArgument3(5, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vx = FieldScriptArgument4(7, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vy = FieldScriptArgument5(9, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].epos.vz = FieldScriptArgument6(0xB, SCRIPT_READ_U8_REL(0xD));
     g_FieldScriptMaxInstructionCount += 4;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 0xE;
 }
 
 void FieldScriptSetParticleBankPhysics(void) {
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].speed = func_8009CF78(1, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vx = func_8009CFBC(3, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vy = func_8009D000(5, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vz = func_8009D044(7, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].srange = func_8009D088(9, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].erange = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].speed = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vx = FieldScriptArgument2(3, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vy = FieldScriptArgument3(5, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].gravity.vz = FieldScriptArgument4(7, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].srange = FieldScriptArgument5(9, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].erange = FieldScriptArgument6(0xB, SCRIPT_READ_U8_REL(0xD));
     g_FieldScriptMaxInstructionCount += 4;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 0xE;
 }
@@ -319,23 +319,23 @@ void FieldScriptSetParticleBankParameters(void) {
 }
 
 void FieldScriptSetParticleBankScale(void) {
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scale.vx = func_8009CF78(1, SCRIPT_READ_U8_REL(0x9));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scale.vy = func_8009CFBC(3, SCRIPT_READ_U8_REL(0x9));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scale.vx = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(0x9));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scale.vy = FieldScriptArgument2(3, SCRIPT_READ_U8_REL(0x9));
     g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scale.vz = 0;
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scaleDelta.vx = func_8009D000(5, SCRIPT_READ_U8_REL(0x9));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scaleDelta.vy = func_8009D044(7, SCRIPT_READ_U8_REL(0x9));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scaleDelta.vx = FieldScriptArgument3(5, SCRIPT_READ_U8_REL(0x9));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scaleDelta.vy = FieldScriptArgument4(7, SCRIPT_READ_U8_REL(0x9));
     g_FieldDefaultParticleBanks[D_800B2384.bankIndex].scaleDelta.vz = 0;
     g_FieldScriptMaxInstructionCount += 4;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 0xA;
 }
 
 void FieldScriptSetParticleBankColor(void) {
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.r  = func_8009CF78(1, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.g = func_8009CFBC(3, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.b = func_8009D000(5, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.r = func_8009D044(7, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.g = func_8009D088(9, SCRIPT_READ_U8_REL(0xD));
-    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.b = func_8009D0CC(0xB, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.r  = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.g = FieldScriptArgument2(3, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].color.b = FieldScriptArgument3(5, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.r = FieldScriptArgument4(7, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.g = FieldScriptArgument5(9, SCRIPT_READ_U8_REL(0xD));
+    g_FieldDefaultParticleBanks[D_800B2384.bankIndex].colorDelta.b = FieldScriptArgument6(0xB, SCRIPT_READ_U8_REL(0xD));
     g_FieldScriptMaxInstructionCount += 4;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 0xE;
 }
@@ -561,7 +561,7 @@ void func_8008D684(void) {
     int mask;
     unsigned int slotIndex;
 
-    slotIndex = (unsigned int) (FieldScriptVMGetInstructionArgument(1) & 0xFFFF) >> 4;
+    slotIndex = (unsigned int) (SCRIPT_IMM_ARG(1)) >> 4;
     mask = 1 << (FieldScriptVMGetInstructionArgument(1) & 0xF);
     FieldScriptMemoryWriteU16(slotIndex, FieldScriptVMGetVariableValue(slotIndex) | mask);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
@@ -571,7 +571,7 @@ void func_8008D700(void) {
     int mask;
     unsigned int slotIndex;
 
-    slotIndex = (unsigned int) (FieldScriptVMGetInstructionArgument(1) & 0xFFFF) >> 4;
+    slotIndex = (unsigned int) (SCRIPT_IMM_ARG(1)) >> 4;
     mask = 1 << (FieldScriptVMGetInstructionArgument(1) & 0xF);
     FieldScriptMemoryWriteU16(slotIndex, FieldScriptVMGetVariableValue(slotIndex) & ~mask);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
@@ -582,7 +582,7 @@ void func_8008D780(void) {
     int mask;
     unsigned int slotIndex;
 
-    slotIndex = (unsigned int) (FieldScriptVMGetInstructionArgument(1) & 0xFFFF) >> 4;
+    slotIndex = (unsigned int) (SCRIPT_IMM_ARG(1)) >> 4;
     mask = 1 << (FieldScriptVMGetInstructionArgument(1) & 0xF);
     if (FieldScriptVMGetVariableValue(slotIndex) & mask) {
         g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
@@ -638,7 +638,7 @@ void FieldScriptVMHandlerIncreasePartyGearHp(void) {
     int amount;
     int i;
 
-    amount = func_8009CF78(1, SCRIPT_READ_U8_REL(3));
+    amount = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(3));
     mask = g_FieldNumPartyMembersMasks[SCRIPT_READ_U8_REL(3) & 0x3];
 
     for (i = 0; i < MAX_PARTY_MEMBERS; i++) {
@@ -655,7 +655,7 @@ void FieldScriptVMHandlerDecreasePartyGearHp(void) {
     int amount;
     int i;
 
-    amount = func_8009CF78(1, SCRIPT_READ_U8_REL(3));
+    amount = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(3));
     mask = g_FieldNumPartyMembersMasks[SCRIPT_READ_U8_REL(3) & 0x3];
 
     for (i = 0; i < MAX_PARTY_MEMBERS; i++) {
@@ -687,7 +687,7 @@ void FieldScriptWriteActorFlags1(void) {
     if (actorIndex != ACTOR_ID_INVALID) {
         pActorData = g_FieldActors[actorIndex].pActorData;
         FieldScriptMemoryWriteU16(
-            FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+            SCRIPT_IMM_ARG(1), 
             pActorData->scriptFlags
         );
     }
@@ -704,7 +704,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", FieldScriptWriteActorFlags4);
 // TODO: These two handlers could use more semantic names since they're likely used
 // in certain situations.
 void FieldScriptVMConditionalJump6(unsigned short flag) {
-    unsigned short argument = FieldScriptVMGetInstructionArgument(1);
+    unsigned short argument = SCRIPT_IMM_ARG(1);
     if (argument & flag) {
         g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
     } else {
@@ -713,11 +713,11 @@ void FieldScriptVMConditionalJump6(unsigned short flag) {
 }
 
 void FieldScriptVMConditionalJump5(unsigned short flag) {
-    unsigned short argument = FieldScriptVMGetInstructionArgument(1);
+    unsigned short argument = SCRIPT_IMM_ARG(1);
     if (argument & flag) {
         g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
     } else {
-        g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(3);
+        g_FieldScriptVMCurActor->scriptInstructionPointer = SCRIPT_IMM_ARG(2);
     }
 }
 
@@ -744,7 +744,7 @@ void FieldScriptWriteActorDistance(void) {
         );
     }
     FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
+        SCRIPT_IMM_ARG(1), 
         distance
     );
     g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
@@ -864,9 +864,9 @@ void func_8008FDD0(void) {
 }
 
 void func_8008FE2C(void) {
-    D_800AF8F0.vx = CONV_FROM_GTE(func_8009CF78(1, SCRIPT_READ_U8_REL(7)));
-    D_800AF8F0.vz = CONV_FROM_GTE(func_8009CFBC(3, SCRIPT_READ_U8_REL(7))); 
-    D_800AF8F0.vy = CONV_FROM_GTE(func_8009D000(5, SCRIPT_READ_U8_REL(7)));
+    D_800AF8F0.vx = CONV_FROM_GTE(FieldScriptArgument1(1, SCRIPT_READ_U8_REL(7)));
+    D_800AF8F0.vz = CONV_FROM_GTE(FieldScriptArgument2(3, SCRIPT_READ_U8_REL(7))); 
+    D_800AF8F0.vy = CONV_FROM_GTE(FieldScriptArgument3(5, SCRIPT_READ_U8_REL(7)));
     g_FieldScriptMaxInstructionCount += 1;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
 }
@@ -896,72 +896,36 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800903BC);
 
 // Write the current interpolated value
 void FieldScriptWriteCurCameraTarget(void) {
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraAt.vx)
-    );
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraAt.vz)
-    );
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraAt.vy)
-    );
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), CONV_TO_GTE(g_CameraAt.vx));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(2), CONV_TO_GTE(g_CameraAt.vz));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(3), CONV_TO_GTE(g_CameraAt.vy));
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
 }
 
 // Write the current interpolated value
 void FieldScriptWriteCurCameraPosition(void) {
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraEye.vx)
-    );
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraEye.vz)
-    );
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraEye.vy)
-    );
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), CONV_TO_GTE(g_CameraEye.vx));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(2), CONV_TO_GTE(g_CameraEye.vz));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(3), CONV_TO_GTE(g_CameraEye.vy));
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
 }
 
 // Write the target / desired value
 void FieldScriptWriteCameraTweenTarget(void) {
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraAt2.vx)
-    );
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraAt2.vz)
-    );
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraAt2.vy)
-    );
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), CONV_TO_GTE(g_CameraAt2.vx));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(2), CONV_TO_GTE(g_CameraAt2.vz));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(3), CONV_TO_GTE(g_CameraAt2.vy));
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
 }
 
 // Write the target / desired value
 void FieldScriptWriteCameraTweenPosition(void) {
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraEye2.vx)
-    );
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraEye2.vz)
-    );
-    FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
-        CONV_TO_GTE(g_CameraEye2.vy)
-    );
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), CONV_TO_GTE(g_CameraEye2.vx));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(2), CONV_TO_GTE(g_CameraEye2.vz));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(3), CONV_TO_GTE(g_CameraEye2.vy));
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
 }
@@ -1191,7 +1155,7 @@ void func_80093CD0(void) {
     arg1 = FieldScriptVMGetInstructionArgument(1);
     offset = arg1 + FieldScriptVMGetArgument(5);
     FieldScriptMemoryWriteU16(
-        FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
+        SCRIPT_IMM_ARG(2), 
         SCRIPT_READ_U8(offset)
     );
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
@@ -1212,13 +1176,13 @@ void func_80093D48(void) {
     if (SCRIPT_READ_U8_REL(7) == 0) {
         // W/O carry
         FieldScriptMemoryWriteU16(
-            FieldScriptVMGetInstructionArgument(3) & 0xFFFF,
+            SCRIPT_IMM_ARG(2),
             SCRIPT_READ_U8(nOffset) | (SCRIPT_READ_U8(nOffset + 1) << 8)
         );
     } else {
         // With carry
         FieldScriptMemoryWriteU16(
-            FieldScriptVMGetInstructionArgument(3) & 0xFFFF,
+            SCRIPT_IMM_ARG(2),
             (short)(SCRIPT_READ_U8(nOffset) + (SCRIPT_READ_U8(nOffset + 1) << 8))
         );
     }

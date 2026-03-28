@@ -162,6 +162,15 @@ FieldScriptVMHandlerSetCurActorRotation = 0x8009AC7C;
 
 FieldScriptVMGetActorIndex = 0x8009CDB4;
 
+FieldScriptArgument1 = 0x8009CF78;
+FieldScriptArgument2 = 0x8009CFBC;
+FieldScriptArgument3 = 0x8009D000;
+FieldScriptArgument4 = 0x8009D044;
+FieldScriptArgument5 = 0x8009D088;
+FieldScriptArgument6 = 0x8009D0CC;
+FieldScriptArgument7 = 0x8009D110;
+FieldScriptArgument8 = 0x8009D154;
+
 FieldScriptVMHandlerRandVariable = 0x8009D198;
 FieldScriptVMHandlerMulVariableWithRand = 0x8009D1F0;
 FieldScriptVMHandlerRShiftVariable = 0x8009D260;
