@@ -1,8 +1,9 @@
 #include "common.h"
+#include "psyq/libgpu.h"
+#include "system/memory.h"
+#include "system/math.h"
 #include "field/main.h"
 #include "field/actor.h"
-#include "system/memory.h"
-#include "psyq/libgpu.h"
 #include "field/effects.h"
 #include "field/graphics.h"
 #include "field/particles.h"
@@ -156,8 +157,8 @@ void func_800AB378(s8 color) {
     int x;
     
     pActor = g_FieldActors[g_PlayerActorIndex].pActorData;
-    x = (pActor->position.vx >> 0x10) * D_800C3914 >> 0x10;
-    y = -((pActor->position.vz >> 0x10) * D_800C3A18) >> 0x10;
+    x = (CONV_TO_GTE(pActor->position.vx) * D_800C3914) >> 0x10;
+    y = -(CONV_TO_GTE(pActor->position.vz) * D_800C3A18) >> 0x10;
     
     for (i = 0; i < 1; i++) {
         if (i == 0) {

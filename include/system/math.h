@@ -15,4 +15,11 @@
 // Convert PSX Angle to index of 8-directional movement
 #define PSX_ANGLE_TO_DIRECTION_8(angle) (angle >> 9)
 
+
+
+// Possible a bad name, but often the game shifts vector values down by 16 bytes
+// before they are used with GTE and/or GPU-related functions.
+#define CONV_TO_GTE(number) (number >> 0x10)
+#define CONV_FROM_GTE(number) (number << 0x10)
+
 #endif

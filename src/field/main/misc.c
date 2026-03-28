@@ -119,8 +119,12 @@ void func_80087420(void) {
     arg5 = FieldScriptVMGetArgument(9);
     arg6 = FieldScriptVMGetArgument(0xB);
 
-    value1 = ((arg5 << 0x10) / arg3 * arg1) >> 0x10;
-    value2 = ((arg6 << 0x10) / arg4 * arg2) >> 0x10;
+    value1 = CONV_TO_GTE(
+        CONV_FROM_GTE(arg5) / arg3 * arg1
+    );
+    value2 = CONV_TO_GTE(
+        CONV_FROM_GTE(arg6) / arg4 * arg2
+    );
     
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(0xD) & 0xFFFF, 
@@ -735,8 +739,8 @@ void FieldScriptWriteActorDistance(void) {
         pActorA = g_FieldActors[actorIndexA].pActorData;
         pActorB = g_FieldActors[actorIndexB].pActorData;
         distance = FieldGetVec2Magnitude(
-            (pActorA->position.vx >> 0x10) - (pActorB->position.vx >> 0x10), 
-            (pActorA->position.vz >> 0x10) - (pActorB->position.vz >> 0x10)
+            CONV_TO_GTE(pActorA->position.vx) - CONV_TO_GTE(pActorB->position.vx), 
+            CONV_TO_GTE(pActorA->position.vz) - CONV_TO_GTE(pActorB->position.vz)
         );
     }
     FieldScriptMemoryWriteU16(
@@ -860,9 +864,9 @@ void func_8008FDD0(void) {
 }
 
 void func_8008FE2C(void) {
-    D_800AF8F0.vx = func_8009CF78(1, SCRIPT_READ_U8_REL(7)) << 0x10;
-    D_800AF8F0.vz = func_8009CFBC(3, SCRIPT_READ_U8_REL(7)) << 0x10; 
-    D_800AF8F0.vy = func_8009D000(5, SCRIPT_READ_U8_REL(7)) << 0x10;
+    D_800AF8F0.vx = CONV_FROM_GTE(func_8009CF78(1, SCRIPT_READ_U8_REL(7)));
+    D_800AF8F0.vz = CONV_FROM_GTE(func_8009CFBC(3, SCRIPT_READ_U8_REL(7))); 
+    D_800AF8F0.vy = CONV_FROM_GTE(func_8009D000(5, SCRIPT_READ_U8_REL(7)));
     g_FieldScriptMaxInstructionCount += 1;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
 }
@@ -894,15 +898,15 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800903BC);
 void FieldScriptWriteCurCameraTarget(void) {
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        g_CameraAt.vx >> 0x10
+        CONV_TO_GTE(g_CameraAt.vx)
     );
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
-        g_CameraAt.vz >> 0x10
+        CONV_TO_GTE(g_CameraAt.vz)
     );
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
-        g_CameraAt.vy >> 0x10
+        CONV_TO_GTE(g_CameraAt.vy)
     );
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
@@ -912,15 +916,15 @@ void FieldScriptWriteCurCameraTarget(void) {
 void FieldScriptWriteCurCameraPosition(void) {
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        g_CameraEye.vx >> 0x10
+        CONV_TO_GTE(g_CameraEye.vx)
     );
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
-        g_CameraEye.vz >> 0x10
+        CONV_TO_GTE(g_CameraEye.vz)
     );
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
-        g_CameraEye.vy >> 0x10
+        CONV_TO_GTE(g_CameraEye.vy)
     );
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
@@ -930,15 +934,15 @@ void FieldScriptWriteCurCameraPosition(void) {
 void FieldScriptWriteCameraTweenTarget(void) {
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        g_CameraAt2.vx >> 0x10
+        CONV_TO_GTE(g_CameraAt2.vx)
     );
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
-        g_CameraAt2.vz >> 0x10
+        CONV_TO_GTE(g_CameraAt2.vz)
     );
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
-        g_CameraAt2.vy >> 0x10
+        CONV_TO_GTE(g_CameraAt2.vy)
     );
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
@@ -948,15 +952,15 @@ void FieldScriptWriteCameraTweenTarget(void) {
 void FieldScriptWriteCameraTweenPosition(void) {
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(1) & 0xFFFF, 
-        g_CameraEye2.vx >> 0x10
+        CONV_TO_GTE(g_CameraEye2.vx)
     );
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(3) & 0xFFFF, 
-        g_CameraEye2.vz >> 0x10
+        CONV_TO_GTE(g_CameraEye2.vz)
     );
     FieldScriptMemoryWriteU16(
         FieldScriptVMGetInstructionArgument(5) & 0xFFFF, 
-        g_CameraEye2.vy >> 0x10
+        CONV_TO_GTE(g_CameraEye2.vy)
     );
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
@@ -1302,19 +1306,19 @@ void func_80094158() {
                 switch (FieldScriptVMGetArgument(5)) { 
                     case 0x1000:
                         g_FieldScriptVMCurActor->unkD0.vy -= FieldScriptVMGetArgument(1) * 0x10;
-                        D_800B06B8->position.vy = g_FieldScriptVMCurActor->unkD0.vz >> 0x10;
+                        D_800B06B8->position.vy = CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vz);
                         break;
                     case 0x1001:
                         g_FieldScriptVMCurActor->unkD0.vy += FieldScriptVMGetArgument(1) * 0x10;
-                        D_800B06B8->position.vy = g_FieldScriptVMCurActor->unkD0.vz >> 0x10;
+                        D_800B06B8->position.vy = CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vz);
                         break;
                     default:
                         delta = PSX_DEGREES(90);
-                        angle = (D_800B06B8->curTriNormal.vx >> 0x10) + FieldScriptVMGetArgument(5) - delta;
+                        angle = CONV_TO_GTE(D_800B06B8->curTriNormal.vx) + FieldScriptVMGetArgument(5) - delta;
                         g_FieldScriptVMCurActor->unkD0.vx += rsin(angle) * FieldScriptVMGetArgument(1);
                         g_FieldScriptVMCurActor->unkD0.vz -= rcos(angle) * FieldScriptVMGetArgument(1);
-                        D_800B06B8->position.vx = g_FieldScriptVMCurActor->unkD0.vx >> 0x10;
-                        D_800B06B8->position.vz = g_FieldScriptVMCurActor->unkD0.vz >> 0x10;
+                        D_800B06B8->position.vx = CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vx);
+                        D_800B06B8->position.vz = CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vz);
                         break;
                 }
             } else {
@@ -1346,19 +1350,19 @@ void func_800943AC(void) {
                 switch (FieldScriptVMGetArgument(5)) {
                     case 0x1000:
                         g_FieldScriptVMCurActor->unkD0.vy -= FieldScriptVMGetArgument(1) * 0x10;
-                        D_800B06B8->position.vy = g_FieldScriptVMCurActor->unkD0.vz >> 0x10;
+                        D_800B06B8->position.vy = CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vz);
                         break;
                     case 0x1001:
                         g_FieldScriptVMCurActor->unkD0.vy += FieldScriptVMGetArgument(1) * 0x10;
-                        D_800B06B8->position.vy = g_FieldScriptVMCurActor->unkD0.vz >> 0x10;
+                        D_800B06B8->position.vy = CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vz);
                         break;
                     default:
                         delta = PSX_DEGREES(90);
-                        angle = (D_800B06B8->curTriNormal.vx >> 0x10) + FieldScriptVMGetArgument(5) - delta;
+                        angle = CONV_TO_GTE(D_800B06B8->curTriNormal.vx) + FieldScriptVMGetArgument(5) - delta;
                         g_FieldScriptVMCurActor->unkD0.vx -= rsin(angle) * FieldScriptVMGetArgument(1);
                         g_FieldScriptVMCurActor->unkD0.vz += rcos(angle) * FieldScriptVMGetArgument(1);
-                        D_800B06B8->position.vx = g_FieldScriptVMCurActor->unkD0.vx >> 0x10;
-                        D_800B06B8->position.vz = g_FieldScriptVMCurActor->unkD0.vz >> 0x10;
+                        D_800B06B8->position.vx = CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vx);
+                        D_800B06B8->position.vz = CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vz);
                         break;
                 }
             } else {

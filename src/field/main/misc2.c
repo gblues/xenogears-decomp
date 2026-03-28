@@ -93,9 +93,9 @@ void FieldMatrixLookAt(MATRIX* pMatLookAt, VECTOR* pEye, VECTOR* pAt, VECTOR* pU
 
     // Forward direction (X-Axis) is defined by the line going from the eye and
     // the point we're looking at
-    vecWork.vx = (pAt->vx - pEye->vx) >> 0x10;
-    vecWork.vy = (pAt->vy - pEye->vy) >> 0x10;
-    vecWork.vz = (pAt->vz - pEye->vz) >> 0x10;
+    vecWork.vx = CONV_TO_GTE(pAt->vx - pEye->vx);
+    vecWork.vy = CONV_TO_GTE(pAt->vy - pEye->vy);
+    vecWork.vz = CONV_TO_GTE(pAt->vz - pEye->vz);
     
     yAxis.vx = pUp->vx;
     yAxis.vy = pUp->vy;
@@ -126,9 +126,9 @@ void FieldMatrixLookAt(MATRIX* pMatLookAt, VECTOR* pEye, VECTOR* pAt, VECTOR* pU
     pMatLookAt->m[2][1] = zAxis.vy;
     pMatLookAt->m[2][2] = zAxis.vz;
     
-    translation.vx = (pEye->vx >> 0x10) * 3;
-    translation.vy = (pEye->vy >> 0x10) * 3;
-    translation.vz = (pEye->vz >> 0x10) * 3;
+    translation.vx = CONV_TO_GTE(pEye->vx) * 3;
+    translation.vy = CONV_TO_GTE(pEye->vy) * 3;
+    translation.vz = CONV_TO_GTE(pEye->vz) * 3;
 
     // We need to translate the eye position back to the origin first,
     // and combine the translation and rotation operation into a single matrix.

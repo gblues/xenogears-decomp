@@ -205,7 +205,7 @@ void func_8009E208(void) {
     g_FieldScriptVMCurActor->scriptFlags_0x10 = 0x0;
     g_FieldScriptVMCurActor->scriptFlags_0x15 = 0x1;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
-    g_FieldScriptVMCurActor->curYPos = g_FieldScriptVMCurActor->position.vy >> 0x10;
+    g_FieldScriptVMCurActor->curYPos = CONV_TO_GTE(g_FieldScriptVMCurActor->position.vy);
 }
 
 void func_8009E248(void) {
@@ -245,7 +245,10 @@ void func_8009E428(void) {
 
     g_FieldScriptVMCurActor->walkmeshId = SCRIPT_READ_U8_REL(1);
     pActor = g_FieldActors[D_800AFD1C].pActorData;
-    func_8009E574(pActor->position.vx >> 0x10, pActor->position.vz >> 0x10);
+    func_8009E574(
+        CONV_TO_GTE(pActor->position.vx), 
+        CONV_TO_GTE(pActor->position.vz)
+    );
     g_FieldScriptVMCurActor->scriptInstructionPointer += 2;
 }
 

@@ -98,9 +98,9 @@ void func_80098CAC(s32 arg0) {
     pActorData = pFieldActor[D_800AFD1C].pActorData;
     pSprite = pFieldActor[D_800AFD1C].pSpriteData;
     if (pActorData->flags & 0x2000) {
-        speed = (0x8000000 / g_FieldScriptVMCurActor->moveSpeed) >> 0x10;
+        speed = CONV_TO_GTE(0x8000000 / g_FieldScriptVMCurActor->moveSpeed);
     } else {
-        speed = (0x4000000 / g_FieldScriptVMCurActor->moveSpeed) >> 0x10;
+        speed = CONV_TO_GTE(0x4000000 / g_FieldScriptVMCurActor->moveSpeed);
     }
     if (speed == 0) {
         speed = 1;
@@ -109,28 +109,28 @@ void func_80098CAC(s32 arg0) {
     animationId = 1;
     g_FieldScriptVMCurActor->scriptFlags_0xX = 1;
     if (SCRIPT_READ_U8_REL(1) == 0) {
-        scriptArg1 = func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)) << 0x10;
-        scriptArg2 = func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)) << 0x10;
-        scriptArg3 = func_8009D000(6, SCRIPT_READ_U8_REL(0x8)) << 0x10;
+        scriptArg1 = CONV_FROM_GTE(func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)));
+        scriptArg2 = CONV_FROM_GTE(func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)));
+        scriptArg3 = CONV_FROM_GTE(func_8009D000(6, SCRIPT_READ_U8_REL(0x8)));
         g_FieldScriptVMCurActor->unk102 = FieldGetVec3Magnitude(
-            (scriptArg1 - g_FieldScriptVMCurActor->position.vx) >> 0x10, 
-            (scriptArg3 - g_FieldScriptVMCurActor->position.vy) >> 0x10, 
-            (scriptArg2 - g_FieldScriptVMCurActor->position.vz) >> 0x10
+            CONV_TO_GTE(scriptArg1 - g_FieldScriptVMCurActor->position.vx), 
+            CONV_TO_GTE(scriptArg3 - g_FieldScriptVMCurActor->position.vy), 
+            CONV_TO_GTE(scriptArg2 - g_FieldScriptVMCurActor->position.vz)
         ) / speed;
 
-        if ((g_FieldScriptVMCurActor->unk102 << 0x10) == 0) {
+        if (CONV_FROM_GTE(g_FieldScriptVMCurActor->unk102) == 0) {
             g_FieldScriptVMCurActor->unk102++;
         }
         
         g_FieldScriptVMCurActor->unkD0.vx = (scriptArg1 - g_FieldScriptVMCurActor->position.vx) / g_FieldScriptVMCurActor->unk102;
         g_FieldScriptVMCurActor->unkD0.vy = (scriptArg3 - g_FieldScriptVMCurActor->position.vy) / g_FieldScriptVMCurActor->unk102;
         g_FieldScriptVMCurActor->unkD0.vz = (scriptArg2 - g_FieldScriptVMCurActor->position.vz) / g_FieldScriptVMCurActor->unk102;
-        if ((scriptArg1 >> 0x10) != (g_FieldScriptVMCurActor->position.vx >> 0x10) || 
-            (scriptArg2 >> 0x10) != (g_FieldScriptVMCurActor->position.vz >> 0x10)
+        if (CONV_TO_GTE(scriptArg1) != CONV_TO_GTE(g_FieldScriptVMCurActor->position.vx) || 
+            CONV_TO_GTE(scriptArg2) != CONV_TO_GTE(g_FieldScriptVMCurActor->position.vz)
         ) {
             rotation = -ratan2(
-                g_FieldScriptVMCurActor->unkD0.vz >> 0x10, 
-                g_FieldScriptVMCurActor->unkD0.vx >> 0x10
+                CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vz), 
+                CONV_TO_GTE(g_FieldScriptVMCurActor->unkD0.vx)
             );
             g_FieldScriptVMCurActor->rotation.vx = rotation;
             g_FieldScriptVMCurActor->rotation.vy = rotation;
@@ -143,9 +143,9 @@ void func_80098CAC(s32 arg0) {
                 prevPosition.x = g_FieldScriptVMCurActor->position.vx;
                 prevPosition.y = g_FieldScriptVMCurActor->position.vy;
                 prevPosition.z = g_FieldScriptVMCurActor->position.vz;
-                g_FieldScriptVMCurActor->position.vx = func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)) << 0x10;
-                g_FieldScriptVMCurActor->position.vz = func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)) << 0x10;
-                g_FieldScriptVMCurActor->position.vy = func_8009D000(6, SCRIPT_READ_U8_REL(0x8)) << 0x10;
+                g_FieldScriptVMCurActor->position.vx = CONV_FROM_GTE(func_8009CF78(2, SCRIPT_READ_U8_REL(0x8)));
+                g_FieldScriptVMCurActor->position.vz = CONV_FROM_GTE(func_8009CFBC(4, SCRIPT_READ_U8_REL(0x8)));
+                g_FieldScriptVMCurActor->position.vy = CONV_FROM_GTE(func_8009D000(6, SCRIPT_READ_U8_REL(0x8)));
                 g_FieldScriptVMCurActor->moveModified.vx = g_FieldScriptVMCurActor->position.vx - prevPosition.x;
                 g_FieldScriptVMCurActor->moveModified.vy = g_FieldScriptVMCurActor->position.vy - prevPosition.y;
                 g_FieldScriptVMCurActor->moveModified.vz = g_FieldScriptVMCurActor->position.vz - prevPosition.z;
@@ -168,9 +168,9 @@ void func_80098CAC(s32 arg0) {
             D_800B00C0 = 1;
         }
         g_FieldScriptVMCurActor->unk102--;
-        g_FieldActors[D_800AFD1C].transformMatrix.t[0] = g_FieldScriptVMCurActor->position.vx >> 0x10;
-        g_FieldActors[D_800AFD1C].transformMatrix.t[1] = g_FieldScriptVMCurActor->position.vy >> 0x10;
-        g_FieldActors[D_800AFD1C].transformMatrix.t[2] = g_FieldScriptVMCurActor->position.vz >> 0x10;
+        g_FieldActors[D_800AFD1C].transformMatrix.t[0] = CONV_TO_GTE(g_FieldScriptVMCurActor->position.vx);
+        g_FieldActors[D_800AFD1C].transformMatrix.t[1] = CONV_TO_GTE(g_FieldScriptVMCurActor->position.vy);
+        g_FieldActors[D_800AFD1C].transformMatrix.t[2] = CONV_TO_GTE(g_FieldScriptVMCurActor->position.vz);
         pSprite->position.x = g_FieldScriptVMCurActor->position.vx;
         pSprite->position.y = g_FieldScriptVMCurActor->position.vy;
         pSprite->position.z = g_FieldScriptVMCurActor->position.vz;
