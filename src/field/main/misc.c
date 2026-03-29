@@ -847,52 +847,106 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FC4C);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FD40);
 
-extern VECTOR D_800AF8F0; // Override target position for camera?
-extern VECTOR g_FieldCameraTargetPosition;
+extern VECTOR g_CamAtMovementFrom;
+extern VECTOR g_CamAtMovementTo;
+extern VECTOR g_CamEyeMovementFrom;
+extern VECTOR g_CamEyeMovementTo;
 extern VECTOR g_CameraEye;
 extern VECTOR g_CameraEye2;
 extern VECTOR g_CameraAt;
 extern VECTOR g_CameraAt2;
 
-// g_CameraAt2 refers to the target position for the camera
-void func_8008FDD0(void) {
-    D_800AF8F0.vx = g_CameraAt2.vx;
-    D_800AF8F0.vy = g_CameraAt2.vy;
-    D_800AF8F0.vz = g_CameraAt2.vz;
+// Reset initial camera target movement to current camera target
+void FieldScriptResetCameraTargetMovement(void) {
+    g_CamAtMovementFrom.vx = g_CameraAt2.vx;
+    g_CamAtMovementFrom.vy = g_CameraAt2.vy;
+    g_CamAtMovementFrom.vz = g_CameraAt2.vz;
     g_FieldScriptMaxInstructionCount++;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 
-void func_8008FE2C(void) {
-    D_800AF8F0.vx = CONV_FROM_GTE(FieldScriptArgument1(1, SCRIPT_READ_U8_REL(7)));
-    D_800AF8F0.vz = CONV_FROM_GTE(FieldScriptArgument2(3, SCRIPT_READ_U8_REL(7))); 
-    D_800AF8F0.vy = CONV_FROM_GTE(FieldScriptArgument3(5, SCRIPT_READ_U8_REL(7)));
+void FieldScriptSetCameraTargetMovementFrom(void) {
+    g_CamAtMovementFrom.vx = CONV_FROM_GTE(FieldScriptArgument1(ARG(1), SCRIPT_READ_U8_REL(7)));
+    g_CamAtMovementFrom.vz = CONV_FROM_GTE(FieldScriptArgument2(ARG(2), SCRIPT_READ_U8_REL(7))); 
+    g_CamAtMovementFrom.vy = CONV_FROM_GTE(FieldScriptArgument3(ARG(3), SCRIPT_READ_U8_REL(7)));
     g_FieldScriptMaxInstructionCount += 1;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
 }
 
-void FieldScriptVMHandlerSetCameraTargetToActor(void) {
+// Set initial camera target movement to position of an actor
+void FieldScriptSetCameraTargetMovementDestToActor(void) {
     ActorData* pActor = g_FieldActors[func_8009CD7C(1)].pActorData;
-    g_FieldCameraTargetPosition.vx = pActor->position.vx;
-    g_FieldCameraTargetPosition.vy = pActor->position.vy;
-    g_FieldCameraTargetPosition.vz = pActor->position.vz;  
+    g_CamAtMovementTo.vx = pActor->position.vx;
+    g_CamAtMovementTo.vy = pActor->position.vy;
+    g_CamAtMovementTo.vz = pActor->position.vz;  
     g_FieldScriptMaxInstructionCount += 1;    
     g_FieldScriptVMCurActor->scriptInstructionPointer += 2;
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FF90);
+void FieldScriptSetCameraTargetMovementDest(void) {
+    g_CamAtMovementTo.vx = CONV_FROM_GTE(FieldScriptArgument1(ARG(1), SCRIPT_READ_U8_REL(7)));
+    g_CamAtMovementTo.vz = CONV_FROM_GTE(FieldScriptArgument2(ARG(2), SCRIPT_READ_U8_REL(7)));
+    g_CamAtMovementTo.vy = CONV_FROM_GTE(FieldScriptArgument3(ARG(3), SCRIPT_READ_U8_REL(7)));
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090068);
+// Reset initial camera position movement to current camera position
+void FieldScriptResetCameraPosMovement(void) {
+    g_CamEyeMovementFrom.vx = g_CameraEye2.vx;
+    g_CamEyeMovementFrom.vy = g_CameraEye2.vy;
+    g_CamEyeMovementFrom.vz = g_CameraEye2.vz;
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 1;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800900C4);
+void FieldScriptSetCameraPosMovementFrom(void) {
+    g_CamEyeMovementFrom.vx = CONV_FROM_GTE(FieldScriptArgument1(ARG(1), SCRIPT_READ_U8_REL(7)));
+    g_CamEyeMovementFrom.vz = CONV_FROM_GTE(FieldScriptArgument2(ARG(2), SCRIPT_READ_U8_REL(7))); 
+    g_CamEyeMovementFrom.vy = CONV_FROM_GTE(FieldScriptArgument3(ARG(3), SCRIPT_READ_U8_REL(7)));
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8009019C);
+void FieldScriptSetCameraPosMovementDestToActor(void) {
+    ActorData* pActor = g_FieldActors[func_8009CD7C(1)].pActorData;
+    g_CamEyeMovementTo.vx = pActor->position.vx;
+    g_CamEyeMovementTo.vy = pActor->position.vy;
+    g_CamEyeMovementTo.vz = pActor->position.vz;  
+    g_FieldScriptMaxInstructionCount += 1;    
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 2;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090228);
+void FieldScriptSetCameraPosMovementDest(void) {
+    g_CamEyeMovementTo.vx = CONV_FROM_GTE(FieldScriptArgument1(ARG(1), SCRIPT_READ_U8_REL(7)));
+    g_CamEyeMovementTo.vz = CONV_FROM_GTE(FieldScriptArgument2(ARG(2), SCRIPT_READ_U8_REL(7)));
+    g_CamEyeMovementTo.vy = CONV_FROM_GTE(FieldScriptArgument3(ARG(3), SCRIPT_READ_U8_REL(7)));
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090300);
+void FieldScriptResetCameraMovements(void) {
+    g_CamAtMovementFrom.vx = g_CameraAt2.vx;
+    g_CamAtMovementFrom.vy = g_CameraAt2.vy;
+    g_CamAtMovementFrom.vz = g_CameraAt2.vz;
+    
+    g_CamAtMovementTo.vx = g_CameraAt2.vx;
+    g_CamAtMovementTo.vy = g_CameraAt2.vy;
+    g_CamAtMovementTo.vz = g_CameraAt2.vz;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800903BC);
+    g_CamEyeMovementFrom.vx = g_CameraEye2.vx;
+    g_CamEyeMovementFrom.vy = g_CameraEye2.vy;
+    g_CamEyeMovementFrom.vz = g_CameraEye2.vz;
+    
+    g_CamEyeMovementTo.vx = g_CameraEye2.vx;
+    g_CamEyeMovementTo.vy = g_CameraEye2.vy;
+    g_CamEyeMovementTo.vz = g_CameraEye2.vz;
+    
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 1;
+}
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc", FieldScriptStartCameraMovement);
 
 // Write the current interpolated value
 void FieldScriptWriteCurCameraTarget(void) {

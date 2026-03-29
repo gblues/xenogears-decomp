@@ -99,7 +99,16 @@ FieldScriptVMConditionalJump6 = 0x8008E0DC;
 FieldScriptVMConditionalJump5 = 0x8008E148;
 FieldScriptWriteActorDistance = 0x8008E1B4;
 
-FieldScriptVMHandlerSetCameraTargetToActor = 0x8008FF04;
+FieldScriptResetCameraTargetMovement = 0x8008FDD0;
+FieldScriptSetCameraTargetMovementFrom = 0x8008FE2C;
+FieldScriptSetCameraTargetMovementDestToActor = 0x8008FF04;
+FieldScriptSetCameraTargetMovementDest = 0x8008FF90;
+FieldScriptResetCameraPosMovement = 0x80090068;
+FieldScriptSetCameraPosMovementFrom = 0x800900C4;
+FieldScriptSetCameraPosMovementDestToActor = 0x8009019C;
+FieldScriptSetCameraPosMovementDest = 0x80090228;
+FieldScriptResetCameraMovements = 0x80090300;
+FieldScriptStartCameraMovement = 0x800903BC;
 
 FieldScriptWriteCurCameraTarget = 0x80090A10;
 FieldScriptWriteCurCameraPosition = 0x80090A94;
@@ -283,11 +292,24 @@ g_CameraAt = 0x800AF890; // type:VECTOR size:0x10
 g_CameraUp = 0x800AF8A0; // type:VECTOR size:0x10
 g_CameraEye2 = 0x800AF8B0; // type:VECTOR size:0x10
 g_CameraAt2 = 0x800AF8C0; // type:VECTOR size:0x10
-D_800AF8F0 = 0x800AF8F0; // type:VECTOR size:0x10
+g_CamAtMovementFrom = 0x800AF8F0; // type:VECTOR size:0x10
+g_CamAtMovementTo = 0x800AF900; // type:VECTOR size:0x10
+g_CamEyeMovementFrom = 0x800AF910; // type:VECTOR size:0x10
+g_CamEyeMovementTo = 0x800AF920; // type:VECTOR size:0x10
+
+g_FieldCameraMode = 0x800AF934;
+
+g_CamMovementFlags = 0x800AF93C;
+g_CamAtMovementDuration = 0x800AF93E;
+g_CamAtMovementCurrent = 0x800AF940; // type:VECTOR size:0x10
+g_CamAtMovementDelta = 0x800AF950; // type:VECTOR size:0x10
+
+g_CamEyeMovementDuration = 0x800AF960;
+g_CamEyeMovementCurrent = 0x800AF964; // type:VECTOR size:0x10
+g_CamEyeMovementDelta = 0x800AF974; // type:VECTOR size:0x10
 
 g_CameraTargetAngleY = 0x800AF98C;
 g_CameraCurAngleY = 0x800AF98E;
-g_FieldCameraTargetPosition = 0x800AF900; // type:VECTOR size:0x10
 
 g_Scene = 0x800AF990; // type:FieldScene size:0x134
 g_WorldScale = 0x800AFAC4;

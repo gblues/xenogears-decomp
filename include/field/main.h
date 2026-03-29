@@ -8,6 +8,8 @@
 
 #define FIELD_OT_MAX_SIZE 4096
 
+// FieldScene.unk48 flags
+#define FIELD_SCENE_INTERPOLATING_SCREEN_Z 0x10
 
 typedef struct {
     // There could potentially be more fields to the struct here
