@@ -992,17 +992,210 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090D50);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090DEC);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80090E70);
+extern s16 D_800AF93A[]; // Part of a struct
+
+void func_80090E70(void) {
+    VECTOR camAtDest;
+    VECTOR camEyeDest;
+    s32 value1;
+    s32 value2;
+    s32 halfDistance;
+    long distance;
+    u16 unkAngle2;
+    int unkAngle;
+
+    camAtDest.vx = g_CamAtMovementTo.vx;
+    camAtDest.vy = g_CamAtMovementTo.vy;
+    camAtDest.vz = g_CamAtMovementTo.vz;
+    camEyeDest.vx = g_CamEyeMovementTo.vx;
+    camEyeDest.vy = g_CamEyeMovementTo.vy;
+    camEyeDest.vz = g_CamEyeMovementTo.vz;
+    
+    // Compute the half distance between the destination camera position and destination
+    // camera target of the camera movement
+    distance = FieldGetVec3Magnitude(
+        CONV_TO_GTE(g_CamEyeMovementTo.vx - g_CamAtMovementTo.vx), 
+        CONV_TO_GTE(g_CamEyeMovementTo.vy - g_CamAtMovementTo.vy), 
+        CONV_TO_GTE(g_CamEyeMovementTo.vz - g_CamAtMovementTo.vz)
+    );
+    halfDistance = distance / 2;
+    
+    D_800AF93A[0] = 0x1000;
+
+    // Cursed angle math
+    unkAngle2 = ratan2(camAtDest.vz - camEyeDest.vz, camAtDest.vx - camEyeDest.vx);
+    value1 = PSX_ANGLE((-unkAngle2 & 0xFFFF) - PSX_DEGREES(90));
+
+    unkAngle = -ratan2(
+        FieldGetVec2Magnitude(
+            CONV_TO_GTE(camEyeDest.vx - camAtDest.vx), 
+            CONV_TO_GTE(camEyeDest.vz - camAtDest.vz)
+        ), 
+        CONV_TO_GTE(camAtDest.vy - camEyeDest.vy)
+    );
+    value2 = ((unkAngle * 360) >> 12) + 0x5B;
+    
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), value1);
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(2), value2);
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(3), halfDistance);
+    
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80091008);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800910C0);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80091318);
+void func_80091318(void) {
+    VECTOR parameter;
+    VECTOR vecResult;
+    s32 angle;
+    s32 temp_s1;
+    s32 factor;
+    s32 yAngle;
+    u8 parameterType;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800915C4);
+    parameterType = SCRIPT_READ_U8_REL(1);
+    switch (parameterType) {
+    case 0:
+        parameter.vx = g_CamAtMovementFrom.vx;
+        parameter.vy = g_CamAtMovementFrom.vy;
+        parameter.vz = g_CamAtMovementFrom.vz;
+        break;
+    case 1:
+        parameter.vx = g_CamAtMovementTo.vx;
+        parameter.vy = g_CamAtMovementTo.vy;
+        parameter.vz = g_CamAtMovementTo.vz;
+        break;
+    case 2:
+        parameter.vx = g_CamEyeMovementFrom.vx;
+        parameter.vy = g_CamEyeMovementFrom.vy;
+        parameter.vz = g_CamEyeMovementFrom.vz;
+        break;
+    case 3:
+        parameter.vx = g_CamEyeMovementTo.vx;
+        parameter.vy = g_CamEyeMovementTo.vy;
+        parameter.vz = g_CamEyeMovementTo.vz;
+        break;
+    }
+    
+    yAngle = FieldScriptArgument1(2, SCRIPT_READ_U8_REL(8));
+    temp_s1 = FieldScriptArgument2(4, SCRIPT_READ_U8_REL(8));
+    factor = FieldScriptArgument3(6, SCRIPT_READ_U8_REL(8));
+    
+    // 0xC00 = 270 degrees
+    angle = ((temp_s1 * 0xB60) >> 8) + 0xC00;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80091720);
+    // (number << 5) >> 0x10 is division by 0x800 = 180 degrees
+    vecResult.vy = ((-((rsin(angle) * factor) << 5) >> 0x10) * D_800AF93A[0] * 0x10) + parameter.vy;
+    vecResult.vz = ((((rcos(angle) * factor) << 5) >> 0x10) * D_800AF93A[0] * 0x10) + parameter.vz;
+    vecResult.vx = parameter.vx;
+
+    // Rotate difference between parameter value and the result vector by Y angle,
+    // then we add it to parameter and set our result vector to it
+    func_80091008(&vecResult, &parameter, yAngle);
+    
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(5), vecResult.vx >> 0x10);
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(6), vecResult.vz >> 0x10);
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(7), vecResult.vy >> 0x10);
+    
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 15;
+}
+
+void FieldScriptWriteCameraMovementParameter(void) {
+    int mode;
+    VECTOR movementParam;
+
+    mode = SCRIPT_READ_U8_REL(1);
+    switch (mode) { 
+        case 0:
+            movementParam.vx  = g_CamAtMovementFrom.vx;
+            movementParam.vy = g_CamAtMovementFrom.vy;
+            movementParam.vz = g_CamAtMovementFrom.vz;
+            break;
+        case 1:
+            movementParam.vx  = g_CamAtMovementTo.vx;
+            movementParam.vy = g_CamAtMovementTo.vy;
+            movementParam.vz = g_CamAtMovementTo.vz;
+            break;
+        case 2:
+            movementParam.vx  = g_CamEyeMovementFrom.vx;
+            movementParam.vy = g_CamEyeMovementFrom.vy;
+            movementParam.vz = g_CamEyeMovementFrom.vz;
+            break;
+        case 3:
+            movementParam.vx  = g_CamEyeMovementTo.vx;
+            movementParam.vy = g_CamEyeMovementTo.vy;
+            movementParam.vz = g_CamEyeMovementTo.vz;
+            break;
+    }
+    
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG_ALIGNED(1), CONV_TO_GTE(movementParam.vx));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG_ALIGNED(2), CONV_TO_GTE(movementParam.vz));
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG_ALIGNED(3), CONV_TO_GTE(movementParam.vy));
+
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 8;
+}
+
+void FieldScriptSetCameraMovementParameter(void) {
+    VECTOR parameter;
+    u8 srcParameter;
+    u8 destParameter;
+
+    srcParameter = SCRIPT_READ_U8_REL(1);
+    switch (srcParameter) {
+    case 0:
+        parameter.vx = g_CamAtMovementFrom.vx;
+        parameter.vy = g_CamAtMovementFrom.vy;
+        parameter.vz = g_CamAtMovementFrom.vz;
+        break;
+    case 1:
+        parameter.vx = g_CamAtMovementTo.vx;
+        parameter.vy = g_CamAtMovementTo.vy;
+        parameter.vz = g_CamAtMovementTo.vz;
+        break;
+    case 2:
+        parameter.vx = g_CamEyeMovementFrom.vx;
+        parameter.vy = g_CamEyeMovementFrom.vy;
+        parameter.vz = g_CamEyeMovementFrom.vz;
+        break;
+    case 3:
+        parameter.vx = g_CamEyeMovementTo.vx;
+        parameter.vy = g_CamEyeMovementTo.vy;
+        parameter.vz = g_CamEyeMovementTo.vz;
+        break;
+    }
+    
+    destParameter = SCRIPT_READ_U8_REL(2);
+    switch (destParameter) {
+    case 0:
+        g_CamAtMovementFrom.vx = parameter.vx;
+        g_CamAtMovementFrom.vy = parameter.vy;
+        g_CamAtMovementFrom.vz = parameter.vz;
+        break;
+    case 1:
+        g_CamAtMovementTo.vx = parameter.vx;
+        g_CamAtMovementTo.vy = parameter.vy;
+        g_CamAtMovementTo.vz = parameter.vz;
+        break;
+    case 2:
+        g_CamEyeMovementFrom.vx = parameter.vx;
+        g_CamEyeMovementFrom.vy = parameter.vy;
+        g_CamEyeMovementFrom.vz = parameter.vz;
+        break;
+    case 3:
+        g_CamEyeMovementTo.vx = parameter.vx;
+        g_CamEyeMovementTo.vy = parameter.vy;
+        g_CamEyeMovementTo.vz = parameter.vz;
+        break;
+    }
+    
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80091944);
 

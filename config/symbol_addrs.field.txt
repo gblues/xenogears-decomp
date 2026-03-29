@@ -114,6 +114,9 @@ FieldScriptWriteCurCameraPosition = 0x80090A94;
 FieldScriptWriteCameraTweenTarget = 0x80090B18;
 FieldScriptWriteCameraTweenPosition = 0x80090B9C;
 
+FieldScriptWriteCameraMovementParameter = 0x800915C4;
+FieldScriptSetCameraMovementParameter = 0x80091720;
+
 FieldScriptVMHandlerSetControllerBtnMask = 0x80092628;
 
 FieldScriptVMHandlerDisableRandomEncounters = 0x80093C48;
@@ -162,8 +165,8 @@ FieldScriptGetCurActorDirection = 0x8009A8DC;
 FieldSetCurrentActorRotation = 0x8009A904;
 FieldScriptSetActorRotation = 0x8009A958;
 
-FieldActorTurnRightRelative = 0x8009AB5C;
-FieldActorTurnLeftRelative = 0x8009ABAC;
+FieldScriptRotateActorClockwise = 0x8009AB5C;
+FieldScriptRotateActorCounterClockwise = 0x8009ABAC;
 FieldScriptSetActorDirection = 0x8009ABFC;
 
 FieldScriptVMHandlerSetCurActorRotation = 0x8009AC7C;

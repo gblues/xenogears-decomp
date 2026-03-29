@@ -433,7 +433,7 @@ extern u16 g_FieldAngleToDirectionLUT[
 ];
 
 // Rotate current actor N turns clockwise, where 1 turn is 45 degrees
-void FieldActorTurnRightRelative(void) {
+void FieldScriptRotateActorClockwise(void) {
     int numTurns = FieldScriptVMGetArgument(1);
     FieldSetCurrentActorRotation(g_FieldAngleToDirectionLUT[
         numTurns + FieldScriptGetCurActorDirection() & MASK_8DIR_MOVEMENT_NUM_DIRECTIONS
@@ -441,7 +441,7 @@ void FieldActorTurnRightRelative(void) {
 }
 
 // Rotate current actor N turns counter-clockwise, where 1 turn is 45 degrees
-void FieldActorTurnLeftRelative(void) {
+void FieldScriptRotateActorCounterClockwise(void) {
     int numTurns = FieldScriptVMGetArgument(1);
     FieldSetCurrentActorRotation(g_FieldAngleToDirectionLUT[
         FieldScriptGetCurActorDirection() - numTurns & MASK_8DIR_MOVEMENT_NUM_DIRECTIONS
