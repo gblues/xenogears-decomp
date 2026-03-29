@@ -99,6 +99,8 @@ FieldScriptVMConditionalJump6 = 0x8008E0DC;
 FieldScriptVMConditionalJump5 = 0x8008E148;
 FieldScriptWriteActorDistance = 0x8008E1B4;
 
+FieldScriptWaitForCameraMovement = 0x8008FA38;
+
 FieldScriptResetCameraTargetMovement = 0x8008FDD0;
 FieldScriptSetCameraTargetMovementFrom = 0x8008FE2C;
 FieldScriptSetCameraTargetMovementDestToActor = 0x8008FF04;

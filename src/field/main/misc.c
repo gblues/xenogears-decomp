@@ -2,6 +2,7 @@
 #include "main/game.h"
 #include "system/math.h"
 #include "field/main.h"
+#include "field/camera.h"
 #include "field/actor.h"
 #include "field/script_vm.h"
 #include "field/text_box.h"
@@ -835,7 +836,42 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008F7B8);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008F90C);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FA38);
+extern s16 g_CamEyeMovementDuration;
+extern s16 g_CamAtMovementDuration;
+extern VECTOR g_CamAtMovementFrom;
+extern VECTOR g_CamAtMovementTo;
+extern VECTOR g_CamEyeMovementFrom;
+extern VECTOR g_CamEyeMovementTo;
+extern VECTOR g_CameraEye;
+extern VECTOR g_CameraEye2;
+extern VECTOR g_CameraAt;
+extern VECTOR g_CameraAt2;
+
+void FieldScriptWaitForCameraMovement(void) {
+    int targetFlags;
+    int camMovementFlags;
+    
+    targetFlags = FieldScriptVMGetArgument(1);
+    camMovementFlags = FIELD_CAMERA_AT_MOVEMENT_ACTIVE | FIELD_CAMERA_EYE_MOVEMENT_ACTIVE;
+    
+    // Is camera target movement done?
+    if (g_CamAtMovementDuration == 0) {
+        camMovementFlags &= ~FIELD_CAMERA_AT_MOVEMENT_ACTIVE;
+    }
+    
+    // Is camera position movement done?
+    if (g_CamEyeMovementDuration == 0) {
+        camMovementFlags &= FIELD_CAMERA_AT_MOVEMENT_ACTIVE;
+    }
+    
+    D_800B00C0 = 1;
+
+    // Advance instruction pointer only when certain camera movements are done
+    if (!(camMovementFlags & targetFlags)) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
+    }
+}
+
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FABC);
 
@@ -846,15 +882,6 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FB98);
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FC4C);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008FD40);
-
-extern VECTOR g_CamAtMovementFrom;
-extern VECTOR g_CamAtMovementTo;
-extern VECTOR g_CamEyeMovementFrom;
-extern VECTOR g_CamEyeMovementTo;
-extern VECTOR g_CameraEye;
-extern VECTOR g_CameraEye2;
-extern VECTOR g_CameraAt;
-extern VECTOR g_CameraAt2;
 
 // Reset initial camera target movement to current camera target
 void FieldScriptResetCameraTargetMovement(void) {
@@ -997,12 +1024,12 @@ extern s16 D_800AF93A[]; // Part of a struct
 void func_80090E70(void) {
     VECTOR camAtDest;
     VECTOR camEyeDest;
-    s32 value1;
-    s32 value2;
+    s32 yaw;
+    s32 pitch;
     s32 halfDistance;
     long distance;
-    u16 unkAngle2;
-    int unkAngle;
+    u16 yawAngle;
+    int pitchAngle;
 
     camAtDest.vx = g_CamAtMovementTo.vx;
     camAtDest.vy = g_CamAtMovementTo.vy;
@@ -1023,20 +1050,20 @@ void func_80090E70(void) {
     D_800AF93A[0] = 0x1000;
 
     // Cursed angle math
-    unkAngle2 = ratan2(camAtDest.vz - camEyeDest.vz, camAtDest.vx - camEyeDest.vx);
-    value1 = PSX_ANGLE((-unkAngle2 & 0xFFFF) - PSX_DEGREES(90));
+    yawAngle = ratan2(camAtDest.vz - camEyeDest.vz, camAtDest.vx - camEyeDest.vx);
+    yaw = PSX_ANGLE((-yawAngle & 0xFFFF) - PSX_DEGREES(90));
 
-    unkAngle = -ratan2(
+    pitchAngle = -ratan2(
         FieldGetVec2Magnitude(
             CONV_TO_GTE(camEyeDest.vx - camAtDest.vx), 
             CONV_TO_GTE(camEyeDest.vz - camAtDest.vz)
         ), 
         CONV_TO_GTE(camAtDest.vy - camEyeDest.vy)
     );
-    value2 = ((unkAngle * 360) >> 12) + 0x5B;
+    pitch = ((pitchAngle * 360) >> 12) + 91;
     
-    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), value1);
-    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(2), value2);
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(1), yaw);
+    FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(2), pitch);
     FieldScriptMemoryWriteU16(SCRIPT_IMM_ARG(3), halfDistance);
     
     g_FieldScriptMaxInstructionCount += 1;
