@@ -109,7 +109,6 @@ FieldScriptSetCameraPosMovementDestToActor = 0x8009019C;
 FieldScriptSetCameraPosMovementDest = 0x80090228;
 FieldScriptResetCameraMovements = 0x80090300;
 FieldScriptStartCameraMovement = 0x800903BC;
-
 FieldScriptWriteCurCameraTarget = 0x80090A10;
 FieldScriptWriteCurCameraPosition = 0x80090A94;
 FieldScriptWriteCameraTweenTarget = 0x80090B18;
