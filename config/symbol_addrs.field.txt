@@ -101,6 +101,7 @@ FieldScriptWriteActorDistance = 0x8008E1B4;
 
 FieldScriptWaitForCameraMovement = 0x8008FA38;
 
+FieldScriptSetCameraInterpolationStep = 0x8008FD40;
 FieldScriptResetCameraTargetMovement = 0x8008FDD0;
 FieldScriptSetCameraTargetMovementFrom = 0x8008FE2C;
 FieldScriptSetCameraTargetMovementDestToActor = 0x8008FF04;
@@ -140,6 +141,14 @@ FieldScriptDecreaseGold = 0x8009601C;
 
 FieldScriptVMCheckControllerInput = 0x80096078;
 FieldScriptCheckControllerInputExact = 0x800960E4;
+
+FieldScriptCheckPartyMember = 0x800964B0;
+
+FieldScriptCheckScenarioFlagsLessThan = 0x80096644;
+FieldScriptCheckScenarioFlagsGreaterThan = 0x800966B4;
+FieldScriptCheckScenarioFlagsEqual = 0x80096724;
+FieldScriptSetScenarioFlags = 0x80096790;
+FieldScriptGetScenarioFlags = 0x800967E8;
 
 FieldPartyMemberIncreaseHp = 0x80096844;
 FieldPartyMemberDecreaseHp = 0x800968CC;
@@ -330,10 +339,7 @@ g_CamAtMovementDelta = 0x800AF950; // type:VECTOR size:0x10
 g_CamEyeMovementDuration = 0x800AF960;
 g_CamEyeMovementCurrent = 0x800AF964; // type:VECTOR size:0x10
 g_CamEyeMovementDelta = 0x800AF974; // type:VECTOR size:0x10
-
-g_CameraTargetAngleY = 0x800AF98C;
-g_CameraCurAngleY = 0x800AF98E;
-
+g_CamInterpolation = 0x800AF984; // type:CameraInterpolation size:0xC
 g_Scene = 0x800AF990; // type:FieldScene size:0x134
 g_WorldScale = 0x800AFAC4;
 

@@ -51,7 +51,19 @@ INCLUDE_ASM("asm/field/nonmatchings/camera/camera_movement", func_8008FB98);
 
 INCLUDE_ASM("asm/field/nonmatchings/camera/camera_movement", func_8008FC4C);
 
-INCLUDE_ASM("asm/field/nonmatchings/camera/camera_movement", func_8008FD40);
+void FieldScriptSetCameraInterpolationStep(void) {
+    g_CamInterpolation.atStepDistance = FieldScriptVMGetArgument(1);
+    g_CamInterpolation.eyeStepDistance = FieldScriptVMGetArgument(3);
+    
+    if (g_CamInterpolation.atStepDistance == 0) {
+        g_CamInterpolation.atStepDistance = 1;
+    }
+    if (g_CamInterpolation.eyeStepDistance == 0) {
+        g_CamInterpolation.eyeStepDistance = 1;
+    }
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
+}
 
 // Reset initial camera target movement to current camera target
 void FieldScriptResetCameraTargetMovement(void) {

@@ -13,4 +13,14 @@ typedef struct {
     /* 0x14 */ VECTOR delta;
 } FieldCameraMovement; // Size: 0x28
 
+typedef struct {
+    /* 0x0 */ s32 atStepDistance;
+    /* 0x4 */ s32 eyeStepDistance;
+    /* 0x8 */ s16 targetAngleY;
+    /* 0xA */ s16 curAngleY;
+} CameraInterpolation;
+
+extern CameraInterpolation g_CamInterpolation;
+
+
 #endif

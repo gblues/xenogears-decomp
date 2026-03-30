@@ -73,6 +73,7 @@ segments:
       - [0x26434, c, game_logic/gold]
       - [0x26588, c, main/input_script_handlers]
       - [0x26724, c, main/misc10]
+      - [0x26B54, c, game_logic/scenario_flags]
       - [0x26D54, c, party/stats]
       - [0x27804, c, main/misc7]
       - [0x2C01C, c, dialogue/text_box]

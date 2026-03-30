@@ -3,6 +3,7 @@
 #include "system/math.h"
 #include "field/main.h"
 #include "field/actor.h"
+#include "field/camera.h"
 #include "field/particles.h"
 
 extern s32 D_800ADB34;
@@ -10,7 +11,6 @@ extern s32 g_FieldSystemMode;
 extern u8 D_8006FDC8[]; // "PARTICLE  "
 extern s32 D_80050100;
 extern u8 D_800AF474[8];
-extern s16 g_CameraCurAngleY;
 extern s32 D_800B00B4;
 
 static inline SetVector(SVECTOR* pVec, short value) {
@@ -460,7 +460,7 @@ void FieldParticleUpdateAndRender(ParticleBank* pParticleBank, ParticlePrimitive
         if (var_s5 == 1) {
             delta = PSX_DEGREES(90);
             rotationVec.vx = D_800B00B4 - delta;
-            rotationVec.vy = -g_CameraCurAngleY;
+            rotationVec.vy = -g_CamInterpolation.curAngleY;
             rotationVec.vz = 0;
             RotMatrixZYX(&rotationVec, &transformMatrix);
             SetRotMatrix(&transformMatrix);
@@ -551,7 +551,7 @@ void FieldParticleStart(ParticleBank* pParticleBank, ParticlePrimitive* pPrim, i
         initialPosition.vz = 0;
     }
 
-    rotation = g_CameraCurAngleY + PSX_ANGLE(g_FieldActors[pParticleBank->targetActorID].pActorData->rotation.vz);
+    rotation = g_CamInterpolation.curAngleY + PSX_ANGLE(g_FieldActors[pParticleBank->targetActorID].pActorData->rotation.vz);
     direction = D_800AF474[rotation >> 9];
     
     initialPosition.vx += pParticleBank->pos.vx + pParticleBank->directions[direction].x;

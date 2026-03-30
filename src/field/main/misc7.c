@@ -3,13 +3,13 @@
 #include "system/math.h"
 #include "field/main.h"
 #include "field/actor.h"
+#include "field/camera.h"
 #include "field/script_vm.h"
 #include "field/text_box.h"
 
 extern FieldActor* D_800B06B8;
 extern s32 D_800AFD1C;
 
-extern s16 g_CameraTargetAngleY;
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_800972F4);
 
@@ -288,7 +288,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_8009A490);
 
 int FieldGetCameraDirection(void) {
     int halfDirection = PSX_DEGREES(22.5);
-    return (7 - PSX_ANGLE_TO_DIRECTION_8(g_CameraTargetAngleY - halfDirection)) 
+    return (7 - PSX_ANGLE_TO_DIRECTION_8(g_CamInterpolation.targetAngleY - halfDirection)) 
         & MASK_8DIR_MOVEMENT_NUM_DIRECTIONS;
 }
 
@@ -408,7 +408,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_8009AA00);
 void func_8009AB08(int rotation) {
     short rotationValue;
 
-    rotationValue = PSX_ANGLE(rotation - g_CameraTargetAngleY) | 0x8000;
+    rotationValue = PSX_ANGLE(rotation - g_CamInterpolation.targetAngleY) | 0x8000;
     g_FieldScriptVMCurActor->rotation.vx = rotationValue;
     g_FieldScriptVMCurActor->rotation.vy = rotationValue;
 
