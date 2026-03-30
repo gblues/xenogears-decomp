@@ -9,6 +9,7 @@
 #include "field/particles.h"
 
 extern s32 D_800AFD1C;
+extern s32 g_PlayerActorIndex;
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_80091944);
 
@@ -572,19 +573,205 @@ void func_80095300(void) {
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_8009533C);
+// Check if an actor is within a trigger zone when considering the entire scene projected to
+// 2D, top-down. If so, call a script function.
+void FieldScriptHandleTriggerZone2D(void) {
+    ActorData* pActor;
+    long actorPosition2D;
+    long triggerPos2;
+    long triggerPos3;
+    long triggerPos4;
+    long triggerPos1;
+    int triggerIndex;
+    FieldTriggerZone* pTrigger;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_80095520);
+    triggerIndex = SCRIPT_READ_U8_REL(1);
+    pActor = g_FieldActors[g_PlayerActorIndex].pActorData;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_80095734);
+    // Pack Z and X position into a long for use w/ NormalClip
+    actorPosition2D = (CONV_TO_GTE(pActor->position.vz) << 0x10) + CONV_TO_GTE(pActor->position.vx);
+    
+    // Consider trigger zone in 2D from a top-down
+    triggerPos1 = (g_pFieldTriggerZones[triggerIndex].z0 << 0x10) + g_pFieldTriggerZones[triggerIndex].x0;
+    triggerPos2 = (g_pFieldTriggerZones[triggerIndex].z1 << 0x10) + g_pFieldTriggerZones[triggerIndex].x1;
+    triggerPos3 = (g_pFieldTriggerZones[triggerIndex].z2 << 0x10) + g_pFieldTriggerZones[triggerIndex].x2;
+    triggerPos4 = (g_pFieldTriggerZones[triggerIndex].z3 << 0x10) + g_pFieldTriggerZones[triggerIndex].x3;
+    
+    if (NormalClip(triggerPos1, triggerPos2, actorPosition2D) >= 0 && 
+        NormalClip(triggerPos2, triggerPos3, actorPosition2D) >= 0 && 
+        NormalClip(triggerPos3, triggerPos4, actorPosition2D) >= 0 && 
+        NormalClip(triggerPos4, triggerPos1, actorPosition2D) >= 0
+    ) {
+        // If we're inside the trigger zone, call script function based on argument
+        if (g_FieldScriptVMCurActor->flags12C_0x6 != 0x4) {
+            g_FieldScriptVMCurActor->scriptPointersStack[g_FieldScriptVMCurActor->flags12C_0x6] = g_FieldScriptVMCurActor->scriptInstructionPointer + 4;
+            g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(2);
+            g_FieldScriptVMCurActor->flags12C_0x6++;;
+            return;
+        }
+    }
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_800958C0);
+// Check if an actor is within a trigger zone, considering height of the trigger zone as well.
+// If so, call a script function.
+void FieldScriptHandleTriggerZone(void) {
+    ActorData* pActor;
+    int actorPositionY;
+    long actorPosition2D;
+    long triggerPos1;
+    long triggerPos2;
+    long triggerPos3;
+    long triggerPos4;
+    int triggerIndex;
+    FieldTriggerZone* pTrigger;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_80095A7C);
+    triggerIndex = SCRIPT_READ_U8_REL(1);
+    pActor = g_FieldActors[g_PlayerActorIndex].pActorData;
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_80095B3C);
+    actorPositionY = CONV_TO_GTE(pActor->position.vy);
+    if (g_pFieldTriggerZones[triggerIndex].y0 < actorPositionY && 
+        (actorPositionY - pActor->height) < g_pFieldTriggerZones[triggerIndex].y0
+    ) {
+        triggerPos1 = (g_pFieldTriggerZones[triggerIndex].z0 << 0x10) + g_pFieldTriggerZones[triggerIndex].x0;
+        triggerPos2 = (g_pFieldTriggerZones[triggerIndex].z1 << 0x10) + g_pFieldTriggerZones[triggerIndex].x1;
+        triggerPos3 = (g_pFieldTriggerZones[triggerIndex].z2 << 0x10) + g_pFieldTriggerZones[triggerIndex].x2;
+        triggerPos4 = (g_pFieldTriggerZones[triggerIndex].z3 << 0x10) + g_pFieldTriggerZones[triggerIndex].x3;
+        actorPosition2D = (CONV_TO_GTE(pActor->position.vz) << 0x10) + CONV_TO_GTE(pActor->position.vx);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_80095C00);
+        if (
+            NormalClip(triggerPos1, triggerPos2, actorPosition2D) >= 0 && 
+            NormalClip(triggerPos2, triggerPos3, actorPosition2D) >= 0 && 
+            NormalClip(triggerPos3, triggerPos4, actorPosition2D) >= 0 && 
+            NormalClip(triggerPos4, triggerPos1, actorPosition2D) >= 0
+        ) {
+            // If we're inside the trigger zone, call script function based on argument
+            if (g_FieldScriptVMCurActor->flags12C_0x6 != 0x4) {
+                g_FieldScriptVMCurActor->scriptPointersStack[g_FieldScriptVMCurActor->flags12C_0x6] = g_FieldScriptVMCurActor->scriptInstructionPointer + 4;
+                g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(2);
+                g_FieldScriptVMCurActor->flags12C_0x6++;;
+                return;
+            }
+        }
+    }
+    g_FieldScriptMaxInstructionCount += 1;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+}
+
+void FieldScriptCheckTriggerZone2D(void) {
+    ActorData* pActor;
+    long actorPosition2D;
+    long triggerPos2;
+    long triggerPos3;
+    long triggerPos4;
+    long triggerPos1;
+    int triggerIndex;
+    FieldTriggerZone* pTrigger;
+
+    triggerIndex = SCRIPT_READ_U8_REL(1);
+    pActor = g_FieldActors[g_PlayerActorIndex].pActorData;
+
+    // Pack Z and X position into a long for use w/ NormalClip
+    actorPosition2D = (CONV_TO_GTE(pActor->position.vz) << 0x10) + CONV_TO_GTE(pActor->position.vx);
+    
+    // Consider trigger zone in 2D from a top-down
+    triggerPos1 = (g_pFieldTriggerZones[triggerIndex].z0 << 0x10) + g_pFieldTriggerZones[triggerIndex].x0;
+    triggerPos2 = (g_pFieldTriggerZones[triggerIndex].z1 << 0x10) + g_pFieldTriggerZones[triggerIndex].x1;
+    triggerPos3 = (g_pFieldTriggerZones[triggerIndex].z2 << 0x10) + g_pFieldTriggerZones[triggerIndex].x2;
+    triggerPos4 = (g_pFieldTriggerZones[triggerIndex].z3 << 0x10) + g_pFieldTriggerZones[triggerIndex].x3;
+    
+    if (NormalClip(triggerPos1, triggerPos2, actorPosition2D) >= 0 && 
+        NormalClip(triggerPos2, triggerPos3, actorPosition2D) >= 0 && 
+        NormalClip(triggerPos3, triggerPos4, actorPosition2D) >= 0 && 
+        NormalClip(triggerPos4, triggerPos1, actorPosition2D) >= 0
+    ) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+        return;
+    }
+    g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(2);
+    g_FieldScriptMaxInstructionCount += 1;
+}
+
+void FieldScriptCheckTriggerZone(void) {
+    ActorData* pActor;
+    int actorPositionY;
+    long actorPosition2D;
+    long triggerPos1;
+    long triggerPos2;
+    long triggerPos3;
+    long triggerPos4;
+    int triggerIndex;
+    FieldTriggerZone* pTrigger;
+
+    triggerIndex = SCRIPT_READ_U8_REL(1);
+    pActor = g_FieldActors[g_PlayerActorIndex].pActorData;
+
+    actorPositionY = CONV_TO_GTE(pActor->position.vy);
+    if (g_pFieldTriggerZones[triggerIndex].y0 < actorPositionY && 
+        (actorPositionY - pActor->height) < g_pFieldTriggerZones[triggerIndex].y0
+    ) {
+        triggerPos1 = (g_pFieldTriggerZones[triggerIndex].z0 << 0x10) + g_pFieldTriggerZones[triggerIndex].x0;
+        triggerPos2 = (g_pFieldTriggerZones[triggerIndex].z1 << 0x10) + g_pFieldTriggerZones[triggerIndex].x1;
+        triggerPos3 = (g_pFieldTriggerZones[triggerIndex].z2 << 0x10) + g_pFieldTriggerZones[triggerIndex].x2;
+        triggerPos4 = (g_pFieldTriggerZones[triggerIndex].z3 << 0x10) + g_pFieldTriggerZones[triggerIndex].x3;
+        actorPosition2D = (CONV_TO_GTE(pActor->position.vz) << 0x10) + CONV_TO_GTE(pActor->position.vx);
+
+        if (
+            NormalClip(triggerPos1, triggerPos2, actorPosition2D) >= 0 && 
+            NormalClip(triggerPos2, triggerPos3, actorPosition2D) >= 0 && 
+            NormalClip(triggerPos3, triggerPos4, actorPosition2D) >= 0 && 
+            NormalClip(triggerPos4, triggerPos1, actorPosition2D) >= 0
+        ) {
+            g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+            return;
+        }
+    }
+    g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(2);
+    g_FieldScriptMaxInstructionCount += 1;
+}
+
+INCLUDE_ASM("asm/field/nonmatchings/main/misc11", FieldProjectActorOriginToScreen);
+
+extern s32 D_800ADC18;
+
+void func_80095B3C(void) {
+    int screenX;
+    int screenY;
+
+    FieldProjectActorOriginToScreen(&screenX, &screenY);
+    if (D_800ADC18 != 0) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+        return;
+    }
+    
+    if ((screenY - 33) < 159U && (screenX - 33) < 255U) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+    } else {
+        g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(2);
+    }
+    
+    D_800B00C0 = 1;
+}
+
+void FieldScriptCheckActorOnScreen(void) {
+    int screenX;
+    int screenY;
+
+    FieldProjectActorOriginToScreen(&screenX, &screenY);
+    if (D_800ADC18 != 0) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+        return;
+    }
+    
+    if ((screenY - 1) < (SCREEN_HEIGHT - 1) && (screenX - 1) < (SCREEN_WIDTH - 1)) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+    } else {
+        g_FieldScriptVMCurActor->scriptInstructionPointer = FieldScriptVMGetInstructionArgument(2);
+    }
+    
+    D_800B00C0 = 1;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc11", func_80095CC4);
 

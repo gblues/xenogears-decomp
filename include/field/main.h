@@ -6,6 +6,9 @@
 
 #define setRGB(obj, _color) obj.r0 = obj.g0 = obj.b0 = _color
 
+#define SCREEN_WIDTH 320U
+#define SCREEN_HEIGHT 224U
+
 #define FIELD_OT_MAX_SIZE 4096
 
 // FieldScene.unk48 flags
@@ -34,6 +37,23 @@ typedef struct {
     /* 0xF4  */ MATRIX unkF4;
     /* 0x114 */ MATRIX worldRotationMatrix;
 } FieldScene; // Size: 0x134
+
+typedef struct {
+    /* 0x0  */ s16 x0;
+    /* 0x2  */ s16 y0; // Height?
+    /* 0x4  */ s16 z0;
+    /* 0x6  */ s16 x1;
+    /* 0x8  */ s16 y1; // Unused?
+    /* 0xA  */ s16 z1;
+    /* 0xC  */ s16 x2;
+    /* 0xE  */ s16 y2; // Unused?
+    /* 0x10 */ s16 z2;
+    /* 0x12 */ s16 x3;
+    /* 0x14 */ s16 y3; // Unused?
+    /* 0x16 */ s16 z3;
+} FieldTriggerZone; // Size: 0x18
+
+extern FieldTriggerZone* g_pFieldTriggerZones;
 
 extern FieldScene g_Scene;
 extern s32 g_WorldScale;

@@ -123,6 +123,15 @@ FieldScriptVMHandlerSetControllerBtnMask = 0x80092628;
 
 FieldScriptVMHandlerDisableRandomEncounters = 0x80093C48;
 
+FieldScriptHandleTriggerZone2D = 0x8009533C;
+FieldScriptHandleTriggerZone = 0x80095520;
+FieldScriptCheckTriggerZone2D = 0x80095734;
+FieldScriptCheckTriggerZone = 0x800958C0;
+
+FieldProjectActorOriginToScreen = 0x80095A7C;
+
+FieldScriptCheckActorOnScreen = 0x80095C00;
+
 FieldScriptCheckActorDistance = 0x80095E48;
 
 FieldScriptCheckGoldAmount = 0x80095F24;
@@ -289,6 +298,9 @@ D_800ADCE0 = 0x800ADCE0; // size:0x8
 D_800ADD28 = 0x800ADD28; // size:0x8
 D_800ADD70 = 0x800ADD70; // size:0x8
 D_800ADDB8 = 0x800ADDB8; // size:0x8
+
+
+g_pFieldTriggerZones = 0x800ADBF4;
 
 g_FieldCurScriptFile = 0x800ADBF8;
 
