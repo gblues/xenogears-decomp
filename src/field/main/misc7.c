@@ -6,7 +6,7 @@
 #include "field/script_vm.h"
 #include "field/text_box.h"
 
-extern ActorData* D_800B06B8;
+extern FieldActor* D_800B06B8;
 extern s32 D_800AFD1C;
 
 extern s16 g_CameraTargetAngleY;

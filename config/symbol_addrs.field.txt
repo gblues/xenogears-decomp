@@ -123,7 +123,14 @@ FieldScriptVMHandlerSetControllerBtnMask = 0x80092628;
 
 FieldScriptVMHandlerDisableRandomEncounters = 0x80093C48;
 
+FieldScriptCheckActorDistance = 0x80095E48;
+
+FieldScriptCheckGoldAmount = 0x80095F24;
+FieldScriptIncreaseGold = 0x80095FB8;
+FieldScriptDecreaseGold = 0x8009601C;
+
 FieldScriptVMCheckControllerInput = 0x80096078;
+FieldScriptCheckControllerInputExact = 0x800960E4;
 
 FieldPartyMemberIncreaseHp = 0x80096844;
 FieldPartyMemberDecreaseHp = 0x800968CC;

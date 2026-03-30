@@ -6,6 +6,9 @@
 #define MAX_PARTY_MEMBERS 3
 #define CHARACTER_ID_NONE 0xFF
 
+#define MAX_GOLD_AMOUNT 9999999
+
+
 typedef struct {
     /* 0x0  */ u8 field_0x0[0x4C];
     /* 0x4C */ unsigned short hp;
@@ -45,7 +48,9 @@ typedef struct {
     /* 0x0    */ u8 field_0x0[0x26C];
     /* 0x26C  */ GameCharacter characters[MAX_GAME_CHARACTERS];
     /* 0x978  */ GameGear gears[MAX_GAME_GEARS];
-    /* 0x1648 */ u8 field_0x1648[0x6EC];
+    /* 0x1648 */ u8 field_0x1648[0x2DC];
+    /* 0x1924 */ unsigned int gold;
+    /* 0x1928 */ u8 unk1928[0x40C];
     /* 0x1D34 */ u8 partyMembers[MAX_PARTY_MEMBERS];
 } GameState; // size: unknown
 
