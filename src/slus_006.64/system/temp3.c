@@ -10,7 +10,7 @@ extern s32 D_8004F330;
 extern s32 D_8004F334;
 extern s32 g_GamePartySkinsInitialized;
 extern s32 D_8004F320;
-extern s32 D_8004F34C;
+extern s32 g_GameSceneMapNum;
 extern s32 D_8004F31C;
 extern GameState D_8006D634;
 extern s32 D_8004F32C;
@@ -142,7 +142,7 @@ void GamePartySyncSkinData(void) {
     }
 
     if (!g_GamePartySkinsInitialized) {
-        if (!(D_8004F34C & 0xC000)) D_8004F320 = 0;
+        if (!(g_GameSceneMapNum & 0xC000)) D_8004F320 = 0;
         else D_8004F320 = 1;
         
         g_PartyIsWaitingForStreamData = 0;

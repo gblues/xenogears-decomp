@@ -61,7 +61,7 @@ void FieldFadeUpdateAndDraw(u_long *ot) {
     FieldFadeDraw(ot, g_FieldCurRenderContextIndex);
 }
 
-void func_80071D08(int index, int duration, int red, int green, int blue, int semitransparency) {
+void FieldFadeSetParameters(int index, int duration, int red, int green, int blue, int semitransparency) {
     g_FieldEffects.fades[index].duration = duration;
     g_FieldEffects.fades[index].isVisible = 1;
     g_FieldEffects.fades[index].semitransparency = semitransparency;
@@ -70,7 +70,7 @@ void func_80071D08(int index, int duration, int red, int green, int blue, int se
     g_FieldEffects.fades[index].blueDelta = (blue * 0x100 - g_FieldEffects.fades[index].b0) / duration;
 }
 
-void func_80071DCC(int duration) {
+void FieldFadeToWhite(int duration) {
     if (D_800ADC08 != 1) {
         D_800ADC08 = 1;
         if (D_800ADC04 == 2) {
@@ -87,7 +87,7 @@ void func_80071DCC(int duration) {
     }
 }
 
-void func_80071E58(int duration) {
+void FieldFadeToBlack(int duration) {
     if (D_800ADC08) {
         D_800ADC08 = 0;
         if (D_800ADC04 == 2) {

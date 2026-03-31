@@ -26,6 +26,9 @@ FieldLoad = 0x80070CC8;
 FieldFadeInitialize = 0x80071A64;
 FieldFadeUpdate = 0x80071A8C;
 FieldFadeUpdateAndDraw = 0x80071CB4;
+FieldFadeSetParameters = 0x80071D08;
+FieldFadeToWhite = 0x80071DCC;
+FieldFadeToBlack = 0x80071E58;
 
 FieldInitializeControllersAndMouse = 0x80071EE8;
 FieldSetClipDimensions = 0x80071F64;
@@ -168,6 +171,11 @@ FieldScriptVMHandlerRestoreCharacterHpAndMp = 0x80097200;
 FieldScriptVMHandlerRestoreHp = 0x80097264;
 FieldScriptVMHandlerRestoreMp = 0x800972AC;
 
+FieldScriptFadeOut = 0x8009731C;
+FieldScriptFadeIn = 0x80097364;
+
+FieldGetPlayerActorDirection = 0x8009744C;
+
 FieldGetVec3Magnitude = 0x80099A04;
 FieldGetVec2Magnitude = 0x80099A4C;
 FieldGetVec1Magnitude = 0x80099A8C;
@@ -244,6 +252,9 @@ FieldScriptVMHandlerHideActor = 0x8009E040;
 FieldActorGetScriptStatus = 0x8009EB48;
 
 FieldCharacterIdToPartyId = 0x8009FA00;
+
+FieldScriptPartyMemberRideGear = 0x8009FC48;
+FieldScriptPartyMemberDisembarkGear = 0x8009FCAC;
 
 FieldScriptVMHandlerConditionalJmp = 0x800A1BD0;
 FieldScriptVMHandlerJmp = 0x800A1E74;

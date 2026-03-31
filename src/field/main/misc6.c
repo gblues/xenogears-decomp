@@ -562,7 +562,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc6", func_8009FB98);
 Matches, but the struct D_800B2268 is part of needs recovery first.
 
 void func_8009FB98(void) {
-    D_8004F34C |= 0xC000;
+    g_GameSceneMapNum |= 0xC000;
     GameWaitForCdData();
     GamePartySyncSkinData();
     GamePartySyncStreamedData();
@@ -572,11 +572,11 @@ void func_8009FB98(void) {
 */
 
 extern s32 D_8006F990[];
-int func_8009FC10(int arg0) {
+int func_8009FC10(int actorIndex) {
     int i;
 
     for (i = 0; i < 3; i++) {
-        if (D_8006F990[i] == arg0) {
+        if (D_8006F990[i] == actorIndex) {
             return i;
         }
     }
@@ -584,39 +584,41 @@ int func_8009FC10(int arg0) {
     return 0xFF;
 }
 
-
-INCLUDE_ASM("asm/field/nonmatchings/main/misc6", func_8009FC48);
-/*
-Matches, but D_8005A39C (g_GameState) needs recovery first.
-
-void func_8009FC48(void) {
+void FieldScriptPartyMemberRideGear(void) {
     int index = FieldScriptVMGetArgument(1);
     if (index >= 3) {
         index = 2;
     }
-    *(u8*)(D_8005A39C + index + 0x22B1) = 1;
+    g_GameState->gearRide[index] = 1;
     func_8009FD10(index);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }
-    */
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc6", func_8009FCAC);
+void FieldScriptPartyMemberDisembarkGear(void) {
+    int index = FieldScriptVMGetArgument(1);
+    if (index >= 3) {
+        index = 2;
+    }
+    g_GameState->gearRide[index] = 0;
+    func_8009FD10(index);
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
+}
 
-extern int D_8004F34C;
-void func_8009FD10(int arg0) {
-    switch (arg0) { 
+extern int g_GameSceneMapNum;
+void func_8009FD10(int partyMemberIndex) {
+    switch (partyMemberIndex) { 
         case 0:
-            FieldScriptMemoryWriteU16(0x2A, PSX_ANGLE(D_8004F34C));
+            FieldScriptMemoryWriteU16(0x2A, g_GameSceneMapNum & 0xFFF);
             FieldScriptMemoryWriteU16(0x2C, 0);
             FieldScriptMemoryWriteU16(0x2E, 0);
             break;
         case 1:
-            FieldScriptMemoryWriteU16(0x30, PSX_ANGLE(D_8004F34C));
+            FieldScriptMemoryWriteU16(0x30, g_GameSceneMapNum & 0xFFF);
             FieldScriptMemoryWriteU16(0x32, 0);
             FieldScriptMemoryWriteU16(0x34, 0);
             break;
         case 2:
-            FieldScriptMemoryWriteU16(0x36, PSX_ANGLE(D_8004F34C));
+            FieldScriptMemoryWriteU16(0x36, g_GameSceneMapNum & 0xFFF);
             FieldScriptMemoryWriteU16(0x38, 0);
             FieldScriptMemoryWriteU16(0x3A, 0);
             break;

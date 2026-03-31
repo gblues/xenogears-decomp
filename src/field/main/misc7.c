@@ -9,19 +9,39 @@
 
 extern FieldActor* D_800B06B8;
 extern s32 D_800AFD1C;
+extern s32 g_PlayerActorIndex;
 
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_800972F4);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_8009731C);
+void FieldScriptFadeOut(void) {
+    int duration;
+    
+    FieldFadeInitializePrimitives(0);
+    duration = FieldScriptVMGetArgument(1);
+    FieldFadeToBlack(duration);
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_80097364);
+void FieldScriptFadeIn(void) {
+    int duration = FieldScriptVMGetArgument(1);
+    FieldFadeToWhite(duration);
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_800973A4);
+void func_800973A4(void) {
+    if (func_8001B484(FieldScriptVMGetInstructionArgument(2) & 0xFFFF, SCRIPT_READ_U8_REL(1)) == 0) {
+        g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+    }
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_80097410);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_8009744C);
+int FieldGetPlayerActorDirection(void) {
+    int halfDirection = PSX_DEGREES(22.5);
+    return (PSX_ANGLE_TO_DIRECTION_8(g_FieldActors[g_PlayerActorIndex].pActorData->rotation.vy + halfDirection) + 2) 
+        & MASK_8DIR_MOVEMENT_NUM_DIRECTIONS;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc7", func_8009749C);
 

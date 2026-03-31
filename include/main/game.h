@@ -52,6 +52,8 @@ typedef struct {
     /* 0x1924 */ unsigned int gold;
     /* 0x1928 */ u8 unk1928[0x40C];
     /* 0x1D34 */ u8 partyMembers[MAX_PARTY_MEMBERS];
+    /* 0x1D37 */ u8 unk1D37[0x57A];
+    /* 0x22B1 */ u8 gearRide[MAX_PARTY_MEMBERS];
 } GameState; // size: unknown
 
 extern GameState* g_GameState;

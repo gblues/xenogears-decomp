@@ -68,7 +68,7 @@ typedef struct {
 typedef struct {
     /* 0x0 */ s16 x;
     /* 0x2 */ s16 z;
-} ParticleBankDirectionData;
+} ParticleBankAngleOffset;
 
 typedef struct {
     /* 0x0   */ u16 unk0;
@@ -84,7 +84,7 @@ typedef struct {
     /* 0x28  */ u16 erange;
     /* 0x2A  */ u16 flags;
     /* 0x2C  */ ParticlePrimitive* pPrimitives;
-    /* 0x30  */ ParticleBankDirectionData directions[8];
+    /* 0x30  */ ParticleBankAngleOffset directions[8];
     /* 0x50  */ s16 unk50;
     /* 0x52  */ s16 targetActorID;
     /* 0x54  */ s16 shape;

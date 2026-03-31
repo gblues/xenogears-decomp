@@ -258,8 +258,8 @@ typedef struct {
     /* 0x82  */ u_char dialogWidth;
     /* 0x83  */ u_char dialogHeight;
     /* 0x84  */ u_int dialogFlags;
-    /* 0x88  */ u_short dialogPixelWidth;
-    /* 0x8A  */ u_short dialogPixelHeight;
+    /* 0x88  */ short dialogPixelWidth;
+    /* 0x8A  */ short dialogPixelHeight;
     /* 0x90  */ ActorScriptSlot scripts[ACTOR_MAX_NUM_SCRIPTS];
     /* 0xCC */ u_short scriptInstructionPointer;
     /* 0xCE  */ u_char curScriptIndex;
@@ -308,7 +308,7 @@ typedef struct {
     u_int flags12C_0x2: 3; // Tentative
     u_int flags12C_0x5: 1;
     u_int flags12C_0x6: 3; // Keeps track of recursion level in scripts - inc on call, dec on ret
-    u_int flags12C_0x9: 3; // Tentative
+    u_int flags12C_0x9: 3; // Tentative, Direction?
     u_int flags12C_0xD: 1;
     u_int flags12C_3: 19; // Tentative
 

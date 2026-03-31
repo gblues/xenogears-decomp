@@ -150,6 +150,7 @@ INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box_render", func_8007F5AC);
 
 INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box_render", func_8007F6F8);
 
+// Project (0, Y, 0) from actor's model/local space to screen
 INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box_render", func_8007F814);
 
 INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box_render", func_8007F8DC);

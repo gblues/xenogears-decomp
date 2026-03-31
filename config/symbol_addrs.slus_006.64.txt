@@ -749,6 +749,8 @@ g_CurGameStateOverlayBuffer = 0x800592bc;
 g_CurGameStateOverlayID =  0x800592C0;
 g_GameStateOverlayArchiveOffsets = 0x8004EAA0;
 
+g_GameSceneMapNum = 0x8004F34C;
+
 g_GameHasLoadedWDS = 0x8004F360;
 g_GameCurLoadedWDS = 0x8006258C;
 
