@@ -180,12 +180,12 @@ void func_80093BD4(void) {
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 
-void func_80093BFC(void) {
+void FieldScriptEnableCompass(void) {
     D_800B21D1[0] = 0x0;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 
-void func_80093C20(void) {
+void FieldScriptDisableCompass(void) {
     D_800B21D1[0] = 0x1;
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }

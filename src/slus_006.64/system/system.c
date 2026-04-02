@@ -92,9 +92,21 @@ void SystemTransferPaletteToVRAM(short xDest, short yDest) {
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033728);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_8003373C);
+// TODO: Cleanup code
+// Dialog data format:
+// 0x0: Offset to dimension data
+// 0x2: ?
+// 0x4: ?
+// 0x6: u16 dimensions[dialog_count]
+u8 DialogGetWidth(u16* pDialogData, int dialogIndex) {
+    u8* pDialog = (pDialogData + 3) + *pDialogData + dialogIndex;
+    return pDialog[0];
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033760);
+u8 DialogGetHeight(u16* pDialogData, int dialogIndex) {
+    u8* pDialog = (pDialogData + 3) + *pDialogData + dialogIndex;
+    return pDialog[1];
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033784);
 

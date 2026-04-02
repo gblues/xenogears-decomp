@@ -26,6 +26,12 @@ GamePartySyncSkinData = 0x8001B044;
 GamePartyStreamLoadSkinData = 0x8001B158;
 GamePartySyncStreamedData = 0x8001B3A8;
 
+// Menu
+MenuInitializeGfxEnvironment = 0x8001BDDC;
+MenuInitializeGfxEnvironments = 0x8001BE14;
+MenuExecute = 0x8001C1A8;
+MenuMain = 0x8001C634;
+
 // Work List
 WorkListsFreeAllEntries = 0x8001C8DC;
 WorkListsReset = 0x8001C944;
@@ -162,6 +168,9 @@ SystemInitializeFont = 0x80033558;
 SystemInitializeData = 0x800335F4;
 SystemInitialize = 0x80033668;
 SystemTransferPaletteToVRAM = 0x80033698;
+
+DialogGetWidth = 0x8003373C;
+DialogGetHeight = 0x80033760;
 
 // Controllers
 ControllerGetButtonState = 0x8003569C;
@@ -985,6 +994,9 @@ g_C2ButtonStatesPressedOnce = 0x8005A19C;
 
 g_GameState = 0x8005A39C;
 g_GamePartyMembers = 0x80062590; // size:0xC
+
+g_MenuDebugEnabled = 0x80059178;
+g_Menu = 0x800625A0;
 
 g_PartyIsWaitingForStreamData = 0x8004F374;
 g_PartyDataBuffers = 0x8005A414;

@@ -1,5 +1,6 @@
 #include "common.h"
 #include "main/game.h"
+#include "system/menu.h"
 #include "system/archive.h"
 #include "system/memory.h"
 #include "system/sound.h"
@@ -306,35 +307,3 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001BBAC);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001BD40);
 
-typedef struct {
-    /* 0x0  */ DRAWENV drawEnv;
-    /* 0x5C */ DISPENV dispEnv;
-    /* 0x70 */ unsigned long ot[16];
-    /* 0xB0 */ 
-} GfxEnvironment; // Size: 0xB4
-
-void func_8001BDDC(GfxEnvironment* pGfxEnv) {
-    pGfxEnv->drawEnv.dtd = 1;
-    pGfxEnv->dispEnv.screen.y = 10;
-    pGfxEnv->dispEnv.screen.w = 256;
-    pGfxEnv->drawEnv.isbg = 0;
-    pGfxEnv->drawEnv.r0 = 0;
-    pGfxEnv->drawEnv.g0 = 0;
-    pGfxEnv->drawEnv.b0 = 0;
-    pGfxEnv->dispEnv.screen.x = 0;
-    pGfxEnv->dispEnv.screen.h = 216;
-}
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001BE14);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001BEEC);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001BF38);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001C074);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001C1A8);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001C634);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", func_8001C76C);

@@ -125,6 +125,8 @@ FieldScriptSetCameraMovementParameter = 0x80091720;
 
 FieldScriptVMHandlerSetControllerBtnMask = 0x80092628;
 
+FieldScriptEnableCompass = 0x80093BFC;
+FieldScriptDisableCompass = 0x80093C20;
 FieldScriptVMHandlerDisableRandomEncounters = 0x80093C48;
 
 FieldScriptHandleTriggerZone2D = 0x8009533C;
