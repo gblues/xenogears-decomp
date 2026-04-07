@@ -11,6 +11,10 @@ categories:
     name: Field Overlay
     paths:
       - field
+  - id: member_change_menu
+    name: Member Change Menu Overlay
+    paths:
+      - member_change_menu
 
 expected_paths:
   asm: expected/asm
