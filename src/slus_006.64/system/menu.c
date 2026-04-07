@@ -35,11 +35,11 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/menu", func_8001C074);
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/menu", MenuExecute);
 
 // Before calling this, it's expected that the caller have loaded the correct
-// menu overlay to the correct address.
+// menu overlay to the correct address (0x801C5000).
 void MenuMain() {
     g_Menu = HeapAlloc(sizeof(SystemMenu), 0);
     bzero(g_Menu, sizeof(SystemMenu));
-    g_Menu->unk325 = 8;
+    g_Menu->input = 8;
     HeapChangeCurrentUser(HEAP_USER_HIG, NULL);
     g_Menu->pGfxEnv = &g_Menu->gfxEnvs[1];
     g_Menu->unk1E94 = 0;

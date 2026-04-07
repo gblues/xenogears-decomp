@@ -6,7 +6,7 @@
 
 
 void FieldScriptCheckGoldAmount(void) {
-    if (g_GameState->gold >= (
+    if (g_pGameState->gold >= (
         SCRIPT_READ_U8_REL(1) + 
         (SCRIPT_READ_U8_REL(2) << 8) + 
         (SCRIPT_READ_U8_REL(3) << 0x10) + 
@@ -23,11 +23,11 @@ void FieldScriptIncreaseGold(void) {
     int newGoldAmount;
 
     amount = FieldScriptVMGetArgument(1);
-    newGoldAmount = g_GameState->gold + amount;
+    newGoldAmount = g_pGameState->gold + amount;
     if (newGoldAmount > MAX_GOLD_AMOUNT) {
         newGoldAmount = MAX_GOLD_AMOUNT;
     }
-    g_GameState->gold = newGoldAmount;
+    g_pGameState->gold = newGoldAmount;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }
 
@@ -36,12 +36,12 @@ void FieldScriptDecreaseGold(void) {
     int amount;
 
     amount = FieldScriptVMGetArgument(1);
-    newGoldAmount = g_GameState->gold;
+    newGoldAmount = g_pGameState->gold;
     newGoldAmount -= amount;
     if (newGoldAmount < 0) {
         newGoldAmount = 0;
     }
-    g_GameState->gold = newGoldAmount;
+    g_pGameState->gold = newGoldAmount;
     
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }

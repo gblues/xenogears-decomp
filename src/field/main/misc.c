@@ -203,7 +203,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_800882B8);
 
 void FieldScriptSetCharacterGear(void) {
     int characterId = FieldScriptVMGetArgument(1);
-    g_GameState->characters[characterId].gearId = FieldScriptVMGetArgument(3);
+    g_pGameState->characters[characterId].gearId = FieldScriptVMGetArgument(3);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
 }
 
@@ -609,11 +609,11 @@ int FieldPartyMemberIncreaseGearHp(int partyMemberIndex, unsigned int amount) {
 
     gearId = GameCharacterGetGearID(g_GamePartyMembers[partyMemberIndex]);
     if (gearId != CHARACTER_ID_NONE) {
-        maxHp = g_GameState->gears[gearId].maxHp;
-        newHp = g_GameState->gears[gearId].hp + amount;
-        g_GameState->gears[gearId].hp = newHp;
+        maxHp = g_pGameState->gears[gearId].maxHp;
+        newHp = g_pGameState->gears[gearId].hp + amount;
+        g_pGameState->gears[gearId].hp = newHp;
         if (maxHp < newHp) {
-            g_GameState->gears[gearId].hp = maxHp;
+            g_pGameState->gears[gearId].hp = maxHp;
         }
     }
 }
@@ -624,11 +624,11 @@ int FieldPartyMemberDecreaseGearHp(int partyMemberIndex, unsigned int amount) {
 
     gearId = GameCharacterGetGearID(g_GamePartyMembers[partyMemberIndex]);
     if (gearId != CHARACTER_ID_NONE) {
-        newHp = g_GameState->gears[gearId].hp - amount;
+        newHp = g_pGameState->gears[gearId].hp - amount;
         if (newHp <= 0) {
             newHp = 1;
         }
-        g_GameState->gears[gearId].hp = newHp;
+        g_pGameState->gears[gearId].hp = newHp;
     }
 }
 

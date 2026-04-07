@@ -5,37 +5,37 @@
 #include "field/script_vm.h"
 
 void FieldPartyMemberIncreaseHp(int i, int amount) {
-    g_GameState->characters[g_GamePartyMembers[i]].hp += amount;
-    if (g_GameState->characters[g_GamePartyMembers[i]].maxHp < g_GameState->characters[g_GamePartyMembers[i]].hp) {
-        g_GameState->characters[g_GamePartyMembers[i]].hp = g_GameState->characters[g_GamePartyMembers[i]].maxHp;
+    g_pGameState->characters[g_GamePartyMembers[i]].hp += amount;
+    if (g_pGameState->characters[g_GamePartyMembers[i]].maxHp < g_pGameState->characters[g_GamePartyMembers[i]].hp) {
+        g_pGameState->characters[g_GamePartyMembers[i]].hp = g_pGameState->characters[g_GamePartyMembers[i]].maxHp;
     }
 }
 
 void FieldPartyMemberDecreaseHp(int partyMemberIndex, int amount) {
     int newHp;
     int characterId = g_GamePartyMembers[partyMemberIndex];
-    newHp = g_GameState->characters[characterId].hp - amount;
+    newHp = g_pGameState->characters[characterId].hp - amount;
     if (newHp <= 0) {
         newHp = 1;
     }
-    g_GameState->characters[characterId].hp = newHp;
+    g_pGameState->characters[characterId].hp = newHp;
 }
 
 void FieldPartyMemberIncreaseMp(int i, int amount) {
-    g_GameState->characters[g_GamePartyMembers[i]].mp += amount;
-    if (g_GameState->characters[g_GamePartyMembers[i]].maxMp < g_GameState->characters[g_GamePartyMembers[i]].mp) {
-        g_GameState->characters[g_GamePartyMembers[i]].mp = g_GameState->characters[g_GamePartyMembers[i]].maxMp;
+    g_pGameState->characters[g_GamePartyMembers[i]].mp += amount;
+    if (g_pGameState->characters[g_GamePartyMembers[i]].maxMp < g_pGameState->characters[g_GamePartyMembers[i]].mp) {
+        g_pGameState->characters[g_GamePartyMembers[i]].mp = g_pGameState->characters[g_GamePartyMembers[i]].maxMp;
     }
 }
 
 void FieldPartyMemberDecreaseMp(int partyMemberIndex, int amount) {
     int newMp;
     int characterId = g_GamePartyMembers[partyMemberIndex];
-    newMp = g_GameState->characters[characterId].mp - amount;
+    newMp = g_pGameState->characters[characterId].mp - amount;
     if (newMp <= 0) {
         newMp = 1;
     }
-    g_GameState->characters[characterId].mp = newMp;
+    g_pGameState->characters[characterId].mp = newMp;
 }
 
 extern s16 g_FieldNumPartyMembersMasks[4];
@@ -64,7 +64,7 @@ void FieldScriptVMHandlerWritePartyMemberHp(void) {
     if (g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))] != CHARACTER_ID_NONE) {
         FieldScriptMemoryWriteU16(
             SCRIPT_IMM_ARG(1), 
-            g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))]].hp
+            g_pGameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))]].hp
         );
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
@@ -74,7 +74,7 @@ void FieldScriptVMHandlerWritePartyMemberMp(void) {
     if (g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))] != CHARACTER_ID_NONE) {
         FieldScriptMemoryWriteU16(
             SCRIPT_IMM_ARG(1), 
-            g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))]].mp
+            g_pGameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(ARG(2))]].mp
         );
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
@@ -87,11 +87,11 @@ void FieldScriptVMHandlerSetPartyMemberHp(void) {
 
     if (g_GamePartyMembers[SCRIPT_READ_U8_REL(3)] != CHARACTER_ID_NONE) {
         targetHp = FieldScriptVMGetArgument(2);
-        characterHp = g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].maxHp;
+        characterHp = g_pGameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].maxHp;
         if (characterHp < targetHp) {
             targetHp = characterHp;
         }
-        g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].hp = targetHp;
+        g_pGameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].hp = targetHp;
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
 }
@@ -103,11 +103,11 @@ void FieldScriptVMHandlerSetPartyMemberMp(void) {
 
     if (g_GamePartyMembers[SCRIPT_READ_U8_REL(3)] != CHARACTER_ID_NONE) {
         targetMp = FieldScriptVMGetArgument(2);
-        characterMp = g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].maxMp;
+        characterMp = g_pGameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].maxMp;
         if (characterMp < targetMp) {
             targetMp = characterMp;
         }
-        g_GameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].mp = targetMp;
+        g_pGameState->characters[g_GamePartyMembers[SCRIPT_READ_U8_REL(1)]].mp = targetMp;
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
 }
@@ -150,15 +150,15 @@ INCLUDE_ASM("asm/field/nonmatchings/party/stats", func_80097108);
 
 void FieldScriptVMHandlerRestoreCharacterHpAndMp(void) {
     int id = FieldScriptVMGetArgument(1);
-    g_GameState->characters[id].hp = g_GameState->characters[id].maxHp;
-    g_GameState->characters[id].mp = g_GameState->characters[id].maxMp;
+    g_pGameState->characters[id].hp = g_pGameState->characters[id].maxHp;
+    g_pGameState->characters[id].mp = g_pGameState->characters[id].maxMp;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }
 
 void FieldScriptVMHandlerRestoreHp(void) {
     int i;
     for (i = 0; i < MAX_GAME_CHARACTERS; i++) {
-        g_GameState->characters[i].hp = g_GameState->characters[i].maxHp;
+        g_pGameState->characters[i].hp = g_pGameState->characters[i].maxHp;
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
@@ -166,7 +166,7 @@ void FieldScriptVMHandlerRestoreHp(void) {
 void FieldScriptVMHandlerRestoreMp(void) {
     int i;
     for (i = 0; i < MAX_GAME_CHARACTERS; i++) {
-        g_GameState->characters[i].mp = g_GameState->characters[i].maxMp;
+        g_pGameState->characters[i].mp = g_pGameState->characters[i].maxMp;
     }
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }

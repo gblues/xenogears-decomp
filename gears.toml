@@ -7,7 +7,7 @@ build = 'build'
 
 [compilation]
 binary = "slus_006.64"
-overlays = ["field"]
+overlays = ["field", "member_change_menu"]
 target = 'mips-linux-gnu'
 
 [[build_preset]]
@@ -40,7 +40,8 @@ build_variables = {
 }
 paths = [
     "{binary}/system/libarchive.",
-    "{binary}/system/sound."
+    "{binary}/system/sound.",
+    "member_change_menu/main/misc.",
 ]
 
 [[build_preset]]

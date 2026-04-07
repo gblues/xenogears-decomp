@@ -13,7 +13,6 @@ extern s32 g_GamePartySkinsInitialized;
 extern s32 D_8004F320;
 extern s32 g_GameSceneMapNum;
 extern s32 D_8004F31C;
-extern GameState D_8006D634;
 extern s32 D_8004F32C;
 extern s32 D_8004F344;
 extern void *D_8005A4A0;
@@ -45,7 +44,7 @@ void func_8001ACA4(void) {
 }
 
 u8 GameCharacterGetGearID(int characterIndex) {
-    return g_GameState->characters[characterIndex].gearId;
+    return g_pGameState->characters[characterIndex].gearId;
 }
 
 void GameWaitForCdData(void) {
@@ -53,7 +52,7 @@ void GameWaitForCdData(void) {
     ArchiveCdDataSync(0);
 }
 
-// Set GameState pointer to D_8006D634, set party members accordingly 
+// Set GameState pointer to g_GameState, set party members accordingly 
 // to it and stream load character skins for them.
 void GamePartyCharactersInitializeSkins(void) {
     int i;
@@ -61,12 +60,12 @@ void GamePartyCharactersInitializeSkins(void) {
     int entryCount;
     void* pBuffer;
 
-    g_GameState = &D_8006D634;
+    g_pGameState = &g_GameState;
     curPartyMemberIndex = 0;
     for (i = 0; i < MAX_PARTY_MEMBERS; i++) {
         g_GamePartyMembers[i] = CHARACTER_ID_NONE;
-        if (g_GameState->partyMembers[i] != CHARACTER_ID_NONE) {
-            g_GamePartyMembers[curPartyMemberIndex++] = g_GameState->partyMembers[i];
+        if (g_pGameState->partyMembers[i] != CHARACTER_ID_NONE) {
+            g_GamePartyMembers[curPartyMemberIndex++] = g_pGameState->partyMembers[i];
         }
     }
     
@@ -87,7 +86,7 @@ void GamePartyCharactersInitializeSkins(void) {
     D_8004F31C = 1;
 }
 
-// Set GameState pointer to D_8006D634, set party members accordingly 
+// Set GameState pointer to g_GameState, set party members accordingly 
 // to it and stream load gear skins for them.
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp3", GamePartyGearsInitializeSkins);
 /*
@@ -100,12 +99,12 @@ void GamePartyGearsInitializeSkins(void) {
     int gearId;
     void* pBuffer;
 
-    g_GameState = &D_8006D634;
+    g_pGameState = &g_GameState;
     curPartyMemberIndex = 0;
     for (i = 0; i < MAX_PARTY_MEMBERS; i++) {
         g_GamePartyMembers[i] = CHARACTER_ID_NONE;
-        if (g_GameState->partyMembers[i] != CHARACTER_ID_NONE) {
-            g_GamePartyMembers[curPartyMemberIndex++] = g_GameState->partyMembers[i];
+        if (g_pGameState->partyMembers[i] != CHARACTER_ID_NONE) {
+            g_GamePartyMembers[curPartyMemberIndex++] = g_pGameState->partyMembers[i];
         }
     }
 

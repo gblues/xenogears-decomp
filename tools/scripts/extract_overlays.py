@@ -241,7 +241,7 @@ class XenogearsDecoder:
             ("WORLD_MAP.LZSS.BIN", 0xF),
             ("BATTLING.LZSS.BIN", 0xD),
             ("MENU.LZSS.BIN", 0x11),
-            ("MOVIE.LZSS.BIN", 0x12)
+            ("MOVIE.LZSS.BIN", 0x12),
         ]
 
         # Overlays => 0x8004eaa0

@@ -4,6 +4,7 @@
 #define MAX_GAME_CHARACTERS 11
 #define MAX_GAME_GEARS 20
 #define MAX_PARTY_MEMBERS 3
+#define MAX_BENCHED_PARTY_MEMBERS 6
 #define CHARACTER_ID_NONE 0xFF
 
 #define MAX_GOLD_AMOUNT 9999999
@@ -26,7 +27,8 @@ typedef struct {
     /* 0x5F */ u8 evadePercentage;
     /* 0x60 */ u16 field_0x60;
     /* 0x61 */ u8 level;
-    /* 0x62 */ u8 field_0x62[0x3d];
+    /* 0x62 */ u8 unk62;
+    /* 0x63 */ u8 unk63[0x3C];
     /* 0xA0 */ u8 gearId;
     /* 0xA1 */ u8 field_0xA1[0x3]
 } GameCharacter; // size: 0xA4
@@ -50,13 +52,16 @@ typedef struct {
     /* 0x978  */ GameGear gears[MAX_GAME_GEARS];
     /* 0x1648 */ u8 field_0x1648[0x2DC];
     /* 0x1924 */ unsigned int gold;
-    /* 0x1928 */ u8 unk1928[0x40C];
+    /* 0x1928 */ u8 unk1928[0x408];
+    /* 0x1D30 */ u16 unk1D30;
+    /* 0x1D32 */ u16 FrMask;
     /* 0x1D34 */ u8 partyMembers[MAX_PARTY_MEMBERS];
     /* 0x1D37 */ u8 unk1D37[0x57A];
     /* 0x22B1 */ u8 gearRide[MAX_PARTY_MEMBERS];
 } GameState; // size: unknown
 
-extern GameState* g_GameState;
+extern GameState g_GameState;
+extern GameState* g_pGameState;
 extern int g_GamePartyMembers[MAX_PARTY_MEMBERS];
 
 #endif

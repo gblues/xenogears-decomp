@@ -589,7 +589,7 @@ void FieldScriptPartyMemberRideGear(void) {
     if (index >= 3) {
         index = 2;
     }
-    g_GameState->gearRide[index] = 1;
+    g_pGameState->gearRide[index] = 1;
     func_8009FD10(index);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }
@@ -599,7 +599,7 @@ void FieldScriptPartyMemberDisembarkGear(void) {
     if (index >= 3) {
         index = 2;
     }
-    g_GameState->gearRide[index] = 0;
+    g_pGameState->gearRide[index] = 0;
     func_8009FD10(index);
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }

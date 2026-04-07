@@ -17,6 +17,9 @@ typedef unsigned short     u16;
 typedef unsigned int       u32;
 typedef unsigned long long u64;
 
+#define TRUE 1
+#define FALSE 0
+
 #ifndef __cplusplus
 typedef enum { false, true } bool;
 #endif
