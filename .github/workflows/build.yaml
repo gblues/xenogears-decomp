@@ -36,6 +36,7 @@ jobs:
           curl -L -o disc/SLUS_006.64 "${{ secrets.FILE_URL }}"
           curl -L -o disc/MOVIE.BIN "${{ secrets.FILE_URL_2 }}"
           curl -L -o disc/FIELD.BIN "${{ secrets.FILE_URL_3 }}"
+          curl -L -o disc/member_change_menu.bin "${{ secrets.FILE_URL_4 }}"
       
       - name: Build
         run: |
