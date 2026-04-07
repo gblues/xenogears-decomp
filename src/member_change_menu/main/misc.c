@@ -248,7 +248,65 @@ void func_801C5724(void) {
     HeapFree(pVramData);
 }
 
-INCLUDE_ASM("asm/member_change_menu/nonmatchings/main/misc", func_801C57A0);
+void func_801C57A0(MenuUnk8* pPolygon, s32 arg1, s32 arg2, u32 attributes) {
+    s32 var_s1;
+    int i;
+    POLY_FT4* pPoly;
+    u32 attr  = attributes;
+
+    for (i = 0; i < 2; i++) {
+        pPoly = &pPolygon->polys[i];
+        var_s1 = 0;
+
+        SetPolyFT4(pPoly);
+        SetSemiTrans(pPoly, 0);
+        SetShadeTex(pPoly, 0);
+        setRGB0(pPoly, 128, 128, 128);
+        
+        if (!(attr & 0xFF)) {
+            pPolygon->unk7C = (arg1 & 1);
+            setTPage(pPoly, 0, 0, 320, 0);
+            
+            #define texCoordV  (((arg1 + arg2) / 4) * 13)
+            #define texCoordU  (((arg1 / 2) & 1) << 7)
+            setUV4(
+                pPoly,
+                texCoordU,                   texCoordV,
+                texCoordU + pPolygon->unk7E, texCoordV,
+                texCoordU,                   texCoordV + 13,
+                texCoordU + pPolygon->unk7E, texCoordV + 13
+            );
+            #undef texCoordV
+            #undef texCoordU
+        } else {
+            if (!(attr & 0x80)) {
+                var_s1 = 0x20;
+                SetSemiTrans(pPoly, 1);
+                setRGB0(pPoly, var_s1, var_s1, var_s1);
+            }
+            
+            pPolygon->unk7C = (attr & 0x7F) + 0xFF;
+            setTPage(pPoly, 0, 0, 0x180, 0x80);
+            pPoly->tpage = var_s1 | pPoly->tpage;
+            
+            #define texCoordU ((arg1 & 1) * 0x60)
+            #define texCoordV (((arg1 / 2) * 13) + arg2)
+            setUV4(
+                pPoly,
+                texCoordU,                   texCoordV,
+                texCoordU + pPolygon->unk7E, texCoordV,
+                texCoordU,                   texCoordV + 13,
+                texCoordU + pPolygon->unk7E, texCoordV + 13
+            );
+            #undef texCoordV
+            #undef texCoordU
+        }
+
+        MenuSetSystemPalette(pPoly, pPolygon->unk7C);
+    }
+
+    pPolygon->unk7F = 0;
+}
 
 INCLUDE_ASM("asm/member_change_menu/nonmatchings/main/misc", func_801C59E0);
 
