@@ -255,6 +255,19 @@ class XenogearsDecoder:
             cdrom_xa.read_and_write_file_from_sector(sector, size, file_path)
             print("Unpacked LZSS compressed overlay: ", file_path)
     
+        # Uncompressed overlays
+        OVERLAYS = [
+            ("member_change_menu.bin", 0x10, 0x1 + 0x5),
+        ]
+        for i in range(len(OVERLAYS)):
+            ovl = OVERLAYS[i]
+            self.set_decoding_value(0, ovl[1])
+            sector = self.get_sector(ovl[2])
+            size = self.get_size_aligned(ovl[2])
+            file_path = target_dir + "/" + ovl[0]
+            cdrom_xa.read_and_write_file_from_sector(sector, size, file_path)
+            print("Unpacked overlay: ", file_path)
+    
     def set_decoding_value(self, v1, v2):
         offset = (v1 + v2) * 2
         self.current_decoding_value = self.header[offset]
