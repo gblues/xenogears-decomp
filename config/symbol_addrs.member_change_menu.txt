@@ -1,6 +1,7 @@
 
 MemberChangeMenuIsCharacterFlagSet = 0x801C5018;
 MemberChangeMenuSetManager = 0x801C5098;
+MemberChangeMenuSetSelectionMenu = 0x801C50FC;
 
 MemberChangeMenuSetCharacters = 0x801C528C;
 MemberChangeMenuLoadResources = 0x801C5390;
@@ -9,6 +10,8 @@ MemberChangeMenuResetRenderContext = 0x801C5714;
 
 MemberChangeMenuInitializeWindowBorders = 0x801C5BEC;
 
+MemberChangeMenuInitializeBackground = 0x801C5DA0;
+MemberChangeMenuSetVertices = 0x801C60EC;
 MemberChangeMenuSetWindowBorderPrimitive = 0x801C6144;
 
 MemberChangeMenuInitializeWindowGraphics = 0x801C618C;
@@ -21,9 +24,10 @@ MemberChangeMenuSetWindowBorderRight = 0x801C722C;
 MemberChangeMenuSetWindow = 0x801C7578;
 MemberChangeMenuFreeWindow = 0x801C76FC;
 MemberChangeMenuInitializeWindow = 0x801C7788;
-
+MemberChangeMenuUpdateWindows = 0x801C790C;
 MemberChangeMenuDrawCursors = 0x801C7A58;
 
+MemberChangeMenuRenderBackgroundDim = 0x801C8040;
 MemberChangeMenuRenderCharacter = 0x801C80BC;
 MemberChangeMenuRenderCharacters = 0x801C83D0;
 
@@ -35,7 +39,7 @@ MemberChangeMenuRenderWindowBackground = 0x801C8BEC;
 MemberChangeMenuRenderWindowBorderCorners = 0x801C8D28;
 MemberChangeMenuRenderScrollBar = 0x801C8E74;
 MemberChangeMenuRenderWindows = 0x801C9098;
-
+MemberChangeMenuRender = 0x801C9210;
 MemberChangeMenuPlaySoundEffect = 0x801C9270;
 MemberChangeMenuPollInput = 0x801C92AC;
 MemberChangeMenuUpdateAndRender = 0x801C94A0;

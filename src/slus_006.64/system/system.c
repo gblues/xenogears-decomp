@@ -90,7 +90,7 @@ void SystemTransferPaletteToVRAM(short xDest, short yDest) {
     g_SystemPalette2 = GetClut(xDest + 16, yDest);
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033728);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", GetStringEntry);
 
 // TODO: Cleanup code
 // Dialog data format:
@@ -112,11 +112,11 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033784);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_800337B8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_800337E8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", GetAccessoryName);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033818);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", GetItemName);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033848);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", GetWeaponName);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033878);
 
@@ -182,7 +182,8 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_8003487C);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80034888);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80034EAC);
+// Render string entry to a buffer
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", SystemRenderStringEntry);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80034F98);
 

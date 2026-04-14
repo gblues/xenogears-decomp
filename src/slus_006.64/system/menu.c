@@ -45,7 +45,7 @@ void MenuMain() {
     g_Menu->unk1E94 = 0;
     g_Menu->unk1E95 = 1;
     g_Menu->unk2D8 = 0;
-    g_Menu->unk327 = 0;
+    g_Menu->shouldDrawMenu = FALSE;
     MenuInitializeGfxEnvironments();
     if (g_MenuDebugEnabled) {
         g_Menu->gfxEnvs[0].drawEnv.isbg = 1;

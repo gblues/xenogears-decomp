@@ -15,6 +15,10 @@ categories:
     name: Member Change Menu Overlay
     paths:
       - member_change_menu
+  - id: shop_menu
+    name: Shop Menu Overlay
+    paths:
+      - shop_menu
 
 expected_paths:
   asm: expected/asm

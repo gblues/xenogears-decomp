@@ -258,6 +258,7 @@ class XenogearsDecoder:
         # Uncompressed overlays
         OVERLAYS = [
             ("member_change_menu.bin", 0x10, 0x1 + 0x5),
+            ("shop_menu.bin", 0x10, 0x4 + 0x5),
         ]
         for i in range(len(OVERLAYS)):
             ovl = OVERLAYS[i]

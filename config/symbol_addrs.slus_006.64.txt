@@ -169,8 +169,16 @@ SystemInitializeData = 0x800335F4;
 SystemInitialize = 0x80033668;
 SystemTransferPaletteToVRAM = 0x80033698;
 
+GetStringEntry = 0x80033728;
+
 DialogGetWidth = 0x8003373C;
 DialogGetHeight = 0x80033760;
+
+GetAccessoryName = 0x800337E8;
+GetItemName = 0x80033818;
+GetWeaponName = 0x80033848;
+
+SystemRenderStringEntry = 0x80034EAC;
 
 // Controllers
 ControllerGetButtonState = 0x8003569C;
@@ -992,7 +1000,9 @@ g_C2ButtonStatesReleased = 0x8005A15C;
 g_C1ButtonStatesPressedOnce = 0x8005A17C;
 g_C2ButtonStatesPressedOnce = 0x8005A19C;
 
-g_GameState = 0x8006D634; // type:GameState
+// TODO: Temporary sized, fix up when known
+g_GameState = 0x8006D634; // type:GameState size:0x2300
+
 g_pGameState = 0x8005A39C;
 g_GamePartyMembers = 0x80062590; // size:0xC
 
