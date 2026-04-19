@@ -10,8 +10,8 @@ from psx.overlay import OverlayExtractor, parse_yaml
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("bin_file", help="Path to the *.bin of the Xenogears bin/cue pair")
-    parser.add_argument("--overlays-yaml", help="Path to the yaml describing the overlays to be extracted",
-                        default=os.path.join(os.getcwd(), "overlays.yaml"))
+    parser.add_argument("--overlays", help="Path to the yaml describing the overlays to be extracted",
+                        default=os.path.join(str(os.path.dirname(__file__)), "overlays.yaml"))
     parser.add_argument("--extract-to", help="Directory to extract overlays to. Defaults to current working directory",
                         default=os.getcwd())
     parser.add_argument("--dry-run", action="store_true")
@@ -20,7 +20,7 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-    overlays = parse_yaml(args.overlays_yaml)
+    overlays = parse_yaml(args.overlays)
 
     with CdromXa(args.bin_file) as xenogears:
         decoder = OverlayExtractor(xenogears)
