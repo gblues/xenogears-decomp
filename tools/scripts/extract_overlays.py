@@ -7,13 +7,26 @@ from cdrom.cdxa import CdromXa
 from psx.overlay import OverlayExtractor, parse_yaml
 
 
+def find_disc_dir():
+    start = os.path.abspath(os.path.dirname(__file__))
+    candidate = f'{start}/disc'
+    while start != '/':
+        if os.path.isdir(candidate):
+            return candidate
+        start = os.path.dirname(start)
+        candidate = f'{start}/disc'
+
+    print("WARNING: failed to find disc dir, using current working directory as default instead")
+    return os.getcwd()
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("bin_file", help="Path to the *.bin of the Xenogears bin/cue pair")
     parser.add_argument("--overlays", help="Path to the yaml describing the overlays to be extracted",
                         default=os.path.join(str(os.path.dirname(__file__)), "overlays.yaml"))
-    parser.add_argument("--extract-to", help="Directory to extract overlays to. Defaults to current working directory",
-                        default=os.getcwd())
+    parser.add_argument("--extract-to", help="Directory to extract overlays to",
+                        default=find_disc_dir())
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
 

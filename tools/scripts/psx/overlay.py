@@ -7,18 +7,6 @@ from cdrom.cdxa import CdromXa
 
 """
 Parses a YAML file into Overlay objects that can be fed into OverlayExtractor.extract()
-
-The YAML is expected to have the following structure:
-
----
-overlays:
-  compressed:
-  - name: some_name
-    sector_id: 0x00 
-  uncompressed:
-  - name: some_name
-    sector_id: 0x00
-    index: 0x00
 """
 def parse_yaml(yaml_file: str):
     with open(yaml_file) as fh:
@@ -26,19 +14,15 @@ def parse_yaml(yaml_file: str):
 
     if 'overlays' not in spec:
         raise ValueError("Invalid yaml: top level key 'overlays' not found")
-    overlays = spec['overlays']
 
-    compressed = overlays['compressed'] if 'compressed' in overlays else []
-    uncompressed = overlays['uncompressed'] if 'uncompressed' in overlays else []
-
-    return [Overlay(name=x["name"], sector_id=x["sector_id"]) for x in compressed] + [Overlay(name=x["name"], sector_id=x["sector_id"], index=x["index"]) for x in uncompressed]
+    return [ Overlay(**ovl) for ovl in spec['overlays']]
 
 class Overlay(object):
-    def __init__(self, name: str, sector_id: int, index: int=-1):
-        self.compressed = index < 0
+    def __init__(self, name: str, file_id: int, directory_id: int, compressed: bool=False):
+        self.compressed = compressed
         self.name = name
-        self.index = index
-        self.sector_id = sector_id
+        self.file_id = file_id
+        self.directory_id = directory_id
 
 
 class OverlayExtractor(object):
@@ -50,59 +34,50 @@ class OverlayExtractor(object):
             table += disc.read_next_sector()
         self.header = header
         self.table = table
-        self.current_decoding_value = 0
+        self.current_directory_id = 0
         self.disc = disc
 
-    def __set_decoding_value(self, nybble_index, offset=0):
+    def extract(self, overlay: Overlay, output_dir='.'):
+        self.__set_directory_id(overlay.directory_id)
+        sector = self.__get_starting_sector(overlay.file_id)
+        size = self.__get_size_aligned(overlay.file_id)
+        file_path = output_dir + "/" + overlay.name
+
+        if overlay.compressed:
+            size = math.ceil(
+                self.__get_size_aligned(overlay.file_id) / CdromXa.SECTOR_DATA_SIZE) * CdromXa.SECTOR_DATA_SIZE
+
+            with mmap.mmap(-1, size) as compressed:
+                self.disc.extract_sectors(sector, size, compressed)
+                compressed.seek(0)
+                with open(file_path, "+wb") as uncompressed:
+                    lzss.decompress(compressed, uncompressed)
+        else:
+            with open(file_path, "wb") as fh:
+                self.disc.extract_sectors(sector, size, fh)
+
+    def __set_directory_id(self, nybble_index, offset=0):
         byte_offset = offset + (nybble_index * 2)
         lsb, msb = self.header[byte_offset:byte_offset+2]
-        self.current_decoding_value = (msb << 8) + lsb - 1
+        self.current_directory_id = (msb << 8) + lsb - 1
 
 
-    def __get_sector(self, index):
-        offset = self.__index_to_offset(index)
-        sector = self.table[offset]
-        sector += (self.table[offset + 1] * 0x100)
-        sector += (self.table[offset + 2] * 0x10000)
-        return sector
-
+    def __get_starting_sector(self, index):
+        offset = self.__get_file_id_offset(index)
+        return (self.table[offset]
+                + (self.table[offset + 1] <<8)
+                + (self.table[offset + 2] <<16))
 
     def __get_size(self, index):
-        offset = self.__index_to_offset(index)
-        size = (self.table[offset + 6] * 0x1000000)
-        size += (self.table[offset + 5] * 0x10000)
-        size += (self.table[offset + 4] * 0x100)
-        size += self.table[offset + 3]
-        return size
+        offset = self.__get_file_id_offset(index)
+        return (self.table[offset+3]
+                + (self.table[offset+4] <<8)
+                + (self.table[offset+5] <<16)
+                + (self.table[offset+6] <<24))
 
-    def __index_to_offset(self, index):
-        return (index + self.current_decoding_value - 1) * 7
+    def __get_file_id_offset(self, file_id):
+        return (file_id + self.current_directory_id - 1) * 7
 
-    def extract(self, overlay: Overlay, output_dir='.'):
-        if overlay.compressed:
-            self.__extract_compressed_overlay(overlay, output_dir)
-        else:
-            self.__extract_overlay(overlay, output_dir)
-
-    def __extract_overlay(self, overlay: Overlay, output_dir: str):
-        self.__set_decoding_value(overlay.index)
-        sector = self.__get_sector(overlay.sector_id)
-        size = self.__get_size_aligned(overlay.sector_id)
-        file_path = output_dir + "/" + overlay.name
-        with open(file_path, "wb") as fh:
-            self.disc.extract_sectors(sector, size, fh)
-
-    def __extract_compressed_overlay(self, overlay: Overlay, output_dir: str):
-        self.__set_decoding_value(1)
-        sector = self.__get_sector(overlay.sector_id)
-        size = math.ceil(self.__get_size_aligned(overlay.sector_id) / CdromXa.SECTOR_DATA_SIZE) * CdromXa.SECTOR_DATA_SIZE
-        file_path = output_dir + "/" + overlay.name
-
-        with mmap.mmap(-1, size) as compressed:
-            self.disc.extract_sectors(sector, size, compressed)
-            compressed.seek(0)
-            with open(file_path, "+wb") as uncompressed:
-                lzss.decompress(compressed, uncompressed)
 
     def __get_size_aligned(self, index):
         size = self.__get_size(index)

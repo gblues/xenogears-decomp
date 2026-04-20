@@ -1,22 +1,32 @@
 ---
 overlays:
-  compressed:
-    - name: BATTLING.BIN
-      sector_id: 0x0D
-    - name: FIELD.BIN
-      sector_id: 0x0E
-    - name: WORLD_MAP.BIN
-      sector_id: 0x0F
-    - name: BATTLE.BIN
-      sector_id: 0x10
-    - name: MENU.BIN
-      sector_id: 0x11
-    - name: MOVIE.BIN
-      sector_id: 0x12
-  uncompressed:
-    - name: member_change_menu.bin
-      sector_id: 0x06
-      index: 0x10
-    - name: shop_menu.bin
-      index: 0x10
-      sector_id: 0x09
+  - name: FIELD.BIN
+    file_id: 0x0E
+    directory_id: 0x01
+    compressed: true
+  - name: WORLD_MAP.BIN
+    file_id: 0x0F
+    directory_id: 0x01
+    compressed: true
+  - name: BATTLING.BIN
+    file_id: 0x0D
+    directory_id: 0x01
+    compressed: true
+  - name: BATTLE.BIN
+    file_id: 0x10
+    directory_id: 0x01
+    compressed: true
+  - name: MENU.BIN
+    file_id: 0x11
+    directory_id: 0x01
+    compressed: true
+  - name: MOVIE.BIN
+    file_id: 0x12
+    directory_id: 0x01
+    compressed: true
+  - name: member_change_menu.bin
+    file_id: 0x06
+    directory_id: 0x10
+  - name: shop_menu.bin
+    directory_id: 0x10
+    file_id: 0x09
