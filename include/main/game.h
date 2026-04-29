@@ -16,58 +16,58 @@
 
 
 typedef struct {
-    /* 0x0  */ u8 field_0x0[0x4C];
-    /* 0x4C */ unsigned short hp;
-    /* 0x4E */ unsigned short maxHp;
-    /* 0x50 */ unsigned short mp;
-    /* 0x52 */ unsigned short maxMp;
-    /* 0x54 */ u32 field_0x54;
-    /* 0x58 */ u8 attack;
-    /* 0x59 */ u8 defense;
-    /* 0x5A */ u8 agility;
-    /* 0x5B */ u8 ether;
-    /* 0x5C */ u8 etherDefence;
-    /* 0x5D */ u8 field_0x5D;
-    /* 0x5E */ u8 hitPercentage;
-    /* 0x5F */ u8 evadePercentage;
-    /* 0x60 */ u16 field_0x60;
-    /* 0x62 */ u8 level;
-    /* 0x63 */ u8 unk63;
-    /* 0x64 */ u8 unk64[0x6];
-    /* 0x6A */ u8 unk6A[0x5]; // Equipped weapons?
-    /* 0x6F */ u8 unk6F[0x5]; // Equipped weapons?    
-    /* 0x74 */ u8 unk74[0x3]; // Equipped accessories?
-    /* 0x77 */ u8 unk77;    
-    /* 0x78 */ u8 unk78[0x28];
-    /* 0xA0 */ u8 gearId;
-    /* 0xA1 */ u8 field_0xA1[0x3];
+    /* 0x0  */ undefined8 field_0x0[0x4C];
+    /* 0x4C */ u_short hp;
+    /* 0x4E */ u_short maxHp;
+    /* 0x50 */ u_short mp;
+    /* 0x52 */ u_short maxMp;
+    /* 0x54 */ undefined32 field_0x54;
+    /* 0x58 */ u_char attack;
+    /* 0x59 */ u_char defense;
+    /* 0x5A */ u_char agility;
+    /* 0x5B */ u_char ether;
+    /* 0x5C */ u_char etherDefence;
+    /* 0x5D */ undefined8 field_0x5D;
+    /* 0x5E */ u_char hitPercentage;
+    /* 0x5F */ u_char evadePercentage;
+    /* 0x60 */ undefined16 field_0x60;
+    /* 0x62 */ u_char level;
+    /* 0x63 */ undefined8 unk63;
+    /* 0x64 */ undefined8 unk64[0x6];
+    /* 0x6A */ undefined8 unk6A[0x5]; // Equipped weapons?
+    /* 0x6F */ undefined8 unk6F[0x5]; // Equipped weapons?    
+    /* 0x74 */ undefined8 unk74[0x3]; // Equipped accessories?
+    /* 0x77 */ undefined8 unk77;    
+    /* 0x78 */ undefined8 unk78[0x28];
+    /* 0xA0 */ u_char gearId;
+    /* 0xA1 */ undefined8 field_0xA1[0x3];
 } GameCharacter; // size: 0xA4
 
 
 typedef struct {
-    /* 0x0  */ u8 field_0x0[0x10];
-    /* 0x10 */ s16 ether;
-    /* 0x12 */ s16 maxEther;
-    /* 0x14 */ u8 field_0x14[0x24];
-    /* 0x38 */ s32 fuel;
-    /* 0x3C */ s32 maxFuel;
-    /* 0x40 */ u8 field_0x40[0x20];
-    /* 0x60 */ unsigned int hp;
-    /* 0x64 */ unsigned int maxHp;
-    /* 0x68 */ u8 field_0x68[0x3C];
+    /* 0x0  */ undefined8 field_0x0[0x10];
+    /* 0x10 */ short ether;
+    /* 0x12 */ short maxEther;
+    /* 0x14 */ undefined8 field_0x14[0x24];
+    /* 0x38 */ int fuel;
+    /* 0x3C */ int maxFuel;
+    /* 0x40 */ undefined8 field_0x40[0x20];
+    /* 0x60 */ u_int hp;
+    /* 0x64 */ u_int maxHp;
+    /* 0x68 */ undefined8 field_0x68[0x3C];
 } GameGear; // size: 0xA4
 
 typedef struct {
-    /* 0x0    */ u8 field_0x0[0x26C];
+    /* 0x0    */ undefined8 field_0x0[0x26C];
     /* 0x26C  */ GameCharacter characters[MAX_GAME_CHARACTERS];
     /* 0x978  */ GameGear gears[MAX_GAME_GEARS];
-    /* 0x1648 */ u8 field_0x1648[0x2DC];
-    /* 0x1924 */ unsigned int gold;
-    /* 0x1928 */ u8 unk1928[0x408];
-    /* 0x1D30 */ u16 unk1D30;
-    /* 0x1D32 */ u16 FrMask;
-    /* 0x1D34 */ u8 partyMembers[MAX_PARTY_MEMBERS];
-    /* 0x1D37 */ u8 unk1D37;
+    /* 0x1648 */ undefined8 field_0x1648[0x2DC];
+    /* 0x1924 */ u_int gold;
+    /* 0x1928 */ undefined8 unk1928[0x408];
+    /* 0x1D30 */ undefined16 unk1D30;
+    /* 0x1D32 */ u_short FrMask;
+    /* 0x1D34 */ undefined8 partyMembers[MAX_PARTY_MEMBERS];
+    /* 0x1D37 */ undefined8 unk1D37;
 
     // Inventory
     /* 0x1D38 */ u_char weaponQuantities[MAX_INVENTORY_WEAPONS];
@@ -77,8 +77,8 @@ typedef struct {
     /* 0x1F90 */ u_char itemQuantities[MAX_INVENTORY_ITEMS];
     /* 0x2026 */ u_char itemIDs[MAX_INVENTORY_ITEMS];
 
-    /* 0x20BC */ u8 unk20BC[0x1F5];
-    /* 0x22B1 */ u8 gearRide[MAX_PARTY_MEMBERS];
+    /* 0x20BC */ undefined8 unk20BC[0x1F5];
+    /* 0x22B1 */ undefined8 gearRide[MAX_PARTY_MEMBERS];
 } GameState; // size: unknown
 
 extern GameState g_GameState;

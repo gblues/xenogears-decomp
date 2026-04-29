@@ -70,7 +70,7 @@ typedef struct {
     */
     short flags; // 0x40C
     short visibility; // 0 = Visible, -1 = Hidden
-    unsigned short order; // 0-top. 0xffff if window not inited
+    u_short order; // 0-top. 0xffff if window not inited
     short unk412;
     short status; // Set to 0 to close window. Usually 0xffff (not used in usual window render)
     short ownerActorID;

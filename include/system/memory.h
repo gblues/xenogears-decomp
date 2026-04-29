@@ -7,7 +7,7 @@
 extern void func_80031FF8();
 extern void func_8003747C(void*);
 extern void FontPrintf(char*, ...);
-extern unsigned int strlen(char* pString);
+extern u_int strlen(char* pString);
 extern int Sprintf(char* pStr, char* pFormat, ...);
 // --------------------------------------
 
@@ -78,16 +78,16 @@ extern int Sprintf(char* pStr, char* pFormat, ...);
 
 typedef struct {
     void* pNext;
-    u32 sourceAddress: 21;
-    u32 userTag: 4;
-    u32 isPinned: 1;
-    u32 contentTag: 6;
+    u_int sourceAddress: 21;
+    u_int userTag: 4;
+    u_int isPinned: 1;
+    u_int contentTag: 6;
 } HeapBlock;
 
 struct HeapDelayedFreeBlock {
     struct HeapDelayedFreeBlock* pNext;
     void* pMem;
-    u32 delay;
+    u_int delay;
 };
 
 typedef struct HeapDelayedFreeBlock HeapDelayedFreeBlock;
@@ -103,43 +103,43 @@ extern char** g_HeapUserContentNames[HEAP_NUM_USERS];
 
 
 void* HeapGetNextBlockHeader(HeapBlock* pHeapBlock);
-unsigned int HeapGetBlockUser(HeapBlock* pHeapBlock);
-unsigned int HeapGetBlockSourceAddress(HeapBlock* pHeapBlock);
-unsigned int HeapIsBlockPinned(HeapBlock* pHeapBlock);
+u_int HeapGetBlockUser(HeapBlock* pHeapBlock);
+mem_addr HeapGetBlockSourceAddress(HeapBlock* pHeapBlock);
+u_int HeapIsBlockPinned(HeapBlock* pHeapBlock);
 int HeapLoadSymbols(char* pSymbolFilePath);
 void HeapReset(void);
 void HeapInit(void* heapStart, void* heapEnd);
 void HeapRelocate(void* pNewStartAddress);
-u32 HeapGetCurrentUser(void);
-void HeapSetCurrentUser(u32 userTag);
-unsigned int HeapToggleErrorHandler(unsigned int status);
-void HeapGetAllocInformation(u32* pAllocSourceAddr, u32* pAllocSize);
-void* HeapAlloc(u32 allocSize, u32 allocFlags);
-void* HeapInsertAlloc(HeapBlock* pMem, u32 allocSize);
+u_int HeapGetCurrentUser(void);
+void HeapSetCurrentUser(u_int userTag);
+u_int HeapToggleErrorHandler(u_int status);
+void HeapGetAllocInformation(mem_addr* pAllocSourceAddr, u_int* pAllocSize);
+void* HeapAlloc(u_int allocSize, u_int allocFlags);
+void* HeapInsertAlloc(HeapBlock* pMem, u_int allocSize);
 void HeapConsolidate(void);
 void HeapPinBlock(HeapBlock* pBlock);
 void HeapUnpinBlock(HeapBlock* pBlock);
 void HeapUnpinBlockCopy(HeapBlock* pBlock);
-u32 HeapFree(void* pMem);
-void HeapFreeBlocksWithFlag(u8 targetFlag);
+u_int HeapFree(void* pMem);
+void HeapFreeBlocksWithFlag(u_char targetFlag);
 void HeapFreeAllBlocks(void);
 void HeapForceFreeAllBlocks(void);
-u32 HeapGetTotalFreeSize(void);
-u32 HeapWalkUntilEnd(void);
-u32 HeapGetLargestFreeBlockSize(void);
-void HeapChangeCurrentUser(u32 userTag, char** pContentTypes);
-void HeapSetCurrentContentType(u16 contentTag);
-void HeapGetSymbolNameFromAddress(u32 address, u8* pString);
-void HeapDebugDumpBlock(HeapBlock* pBlockHeader, void* pBlockMem, u32 blockSize, s32 debugFlags);
-void HeapDebugDump(u32 mode, u32 startBlockIdx, s32 endBlockIdx, u32 flags);
-void* HeapAllocSound(u32 allocSize);
-void HeapCalloc(u32 numElements, u32 elementSize);
+u_int HeapGetTotalFreeSize(void);
+u_int HeapWalkUntilEnd(void);
+u_int HeapGetLargestFreeBlockSize(void);
+void HeapChangeCurrentUser(u_int userTag, char** pContentTypes);
+void HeapSetCurrentContentType(u_short contentTag);
+void HeapGetSymbolNameFromAddress(mem_addr address, u_char* pString);
+void HeapDebugDumpBlock(HeapBlock* pBlockHeader, void* pBlockMem, u_int blockSize, int debugFlags);
+void HeapDebugDump(u_int mode, u_int startBlockIdx, int endBlockIdx, u_int flags);
+void* HeapAllocSound(u_int allocSize);
+void HeapCalloc(u_int numElements, u_int elementSize);
 void HeapForceFree(void* pMem);
 //void HeapPrintf(char* pFormat, void* arg);
-void HeapDelayedFree(void* pMem, u32 delay);
+void HeapDelayedFree(void* pMem, u_int delay);
 void HeapTickDelayedFree(void);
 void HeapFreeAllDelayedBlocks(void);
 void HeapWriteToDebugFile(char* pBuffer);
 void HeapDumpToFile(char *pOutputFilePath);
-void* HeapDerefPtr(u32* pData);
+void* HeapDerefPtr(u_int* pData);
 #endif

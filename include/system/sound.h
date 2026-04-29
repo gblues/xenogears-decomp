@@ -55,9 +55,9 @@ typedef struct {
 typedef void (*SoundCommandCallback_t)(void);
 
 typedef struct {
-    /* 0x0 */ u16 unk0; // Flags?
-    /* 0x2 */ u16 unk2;
-    /* 0x4 */ u32 unk4;
+    /* 0x0 */ undefined16 unk0; // Flags?
+    /* 0x2 */ undefined16 unk2;
+    /* 0x4 */ undefined32 unk4;
     /* 0x8 */ void* pPrev;
     /* 0xC */ void* pNext;
 } SoundHeapBlockHeader;
@@ -70,12 +70,12 @@ typedef struct {
 #define SPU_MEMORY_IN_USE 0x80
 
 typedef struct {
-    /* 0x0 */ unsigned char flags;
-    /* 0x1 */ unsigned char unk1; // Type of memory/data?
+    /* 0x0 */ u_char flags;
+    /* 0x1 */ u_char unk1; // Type of memory/data?
     /* 0x2 */ short nextBlockIndex;
     /* 0x4 */ int spuAddress;
     /* 0x8 */ int size;
-    /* 0xC */ unsigned int unkC; // Padding?
+    /* 0xC */ u_int unkC; // Padding?
 } SoundSpuMemoryBlock;
 
 // Possible a more general queue to sending commands to the SPU,
@@ -84,22 +84,22 @@ typedef struct {
     /* 0x0  */ u_short commandType;
     /* 0x2  */ short unk2;
     /* 0x4  */ void* pSpuData;
-    /* 0x8  */ u32 pTransferAddress;
+    /* 0x8  */ mem_addr pTransferAddress;
     /* 0xC  */ u_long dataSize;
     /* 0x10 */ SoundCommandCallback_t pCallbackFn;
 } SoundTransferCommand;
 
 // Possibly a struct which can either be a SMD (Background Music), SED (Sound Effect) or SND entry
 struct SoundFile_t {
-    /* 0x0 */ unsigned int magic;
-    /* 0x4 */ u32 unk4;
-    /* 0x8 */ u32 unk8; // Size?
-    /* 0xC */ u16 unkC; // File format version?
-    /* 0xE */ u16 unkE;
-    /* 0x10 */ u32 unk10; // smdId?
-    /* 0x14 */ unsigned short sedId;
-    /* 0x16 */ unsigned short sndId;
-    /* 0x18 */ u32 unk18;
+    /* 0x0  */ u_int magic;
+    /* 0x4  */ undefined32 unk4;
+    /* 0x8  */ undefined32 unk8; // Size?
+    /* 0xC  */ undefined16 unkC; // File format version?
+    /* 0xE  */ undefined16 unkE;
+    /* 0x10 */ undefined32 unk10; // smdId?
+    /* 0x14 */ u_short sedId;
+    /* 0x16 */ u_short sndId;
+    /* 0x18 */ undefined32 unk18;
     /* 0x1C */ struct SoundFile_t* pNext;
     /* 0x20 */ // starts of 0x2 size offsets to scripts. Pair of scripts for each instrument. 1 script for 1 channel.
 };
@@ -107,12 +107,12 @@ typedef struct SoundFile_t SoundFile;
 
 struct SoundWDSEntry_t {
     /* 0x0  */ u_char _unk0[0x10];
-    /* 0x10 */ unsigned int headerSizeMby;
-    /* 0x14 */ unsigned int adpcmDataSize; // Sample size
-    /* 0x18 */ unsigned int adpcmDataOffset; // Offset to data to write to SPU
-    /* 0x1C */ unsigned short unk1C;
-    /* 0x1E */ unsigned short unk1E;
-    /* 0x20 */ unsigned short id;
+    /* 0x10 */ u_int headerSizeMby;
+    /* 0x14 */ u_int adpcmDataSize; // Sample size
+    /* 0x18 */ u_int adpcmDataOffset; // Offset to data to write to SPU
+    /* 0x1C */ u_short unk1C;
+    /* 0x1E */ u_short unk1E;
+    /* 0x20 */ u_short id;
     /* 0x22 */ u_short unk22;
     /* 0x24 */ u_int unk24;
     /* 0x28 */ int spuMemoryAddress; // Optional
@@ -121,10 +121,10 @@ struct SoundWDSEntry_t {
 typedef struct SoundWDSEntry_t SoundWDSEntry;
 
 typedef struct {
-    s32 currentValue;     // 0x0 - Current interpolated value
-    s32 stepIncrement;    // 0x4 - Amount to add each step
-    s16 counter;          // 0x8 - Steps remaining
-    s16 targetValue;      // 0xA - Final value when counter reaches 0
+    /* 0x0 */ int currentValue; // Current interpolated value
+    /* 0x4 */ int stepIncrement; // Amount to add each step
+    /* 0x8 */ short counter; // Steps remaining
+    /* 0xA */ short targetValue; // Final value when counter reaches 0
 } AudioInterpolator;
 
 // AudioElement.active_flags
@@ -185,38 +185,38 @@ typedef struct AudioManager {
     /* 0x10 */ s16 unk_Flags;
     /* 0x12 */ s8 unk2[2];
     /* 0x14 */ u8 elementCount;
-    u8 unk_0x15[3];                           // 0x15-0x17
-    u8 unk_0x18;                              // 0x18
-    u8 unk_0x19;                              // 0x19
-    u8 unk_0x1a;                              // 0x1a
-    u8 unk_0x1b;                              // 0x1b
-    u8 unk_0x1c[4];                           // 0x1c-0x1f
-    s32 unk_0x20;                             // 0x20
-    s32 unk_0x24;                             // 0x24
-    s32 unk_0x28;                             // 0x28                      
-    s32 unk_0x2c;                             // 0x2c
-    s16 unk_0x30;                             // 0x30
-    s16 unk_0x32;                             // 0x32
-    s16 unk_0x34;                             // 0x34
-    s16 unk_0x36;                             // 0x36
-    s16 unk_0x38;                             // 0x38
-    s16 unk_0x3a;                             // 0x3a
-    s16 unk_0x3c;                             // 0x3c
-    s16 unk_0x3e;                             // 0x3e
-    u8 unk_0x40[8];                           // 0x40-0x47
-    s32 unk_0x48;                             // 0x48
-    u8 unk_0x4c[4];                           // 0x4c-0x4f
-    s32 unk_0x50;                             // 0x50
-    s32 unk_0x54;                             // 0x54
-    s32 unk_0x58;                             // 0x58                             
-    s32 unk_0x5c;                             // 0x5c
-    s16 unk_0x60;                             // 0x60
-    u8 unk_0x62[2];                           // 0x62-0x63
-    AudioInterpolator unk_Interpolator_0x64;  // 0x64
-    AudioInterpolator unk_Interpolator_0x70;  // 0x70
-    AudioInterpolator unk_Interpolator_0x7c;  // 0x7c
-    AudioInterpolator unk_Interpolator_0x88;  // 0x88
-    AudioElement elements[24];                // 0x94
+    /* 0x15 */ u8 unk_0x15[3];
+    /* 0x18 */ u8 unk_0x18;
+    /* 0x19 */ u8 unk_0x19;
+    /* 0x1A */ u8 unk_0x1a;
+    /* 0x1B */ u8 unk_0x1b;
+    /* 0x1C */ u8 unk_0x1c[4];
+    /* 0x20 */ s32 unk_0x20;
+    /* 0x24 */ s32 unk_0x24;
+    /* 0x28 */ s32 unk_0x28;                  
+    /* 0x2C */ s32 unk_0x2c;
+    /* 0x30 */ s16 unk_0x30;
+    /* 0x32 */ s16 unk_0x32;
+    /* 0x34 */ s16 unk_0x34;
+    /* 0x36 */ s16 unk_0x36;
+    /* 0x38 */ s16 unk_0x38;
+    /* 0x3A */ s16 unk_0x3a;
+    /* 0x3C */ s16 unk_0x3c;
+    /* 0x3E */ s16 unk_0x3e;
+    /* 0x40 */ u8 unk_0x40[8];
+    /* 0x48 */ s32 unk_0x48;
+    /* 0x4C */ u8 unk_0x4c[4];
+    /* 0x50 */ s32 unk_0x50;
+    /* 0x54 */ s32 unk_0x54;
+    /* 0x58 */ s32 unk_0x58;                          
+    /* 0x5C */ s32 unk_0x5c;
+    /* 0x60 */ s16 unk_0x60;
+    /* 0x62 */ u8 unk_0x62[2];
+    /* 0x64 */ AudioInterpolator unk_Interpolator_0x64;
+    /* 0x70 */ AudioInterpolator unk_Interpolator_0x70;
+    /* 0x7C */ AudioInterpolator unk_Interpolator_0x7c;
+    /* 0x88 */ AudioInterpolator unk_Interpolator_0x88;
+    /* 0x94 */ AudioElement elements[24];
 } AudioManager;
 
 typedef struct {

@@ -7,17 +7,17 @@
 #define FIELD_CAMERA_EYE_MOVEMENT_ACTIVE 0x2
 
 typedef struct {
-    /* 0x0  */ u16 duration;
-    /* 0x2  */ u16 _pad2;
+    /* 0x0  */ undefined16 duration;
+    /* 0x2  */ undefined16 _pad2;
     /* 0x4  */ VECTOR current;
     /* 0x14 */ VECTOR delta;
 } FieldCameraMovement; // Size: 0x28
 
 typedef struct {
-    /* 0x0 */ s32 atStepDistance;
-    /* 0x4 */ s32 eyeStepDistance;
-    /* 0x8 */ s16 targetAngleY;
-    /* 0xA */ s16 curAngleY;
+    /* 0x0 */ int atStepDistance;
+    /* 0x4 */ int eyeStepDistance;
+    /* 0x8 */ short targetAngleY;
+    /* 0xA */ short curAngleY;
 } CameraInterpolation;
 
 extern CameraInterpolation g_CamInterpolation;

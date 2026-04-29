@@ -28,32 +28,32 @@
 #define PARTICLE_FLAG_COLOR_MODE(flags) (flags >> 8) & 3
 
 typedef struct {
-    /* 0x0  */ u16 x0;
-    /* 0x2  */ u16 y0;
-    /* 0x4  */ u16 x1;
-    /* 0x6  */ u16 y1;
-    /* 0x8  */ u16 u0;
-    /* 0xA  */ u16 v0;
-    /* 0xC  */ u16 u1;
-    /* 0xE  */ u16 v1;
-    /* 0x10 */ u16 u2;
-    /* 0x12 */ u16 v2;
-    /* 0x14 */ u16 u3;
-    /* 0x16 */ u16 v3;
+    /* 0x0  */ u_short x0;
+    /* 0x2  */ u_short y0;
+    /* 0x4  */ u_short x1;
+    /* 0x6  */ u_short y1;
+    /* 0x8  */ u_short u0;
+    /* 0xA  */ u_short v0;
+    /* 0xC  */ u_short u1;
+    /* 0xE  */ u_short v1;
+    /* 0x10 */ u_short u2;
+    /* 0x12 */ u_short v2;
+    /* 0x14 */ u_short u3;
+    /* 0x16 */ u_short v3;
 } ParticleShape; // Size: 0x18
 
 typedef struct {
-    /* 0x0 */ s8 r;
-    /* 0x1 */ s8 g;
-    /* 0x2 */ s8 b;
-    /* 0x3 */ s8 a;
+    /* 0x0 */ s_char r;
+    /* 0x1 */ s_char g;
+    /* 0x2 */ s_char b;
+    /* 0x3 */ s_char a;
 } ParticleColorDelta; // Size: 0x4
 
 typedef struct {
-    /* 0x0  */ s16 active;
-    /* 0x2  */ u16 swait; // Delay before particle starts
-    /* 0x4  */ u16 ewait; // Duration of particle
-    /* 0x6  */ s16 zRotation;
+    /* 0x0  */ short active;
+    /* 0x2  */ u_short swait; // Delay before particle starts
+    /* 0x4  */ u_short ewait; // Duration of particle
+    /* 0x6  */ short zRotation;
     /* 0x8  */ VECTOR position;
     /* 0x18 */ VECTOR velocity;
     /* 0x28 */ VECTOR gravity;
@@ -66,37 +66,37 @@ typedef struct {
 } ParticlePrimitive; // Size: 0xC0
 
 typedef struct {
-    /* 0x0 */ s16 x;
-    /* 0x2 */ s16 z;
+    /* 0x0 */ short x;
+    /* 0x2 */ short z;
 } ParticleBankAngleOffset;
 
 typedef struct {
-    /* 0x0   */ u16 unk0;
-    /* 0x2   */ u16 swait;
-    /* 0x4   */ u16 ewait;
-    /* 0x6   */ s16 max;
-    /* 0x8   */ s32 speed;
+    /* 0x0   */ undefined16 unk0;
+    /* 0x2   */ u_short swait;
+    /* 0x4   */ u_short ewait;
+    /* 0x6   */ short max;
+    /* 0x8   */ int speed;
     /* 0xC   */ SVECTOR pos;
     /* 0x14  */ SVECTOR epos;
     /* 0x1C  */ SVECTOR gravity;
-    /* 0x24  */ s16 speedMultiplier;
-    /* 0x26  */ u16 srange;
-    /* 0x28  */ u16 erange;
-    /* 0x2A  */ u16 flags;
+    /* 0x24  */ short speedMultiplier;
+    /* 0x26  */ u_short srange;
+    /* 0x28  */ u_short erange;
+    /* 0x2A  */ u_short flags;
     /* 0x2C  */ ParticlePrimitive* pPrimitives;
     /* 0x30  */ ParticleBankAngleOffset directions[8];
     /* 0x50  */ s16 unk50;
-    /* 0x52  */ s16 targetActorID;
-    /* 0x54  */ s16 shape;
-    /* 0x56  */ u16 pswait;
-    /* 0x58  */ u16 pewait;
+    /* 0x52  */ short targetActorID;
+    /* 0x54  */ short shape;
+    /* 0x56  */ u_short pswait;
+    /* 0x58  */ u_short pewait;
     /* 0x5A  */ SVECTOR scale;
     /* 0x62  */ SVECTOR scaleDelta;
     /* 0x6A  */ CVECTOR color;
     /* 0x6E  */ ParticleColorDelta colorDelta;
     /* 0x72  */ s16 unk72;
     /* 0x74  */ s16 unk74;
-    /* 0x76  */ s16 rotAngle;
+    /* 0x76  */ short rotAngle;
 } ParticleBank; // Size: 0x78
 
 typedef struct { 
@@ -109,7 +109,7 @@ extern int g_FieldParticleBankIndex;
 extern ParticleBank g_FieldDefaultParticleBanks[NUM_PARTICLE_BANKS];
 
 extern short g_FieldParticleActorIDs[NUM_PARTICLES];
-extern u8 g_FieldParticleStatuses[NUM_PARTICLES];
+extern u_char g_FieldParticleStatuses[NUM_PARTICLES];
 extern ParticleBank* g_FieldParticleBanks[NUM_PARTICLES];
 
 #endif

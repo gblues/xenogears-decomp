@@ -19,18 +19,18 @@ HeapDelayedFreeBlock g_HeapDelayedFreeBlocksHead;
 
 
 void* HeapGetNextBlockHeader(HeapBlock* pHeapBlock) {
-    return (HeapBlock*)(pHeapBlock[-1].pNext - (u32)pHeapBlock) - 1;
+    return (HeapBlock*)(pHeapBlock[-1].pNext - (mem_addr)pHeapBlock) - 1;
 }
 
-unsigned int HeapGetBlockUser(HeapBlock* pHeapBlock) {
+u_int HeapGetBlockUser(HeapBlock* pHeapBlock) {
     return pHeapBlock[-1].userTag;
 }
 
-unsigned int HeapGetBlockSourceAddress(HeapBlock* pHeapBlock) {
+mem_addr HeapGetBlockSourceAddress(HeapBlock* pHeapBlock) {
     return (pHeapBlock[-1].sourceAddress * 4) + VRAM_BASE_ADDRESS;
 }
 
-unsigned int HeapIsBlockPinned(HeapBlock* pHeapBlock) {
+u_int HeapIsBlockPinned(HeapBlock* pHeapBlock) {
     return pHeapBlock[-1].isPinned;
 }
 
@@ -138,33 +138,33 @@ void HeapRelocate(void* pNewStartAddress) {
     g_HeapDelayedFreeBlocksHead.pNext = NULL;
 }
 
-u32 HeapGetCurrentUser(void) {
+u_int HeapGetCurrentUser(void) {
     return g_HeapCurUser;
 }
 
-void HeapSetCurrentUser(u32 userTag) {
+void HeapSetCurrentUser(u_int userTag) {
     g_HeapCurUser = userTag;
 }
 
-unsigned int HeapToggleErrorHandler(unsigned int status) {
-  unsigned int prevStatus;
+u_int HeapToggleErrorHandler(u_int status) {
+  u_int prevStatus;
   prevStatus = g_HeapIsErrorHandlerOff;
   g_HeapIsErrorHandlerOff = status;
   return prevStatus;
 }
 
-void HeapGetAllocInformation(u32* pAllocSourceAddr, u32* pAllocSize) {
+void HeapGetAllocInformation(mem_addr* pAllocSourceAddr, u_int* pAllocSize) {
     *pAllocSourceAddr = g_HeapLastAllocSrcAddr;
     *pAllocSize = g_HeapLastAllocSize;
 }
 
 // Only matches on GCC 2.7.2
-void* HeapAlloc(u32 allocSize, u32 allocFlags) {
-    u32 nCallerAddr;
-    u32 nFreeSize;
-    s32 nRemainingSize;
-    u32 bOutOfMemory;
-    u32 nMinFreeSize;
+void* HeapAlloc(u_int allocSize, u_int allocFlags) {
+    mem_addr nCallerAddr;
+    u_int nFreeSize;
+    int nRemainingSize;
+    u_int bOutOfMemory;
+    u_int nMinFreeSize;
     HeapBlock* pSmallBlock;
     HeapBlock* pCurBlockHeader;
     HeapBlock* pFreeBlock;
@@ -300,11 +300,11 @@ void* HeapAlloc(u32 allocSize, u32 allocFlags) {
     return pFreeBlock;
 }
 
-void* HeapInsertAlloc(HeapBlock* pMem, u32 allocSize) {
+void* HeapInsertAlloc(HeapBlock* pMem, u_int allocSize) {
     HeapBlock* pBlockHeader;
     HeapBlock* pNewBlock;
     HeapBlock* pNextBlock;
-    u32 nFreeSize;
+    u_int nFreeSize;
 
     pNextBlock = (HeapBlock*)pMem[-1].pNext;
     pBlockHeader = &pMem[-1];
@@ -359,8 +359,8 @@ void HeapUnpinBlockCopy(HeapBlock* pBlock) {
     pBlock[-1].isPinned = 0;
 }
 
-u32 HeapFree(void* pMem) {
-    u32 nCallerAddr;
+u_int HeapFree(void* pMem) {
+    mem_addr nCallerAddr;
     HeapBlock* pBlock;  
 
     if (pMem == NULL) {
@@ -389,7 +389,7 @@ u32 HeapFree(void* pMem) {
     }
 }
 
-void HeapFreeBlocksWithFlag(u8 targetFlag) {
+void HeapFreeBlocksWithFlag(u_char targetFlag) {
     void* pMem;
     HeapBlock* pCurBlock;
 
@@ -430,22 +430,22 @@ void HeapForceFreeAllBlocks(void) {
     }
 }
 
-u32 HeapGetTotalFreeSize(void) {
-    u32 nTotalFreeSize;
+u_int HeapGetTotalFreeSize(void) {
+    u_int nTotalFreeSize;
     HeapBlock* pCurBlock;
 
     nTotalFreeSize = 0;
     pCurBlock = (HeapBlock*)g_Heap - 1;
     while (pCurBlock->userTag != HEAP_USER_END) {
         if (pCurBlock->userTag == HEAP_USER_NONE) {
-            nTotalFreeSize += ((u32)pCurBlock->pNext - (u32)pCurBlock) - sizeof(HeapBlock)*2;
+            nTotalFreeSize += ((mem_addr)pCurBlock->pNext - (mem_addr)pCurBlock) - sizeof(HeapBlock)*2;
         }
         pCurBlock = (HeapBlock*)pCurBlock->pNext - 1;
     }
     return nTotalFreeSize;
 }
 
-u32 HeapWalkUntilEnd(void) {
+u_int HeapWalkUntilEnd(void) {
     HeapBlock* pCurBlock;
 
     pCurBlock = (HeapBlock*)g_Heap - 1;
@@ -456,16 +456,16 @@ u32 HeapWalkUntilEnd(void) {
     return 0;
 }
 
-u32 HeapGetLargestFreeBlockSize(void) {
-    u32 nLargestFreeBlockSize;
+u_int HeapGetLargestFreeBlockSize(void) {
+    u_int nLargestFreeBlockSize;
     HeapBlock* pCurBlock;
-    u32 nBlockSize;
+    u_int nBlockSize;
 
     pCurBlock = (HeapBlock*)g_Heap - 1;
     nLargestFreeBlockSize = 0;
     while (pCurBlock->userTag != HEAP_USER_END) {
         if (pCurBlock->userTag == HEAP_USER_NONE) {
-            nBlockSize = ((u32)pCurBlock->pNext - (u32)pCurBlock) - sizeof(HeapBlock)*2;
+            nBlockSize = ((mem_addr)pCurBlock->pNext - (mem_addr)pCurBlock) - sizeof(HeapBlock)*2;
             if (nLargestFreeBlockSize < nBlockSize) {
                 nLargestFreeBlockSize = nBlockSize;
             }
@@ -479,13 +479,13 @@ u32 HeapGetLargestFreeBlockSize(void) {
     return nLargestFreeBlockSize - sizeof(HeapBlock);
 }
 
-void HeapChangeCurrentUser(u32 userTag, char** pContentTypes) {
+void HeapChangeCurrentUser(u_int userTag, char** pContentTypes) {
     g_HeapCurUser = userTag;
     g_HeapUserContentNames[userTag] = pContentTypes;
     g_HeapIsErrorHandlerOff = 0;
 }
 
-void HeapSetCurrentContentType(u16 contentTag) {
+void HeapSetCurrentContentType(u_short contentTag) {
     g_HeapCurContentType = contentTag;
 }
 
@@ -493,7 +493,7 @@ void HeapSetCurrentContentType(u16 contentTag) {
 // 0x0: u32 address
 // 0x4: u8 nameLen
 // 0x5: u8 name[nameLen]
-void HeapGetSymbolNameFromAddress(u32 address, u8* pString) {
+void HeapGetSymbolNameFromAddress(mem_addr address, u_char* pString) {
     u32 byte0;
     u32 byte1;
     u32 byte2;
@@ -533,7 +533,7 @@ void HeapGetSymbolNameFromAddress(u32 address, u8* pString) {
     *pString = 0;
 }
 
-void HeapDebugDumpBlock(HeapBlock* pBlockHeader, void* pBlockMem, u32 blockSize, s32 debugFlags) {
+void HeapDebugDumpBlock(HeapBlock* pBlockHeader, void* pBlockMem, u_int blockSize, int debugFlags) {
     char sFunctionName[0x40];
     s32 nContentType;
     char* sContentType;
@@ -584,7 +584,7 @@ void HeapDebugDumpBlock(HeapBlock* pBlockHeader, void* pBlockMem, u32 blockSize,
 }
 
 // Only matches on GCC 2.7.2
-void HeapDebugDump(u32 mode, u32 startBlockIdx, s32 endBlockIdx, u32 flags) {
+void HeapDebugDump(u_int mode, u_int startBlockIdx, int endBlockIdx, u_int flags) {
     char _sBuffer[0x40];
     u32 bIsDone;
     u32 nBlockSize;
@@ -709,7 +709,7 @@ void HeapDebugDump(u32 mode, u32 startBlockIdx, s32 endBlockIdx, u32 flags) {
     HeapPrintf("\n");
 }
 
-void* HeapAllocSound(u32 allocSize) {
+void* HeapAllocSound(u_int allocSize) {
     u32 nPrevHeapUser;
     void* pMem;
 
@@ -722,7 +722,7 @@ void* HeapAllocSound(u32 allocSize) {
     return pMem;
 }
 
-void HeapCalloc(u32 numElements, u32 elementSize) {
+void HeapCalloc(u_int numElements, u_int elementSize) {
     u32 nPrevHeapUser;
 
     nPrevHeapUser = g_HeapCurUser;
@@ -750,9 +750,9 @@ void HeapPrintf(char* pFormat, void* arg) {
     g_HeapDebugPrintfFn(sBuffer);
 }
 
-void HeapDelayedFree(void* pMem, u32 delay) {
+void HeapDelayedFree(void* pMem, u_int delay) {
     HeapDelayedFreeBlock* pFreeBlock;
-    u32 nCallerAddr;
+    mem_addr nCallerAddr;
     
     if (pMem == NULL) {
         asm volatile(

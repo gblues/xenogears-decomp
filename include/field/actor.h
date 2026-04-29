@@ -261,7 +261,7 @@ typedef struct {
     /* 0x88  */ short dialogPixelWidth;
     /* 0x8A  */ short dialogPixelHeight;
     /* 0x90  */ ActorScriptSlot scripts[ACTOR_MAX_NUM_SCRIPTS];
-    /* 0xCC */ u_short scriptInstructionPointer;
+    /* 0xCC  */ u_short scriptInstructionPointer;
     /* 0xCE  */ u_char curScriptIndex;
     /* 0xCF  */ u_char unkCF; // Unknown event slot id
     /* 0xD0  */ VECTOR unkD0;

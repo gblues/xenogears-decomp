@@ -21,16 +21,16 @@ typedef struct {
     /* 0x20  */ MATRIX camRotationMatrix;
     /* 0x40  */ SVECTOR camRotation;
     /* 0x48  */ s32 unk48; // Flags related to random encounters?
-    /* 0x4C  */ u8 unk4C[0x8];
+    /* 0x4C  */ undefined8 unk4C[0x8];
     /* 0x54  */ SVECTOR sceneAngle;
-    /* 0x5C  */ u8 unk5C[0x8];
-    /* 0x64  */ u8 dollySet;
-    /* 0x65  */ u8 dollyStop;
-    /* 0x66  */ u16 _pad66;
-    /* 0x68  */ u32 sceneScrZ;
-    /* 0x6C  */ u16 sceneDIP;
-    /* 0x6E  */ u16 sceneScale;
-    /* 0x70  */ u8 unk70[0x54];
+    /* 0x5C  */ undefined8 unk5C[0x8];
+    /* 0x64  */ u_char dollySet;
+    /* 0x65  */ u_char dollyStop;
+    /* 0x66  */ undefined16 _pad66;
+    /* 0x68  */ u_int sceneScrZ;
+    /* 0x6C  */ u_short sceneDIP;
+    /* 0x6E  */ u_short sceneScale;
+    /* 0x70  */ undefined8 unk70[0x54];
     /* 0xC4  */ SVECTOR worldRotation;
     /* 0xCC  */ SVECTOR worldTranslation;
     /* 0xD4  */ MATRIX worldToScreenMatrix;
@@ -56,7 +56,7 @@ typedef struct {
 extern FieldTriggerZone* g_pFieldTriggerZones;
 
 extern FieldScene g_Scene;
-extern s32 g_WorldScale;
+extern int g_WorldScale;
 
 
 typedef struct {
