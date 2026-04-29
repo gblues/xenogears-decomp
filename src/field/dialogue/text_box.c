@@ -43,7 +43,9 @@ void func_8009BB0C(void) {
 
 INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009BC98);
 
-INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009BE58);
+s32 func_8009BE58(void) {
+    return ((g_FieldScriptVMCurActor->flags12C_0x9 - (FieldGetCameraDirection() & 0xffff)) & 0x7) < 5;
+}
 
 // Reset text box?
 void func_8009BE9C(void) {
@@ -67,17 +69,33 @@ void func_8009BE9C(void) {
     D_800B00C0 = 1;
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009BF8C);
+// modifies the face id.. is this changing out the portrait?
+void func_8009BF8C(void) {
+    if (FieldScriptVMGetActorIndex(1) != 0xFF) {
+        g_FieldScriptVMCurActor->faceId = g_FieldActors[FieldScriptVMGetActorIndex(1)].pActorData->faceId;
+        func_8009C01C();
+        return;
+    }
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 6;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009C01C);
 
-INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009C0B4);
+void func_8009C0B4(void) {
+    func_8009C5A8(D_800AFD1C, 0);
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009C0DC);
+void func_8009C0DC(void) {
+    func_8009C5A8(D_800AFD1C, 1);
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009C104);
+void func_8009C104(void) {
+    func_8009C5A8(D_800AFD1C, 2);
+}
 
-INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009C12C);
+void func_8009C12C(void) {
+    func_8009C5A8(D_800AFD1C, 3);
+}
 
 // https://decomp.me/scratch/tL6mE
 INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009C154);
@@ -107,7 +125,7 @@ extern u16 D_800B2174[];
 void func_8009CCF8(int arg0) {
     D_800B2174[0] |= 1 << arg0;
 }
-
+// find_first_unused()?
 int func_8009CD18(int* pTextBoxIndex) {
     int i;
 

@@ -1,6 +1,7 @@
 #include "common.h"
 #include "main/game.h"
 #include "system/math.h"
+#include "field/main.h"
 #include "field/camera.h"
 #include "field/actor.h"
 #include "field/script_vm.h"
@@ -43,7 +44,14 @@ void FieldScriptWaitForCameraMovement(void) {
 }
 
 
-INCLUDE_ASM("asm/field/nonmatchings/camera/camera_movement", func_8008FABC);
+void func_8008FABC(void) {
+    s16 angleY;
+
+    angleY = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(3));
+    g_Scene.sceneAngle.vy = angleY;
+    g_Scene.unknown_vec = (s32) angleY;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/camera/camera_movement", func_8008FB28);
 
