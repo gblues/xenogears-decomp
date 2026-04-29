@@ -49,7 +49,7 @@ void func_8008FABC(void) {
 
     angleY = FieldScriptArgument1(1, SCRIPT_READ_U8_REL(3));
     g_Scene.sceneAngle.vy = angleY;
-    g_Scene.unknown_vec = (s32) angleY;
+    g_Scene.unk7C = angleY;
     g_FieldScriptVMCurActor->scriptInstructionPointer += 4;
 }
 

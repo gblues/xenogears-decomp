@@ -308,9 +308,9 @@ typedef struct {
     u_int flags12C_0x2: 3; // Tentative
     u_int flags12C_0x5: 1;
     u_int flags12C_0x6: 3; // Keeps track of recursion level in scripts - inc on call, dec on ret
-    u_int flags12C_0x9: 3; // Tentative, Direction?
+    /* flags12C_0x9 */ u_int direction: 3;
     u_int flags12C_0xD: 1;
-    u_int flags12C_3: 19; // Tentative
+    u_int flags12C_0xE: 19; // Tentative
 
 
     int flags130;

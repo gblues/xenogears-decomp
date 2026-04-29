@@ -44,7 +44,7 @@ void func_8009BB0C(void) {
 INCLUDE_ASM("asm/field/nonmatchings/dialogue/text_box", func_8009BC98);
 
 s32 func_8009BE58(void) {
-    return ((g_FieldScriptVMCurActor->flags12C_0x9 - (FieldGetCameraDirection() & 0xffff)) & 0x7) < 5;
+    return ((g_FieldScriptVMCurActor->direction - (FieldGetCameraDirection() & 0xffff)) & MASK_8DIR_MOVEMENT_NUM_DIRECTIONS) < 5;
 }
 
 // Reset text box?
