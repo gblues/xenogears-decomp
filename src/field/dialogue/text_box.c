@@ -71,7 +71,7 @@ void func_8009BE9C(void) {
 
 // modifies the face id.. is this changing out the portrait?
 void func_8009BF8C(void) {
-    if (FieldScriptVMGetActorIndex(1) != 0xFF) {
+    if (FieldScriptVMGetActorIndex(1) != ACTOR_ID_INVALID) {
         g_FieldScriptVMCurActor->faceId = g_FieldActors[FieldScriptVMGetActorIndex(1)].pActorData->faceId;
         func_8009C01C();
         return;
