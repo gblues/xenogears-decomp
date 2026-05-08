@@ -22,12 +22,19 @@
 #define SCRIPT_VAR_SYSTEM_TIME_LOW 0xC // Seconds and minutes
 #define SCRIPT_VAR_SYSTEM_TIME_HIGH 0xE // Hours
 
+typedef void (*ScriptVMHandler)(void);
+
 // Is Yielding maybe?
 extern int D_800B00C0;
+extern char D_8006FD84;
+extern int D_800ADBE0;
+extern int D_800ADBE4;
+extern int D_800ADBEC;
+extern int D_800ADB1C;
 
 extern int FieldScriptVMGetInstructionArgument(int);
 extern int FieldScriptVMGetVariableSign(int);
 extern int FieldScriptVMGetVariableValue(int);
 extern short FieldScriptVMGetInstructionArgumentS16(int);
-
+extern ScriptVMHandler g_FieldScriptVMHandlers[];
 #endif

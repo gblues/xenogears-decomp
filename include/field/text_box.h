@@ -14,6 +14,7 @@ typedef struct {
     SPRT sprites[2];
 } FieldTextBoxCursor;
 
+/* size = 0x44 */
 typedef struct {
     short visibility;
     u_char _pad[2];
@@ -43,24 +44,23 @@ typedef struct {
 
 // FieldTextBox Size 0x498
 typedef struct {
-    DR_MODE drawModes[2];
+    /* 0x000 */ DR_MODE drawModes[2];
 
-    // 0x18
-    short _pad[0x56];
+    /* 0x018 */ short _pad[0x56];
 
-    // Background, 0xC4
-    FieldTextBoxBackground background;
+    // Background
+    /* 0x0C4 */FieldTextBoxBackground background;
 
-    // Borders, 0xFC
-    FieldTextBoxBorders borders;
+    // Borders
+    /* 0x0FC */ FieldTextBoxBorders borders;
 
-    // Cursor, 0x37C
-    FieldTextBoxCursor cursor;
+    // Cursor
+    /* 0x37C */ FieldTextBoxCursor cursor;
 
-    // Continue Arrow, 0x3C4
-    FieldTextBoxContinueArrow continueArrow;
-    short windowOpenTimer;
-    short continueArrowTimer;
+    // Continue Arrow
+    /* 0x3C4 */ FieldTextBoxContinueArrow continueArrow;
+    /* 0x408 */ short windowOpenTimer;
+    /* 0x40A */ short continueArrowTimer;
 
     /*
     0x0001 - set when top message init and bottom.
@@ -68,20 +68,20 @@ typedef struct {
     0x0040 - don't render border and background and continue arrow.
     0x0080 - set when bottom message init.
     */
-    short flags; // 0x40C
-    short visibility; // 0 = Visible, -1 = Hidden
-    u_short order; // 0-top. 0xffff if window not inited
-    short unk412;
-    short status; // Set to 0 to close window. Usually 0xffff (not used in usual window render)
-    short ownerActorID;
-    short talkingActorID;
-    int positionOffsetX;
-    int positionOffsetY;
-    int positionOffsetDeltaX;
-    int positionOffsetDeltaY;
+    /* 0x40C */ short flags;
+    /* 0x40E */ short visibility; // 0 = Visible, -1 = Hidden
+    /* 0x410 */ u_short order; // 0-top. 0xffff if window not inited
+    /* 0x412 */ short unk412;
+    /* 0x414 */ short status; // Set to 0 to close window. Usually 0xffff (not used in usual window render)
+    /* 0x416 */ short ownerActorID;
+    /* 0x418 */ short talkingActorID;
+    /* 0x41C */ int positionOffsetX;
+    /* 0x420 */ int positionOffsetY;
+    /* 0x424 */ int positionOffsetDeltaX;
+    /* 0x428 */ int positionOffsetDeltaY;
 
-    // Portrait, 0x42C
-    FieldTextBoxPortrait portrait;
+    // Portrait
+    /* 0x42C */ FieldTextBoxPortrait portrait;
 } FieldTextBox;
 
 extern FieldTextBox g_FieldTextBoxes[4];
