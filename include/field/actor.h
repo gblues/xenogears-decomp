@@ -325,8 +325,8 @@ typedef struct {
     /* 0x2C */ MATRIX childMatrix;
     /* 0x4C */ ActorData* pActorData;
     /* 0x50 */ SVEC rotation;
-    short flags;
-    short status;
+    /* 0x56 */ short flags;
+    /* 0x58 */ short status;
 } FieldActor;
 
 typedef struct {

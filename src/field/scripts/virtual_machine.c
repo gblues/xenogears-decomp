@@ -6,6 +6,7 @@
 #include "field/effects.h"
 #include "system/memory.h"
 #include "system/archive.h"
+#include "system/debug.h"
 #include "psyq/libgpu.h"
 #include "psyq/libcd.h"
 
@@ -211,7 +212,50 @@ void func_800A1E9C(void) {
     g_FieldScriptVMCurActor->scriptInstructionPointer++;
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/scripts/virtual_machine", FieldScriptVMRun);
+void FieldScriptVMRun(int maxInstructionCount) {
+    int nInstructionCount;
+    u_short nInstructionPointer;
+    u_char nHandlerIndex;
+
+    D_800B00C0 = 0;
+    g_FieldScriptMaxInstructionCount = maxInstructionCount;
+
+    for (nInstructionCount = 0; nInstructionCount < g_FieldScriptMaxInstructionCount; nInstructionCount++) {
+        /* TODO: delete this asm() when we hit 100% matching.
+         *
+         * The current working theory is that there was some debugging code injected here, most likely a break
+         * instruction, and they just changed the define to an empty string for the release build. This caused
+         * the loop optimization for this function to break, which is why you see a noop in the jump's delay
+         * slot. From all testing done with code structure and compiler arguments, this appears to be the only
+         * way to make the function match.
+         */
+        asm(ASM_BREAKPOINT);
+        if (nInstructionCount > 0x400) {
+            if (g_FieldSystemMode == SYSTEM_PC_HARDDRIVE) {
+                func_800379C8(&D_8006FD84, D_800AFD1C); // Error printing
+            }
+            return;
+        }
+        nInstructionPointer = g_FieldScriptVMCurActor->scriptInstructionPointer;
+        nHandlerIndex = ((u_char *)g_FieldScriptVMCurScriptData)[nInstructionPointer];
+        g_FieldScriptVMHandlers[nHandlerIndex]();
+
+        if (D_800AFFEC == 0) {
+            g_FieldScriptMaxInstructionCount = 0xFFFF;
+        }
+
+        // Various exit checks
+        if ((D_800ADB1C != 0 && (D_800ADBE0 == 0 ||  D_800ADBE4 == 0 ||  D_800ADBEC == 0))) {
+            return;
+        }
+
+        if (D_800B00C0 == 1 && D_800AFFEC == D_800B00C0) {
+            return;
+        }
+
+    }
+
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/scripts/virtual_machine", func_800A2030);
 
@@ -371,4 +415,3 @@ void func_800A476C(int x, int y) {
     MoveImage(&rect, x, y);
     FieldRenderSync();
 }
-
