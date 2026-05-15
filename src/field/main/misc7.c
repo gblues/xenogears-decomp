@@ -127,7 +127,7 @@ void func_80098CAC(s32 arg0) {
     }
     
     animationId = 1;
-    g_FieldScriptVMCurActor->scriptFlags_0xX = 1;
+    g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0xX = 1;
     if (SCRIPT_READ_U8_REL(1) == 0) {
         scriptArg1 = CONV_FROM_GTE(FieldScriptArgument1(2, SCRIPT_READ_U8_REL(0x8)));
         scriptArg2 = CONV_FROM_GTE(FieldScriptArgument2(4, SCRIPT_READ_U8_REL(0x8)));
@@ -201,7 +201,7 @@ void func_80098CAC(s32 arg0) {
     }
     
     if (g_FieldScriptVMCurActor->curAnimationId != animationId &&  
-        !g_FieldScriptVMCurActor->scriptFlags_0x18
+        !g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x18
     ) {
         g_FieldScriptVMCurActor->curAnimationId = animationId;
         func_800821F4(pSprite, animationId, D_800B06B8, g_FieldScriptVMCurActor);

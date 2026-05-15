@@ -253,7 +253,7 @@ void func_80093D48(void) {
 
 // The two functions seems to be related to handling room transitions
 void func_80093E30(void) {
-    if (!g_FieldScriptVMCurActor->scriptFlags_0x13) {
+    if (!g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x13) {
         if (!(g_FieldScriptVMCurActor->flags12C_0x5)) {
             g_FieldScriptVMCurActor->flags12C_0x5 = 1;
             g_FieldScriptVMCurActor->curDoorStep = 0;
@@ -267,7 +267,7 @@ void func_80093E30(void) {
                     g_FieldActors[D_800AFD1C].rotation.y -= 0x20;
                 }
             } else {
-                g_FieldScriptVMCurActor->scriptFlags_0x13 = 0x1;
+                g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x13 = 0x1;
                 g_FieldScriptVMCurActor->flags12C_0x5 = 0;
                 g_FieldScriptVMCurActor->curDoorStep = 0;
                 g_FieldScriptVMCurActor->scriptInstructionPointer += 2;
@@ -281,7 +281,7 @@ void func_80093E30(void) {
 }
 
 void func_80093FC0(void) {
-    if (g_FieldScriptVMCurActor->scriptFlags_0x13) {
+    if (g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x13) {
         if (!(g_FieldScriptVMCurActor->flags12C_0x5)) {
             g_FieldScriptVMCurActor->flags12C_0x5 = 1;
             g_FieldScriptVMCurActor->curDoorStep = 0;
@@ -295,7 +295,7 @@ void func_80093FC0(void) {
                     g_FieldActors[D_800AFD1C].rotation.y += 0x20;
                 }
             } else {
-                g_FieldScriptVMCurActor->scriptFlags_0x13 = 0;
+                g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x13 = 0;
                 g_FieldScriptVMCurActor->flags12C_0x5 = 0;
                 g_FieldScriptVMCurActor->curDoorStep = 0;
                 g_FieldScriptVMCurActor->scriptInstructionPointer += 2;
@@ -317,7 +317,7 @@ void func_80094158() {
     int angle;
     int delta;
 
-    if (!g_FieldScriptVMCurActor->scriptFlags_0x13) {
+    if (!g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x13) {
         if (!g_FieldScriptVMCurActor->flags12C_0x5) {
             g_FieldScriptVMCurActor->flags12C_0x5 = 0x1;
             g_FieldScriptVMCurActor->curDoorStep = 0;
@@ -347,7 +347,7 @@ void func_80094158() {
                         break;
                 }
             } else {
-                g_FieldScriptVMCurActor->scriptFlags_0x13 = 1;
+                g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x13 = 1;
                 g_FieldScriptVMCurActor->flags12C_0x5 = 0;
                 g_FieldScriptVMCurActor->curDoorStep = 0;   
                 g_FieldScriptVMCurActor->scriptInstructionPointer += 7;
@@ -364,7 +364,7 @@ void func_800943AC(void) {
     int angle;
     int delta;
     
-    if (g_FieldScriptVMCurActor->scriptFlags_0x13) {
+    if (g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x13) {
         if (!g_FieldScriptVMCurActor->flags12C_0x5) {
             g_FieldScriptVMCurActor->flags12C_0x5 = 0x1;
             g_FieldScriptVMCurActor->curDoorStep = 0x0;
@@ -391,7 +391,7 @@ void func_800943AC(void) {
                         break;
                 }
             } else {
-                g_FieldScriptVMCurActor->scriptFlags_0x13 = 0x0;
+                g_FieldScriptVMCurActor->scriptFlags.fields.scriptFlags_0x13 = 0x0;
                 g_FieldScriptVMCurActor->flags12C_0x5 = 0x0;
                 g_FieldScriptVMCurActor->curDoorStep = 0;
                 g_FieldScriptVMCurActor->scriptInstructionPointer += 7;

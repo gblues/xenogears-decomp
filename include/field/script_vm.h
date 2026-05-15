@@ -37,4 +37,5 @@ extern int FieldScriptVMGetVariableSign(int);
 extern int FieldScriptVMGetVariableValue(int);
 extern short FieldScriptVMGetInstructionArgumentS16(int);
 extern ScriptVMHandler g_FieldScriptVMHandlers[];
+extern ScriptVMHandler g_FieldScriptVMHandlers2[];
 #endif
