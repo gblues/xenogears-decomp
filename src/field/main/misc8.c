@@ -3,6 +3,7 @@
 #include "field/main.h"
 #include "field/text_box.h"
 #include "field/effects.h"
+#include "field/script_vm.h"
 #include "system/memory.h"
 #include "system/archive.h"
 #include "system/sound.h"
@@ -198,17 +199,13 @@ void func_80086908(void) {
 }
 */
 
-// Call function from second handler table
-INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_800869B8);
-/*
-void func_800869B8(void) {
-    u_short handlerIndex;
+void FieldScriptVM2Run(void) {
+    char *script = (char *)g_FieldScriptVMCurScriptData;
+    size_t vmIP = ++(g_FieldScriptVMCurActor->scriptInstructionPointer);
 
-    handlerIndex = g_FieldScriptVMCurActor->scriptInstructionPointer + 1;
-    g_FieldScriptVMCurActor->scriptInstructionPointer = handlerIndex;
-    &gEventHandlers2[g_FieldScriptVMCurScriptData + handlerIndex]();
+    ScriptVMHandler *handler = &g_FieldScriptVMHandlers2[script[vmIP]];
+    (*handler)();
 }
-*/
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc8", func_80086A1C);
 
