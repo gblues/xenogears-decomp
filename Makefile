@@ -75,7 +75,7 @@ build:
 endif
 
 check: clean build
-	@sha256sum --ignore-missing --check $(CONFIG_DIR)/checksum.sha
+	@sha256sum --check $(CONFIG_DIR)/checksum.sha
 
 objdiff-config:
 	$(MAKE) clean; \
