@@ -1,5 +1,6 @@
 #include "common.h"
 #include "psyq/libgte.h"
+#include "system/controller.h"
 #include "system/menu.h"
 #include "system/memory.h"
 
@@ -28,7 +29,52 @@ void MenuInitializeGfxEnvironments(void) {
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/menu", func_8001BEEC);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/menu", func_8001BF38);
+void MenuProcessControllerInput(void) {
+    u_char input = MENU_INPUT_IDLE;
+    if (func_80036410() != 0) {
+        ControllerResetState();
+        g_Menu->input = input;
+        return;
+    }
+    while (ControllerPopState()) {
+        if (g_C1ButtonStatePressedOnce & CTRL_BTN_RIGHT) {
+            input = MENU_INPUT_RIGHT;
+            break;
+        }
+        if (g_C1ButtonStatePressedOnce & CTRL_BTN_DOWN) {
+            input = MENU_INPUT_DOWN;
+            break;
+        }
+        if (g_C1ButtonStatePressedOnce & CTRL_BTN_LEFT) {
+            input = MENU_INPUT_LEFT;
+            break;
+        }
+        if (g_C1ButtonStatePressedOnce & CTRL_BTN_UP) {
+            input = MENU_INPUT_UP;
+            break;
+        }
+        if (g_C1ButtonStatePressedOnce & CTRL_BTN_CIRCLE) {
+            input = MENU_INPUT_CONFIRM;
+            break;
+        }
+        if (g_C1ButtonStatePressedOnce & CTRL_BTN_SELECT) {
+            input = 12;
+            g_Menu->unk1E94 = g_Menu->unk1E94 == 0;
+            break;
+        }
+        if (g_C1ButtonStatePressedOnce & CTRL_BTN_L1) {
+            if (g_Menu->unk1E95) {
+                g_Menu->unk1E95 -= 1;
+            }
+            break;
+        }
+        if (g_C1ButtonStatePressedOnce & CTRL_BTN_L2) {
+            g_Menu->unk1E95 += 1;
+            break;
+        }
+    }
+    g_Menu->input = input;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/menu", func_8001C074);
 
