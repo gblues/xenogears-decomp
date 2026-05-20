@@ -344,12 +344,23 @@ typedef struct {
     /* 0x1D8  */ SVECTOR rotation;
     /* 0x1E0  */ VECTOR translation;
     /* 0x1F0  */ MATRIX matTransform;
-    /* 0x210  */ u8 unk1D8[0xC8];
+    /* 0x210  */ u8 unk1D8[0x8];
+    // Note: The next 8 bytes (4 shorts) could be a SVECTOR
+    /* 0x218  */ undefined16 unk218;
+    /* 0x21A  */ undefined16 unk21A;
+    /* 0x21C  */ undefined16 unk21C;
+    /* 0x21E  */ u8 unk21E[0x2];
+    // Note: the next 16 bytes (4 longs) could be a VECTOR
+    /* 0x220  */ undefined32 unk220;
+    /* 0x224  */ undefined32 unk224;
+    /* 0x228  */ undefined32 unk228;
+    /* 0x22D  */ u8 unk22D[0xAB];
     /* 0x2D8  */ u32 unk2D8;
     /* 0x2DC  */ void* unk2DC; // Resources / Textured polys
     /* 0x2E0  */ void* unk2E0; // Pointer to resources (bin 3)
     /* 0x2E4  */ SoundFile* unk2E4; // Pointer to SEDS file
-    /* 0x2E8  */ u8 unk2E8[0x20];
+    /* 0x2E8  */ undefined32 unk2E8;
+    /* 0x2EC  */ u8 unk2EC[0x1C];
     /* 0x308  */ int renderContext;
     /* 0x30C  */ u_char availableCharacters[0x10];
     /* 0x31C  */ u_char digits[0x9]; // Buffer for numbers parsed into a string
