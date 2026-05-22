@@ -155,9 +155,15 @@ void ShopMenuParseNumberToString(u_int number) {
     }
 }
 
-INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", func_801C5194);
+void ShopMenuUnk32CManager(u_char isInitialization) {
+    if (isInitialization) {
+        g_Menu->unk32C = HeapAlloc(sizeof(MenuUnk2), 0);
+        bzero(g_Menu->unk32C, sizeof(MenuUnk2));
+        return;
+    }
+    HeapFree(g_Menu->unk32C);
+}
 
-// Initialize or free the manager which handles the menu logic
 void ShopMenuSetManager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->pManager = HeapAlloc(sizeof(MenuManager), 0);
@@ -167,17 +173,52 @@ void ShopMenuSetManager(u_char isInitialization) {
     HeapFree(g_Menu->pManager);
 }
 
-INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", func_801C525C);
+void ShopMenuSelectionMenuManager(u_char isInitialization) {
+    if (isInitialization) {
+        g_Menu->pSelectionMenu = HeapAlloc(sizeof(MenuSelectionMenu), 0);
+        bzero(g_Menu->pSelectionMenu, sizeof(MenuSelectionMenu));
+        return;
+    }
+    HeapFree(g_Menu->pSelectionMenu);
+}
 
-INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", func_801C52C0);
+void ShopMenuUnk354Manager(u_char isInitialization) {
+    if (isInitialization) {
+        g_Menu->unk354 = HeapAlloc(sizeof(MenuUnk5), 0);
+        bzero(g_Menu->unk354, sizeof(MenuUnk5));
+        return;
+    }
+    HeapFree(g_Menu->unk354);
+}
 
-INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", func_801C5324);
+void ShopMenuUnk330Manager(u_char isInitialization) {
+    if (isInitialization) {
+        g_Menu->unk330 = HeapAlloc(sizeof(MenuUnk6), 0);
+        bzero(g_Menu->unk330, sizeof(MenuUnk6));
+        return;
+    }
+    HeapFree(g_Menu->unk330);
+}
 
-INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", func_801C5388);
+void ShopMenuUnk348Manager(u_char isInitialization) {
+    if (isInitialization) {
+        g_Menu->unk348 = HeapAlloc(sizeof(MenuUnk1), 0);
+        bzero(g_Menu->unk348, sizeof(MenuUnk1));
+        return;
+    }
+    HeapFree(g_Menu->unk348);
+}
 
-INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", func_801C53EC);
+void ShopMenuUnk1E20Manager(u_char isInitialization) {
+    if (isInitialization) {
+        g_Menu->unk1E20 = HeapAlloc(sizeof(MenuUnk7), 0);
+        bzero(g_Menu->unk1E20, sizeof(MenuUnk7));
+        return;
+    }
+    HeapFree(g_Menu->unk1E20);
+}
 
-void ShopMenuSetShopData(u_char isInitialization) {
+void ShopMenuShopManager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->pShop = HeapAlloc(sizeof(MenuShop), 0);
         bzero(g_Menu->pShop, sizeof(MenuShop));
@@ -2031,14 +2072,14 @@ void ShopMenuFree(void) {
     do {
         ShopMenuUpdateAndRender();
     } while (g_Menu->renderContext);
-    func_801C5194(MENU_DATA_FREE);
+    ShopMenuUnk32CManager(MENU_DATA_FREE);
     ShopMenuSetManager(MENU_DATA_FREE);
-    func_801C525C(MENU_DATA_FREE);
-    func_801C52C0(MENU_DATA_FREE);
-    func_801C5324(MENU_DATA_FREE);
-    func_801C5388(MENU_DATA_FREE);
+    ShopMenuSelectionMenuManager(MENU_DATA_FREE);
+    ShopMenuUnk354Manager(MENU_DATA_FREE);
+    ShopMenuUnk330Manager(MENU_DATA_FREE);
+    ShopMenuUnk348Manager(MENU_DATA_FREE);
     ShopMenuLoadShopItemsData(0x10);
-    ShopMenuSetShopData(MENU_DATA_FREE);
+    ShopMenuShopManager(MENU_DATA_FREE);
     HeapFree(g_Menu->unk2DC);
     HeapFree(g_Menu->unk2E0);
     HeapFree(g_Menu->unk4E0[0].pVramBuffer);
@@ -2050,7 +2091,7 @@ void ShopMenuFree(void) {
         HeapFree(g_Menu->unk2E4);
     }
     HeapFree(g_Menu->pShopEntries);
-    func_801C53EC(MENU_DATA_FREE);
+    ShopMenuUnk1E20Manager(MENU_DATA_FREE);
     HeapFree(g_Menu);
 }
 
@@ -2251,14 +2292,14 @@ void ShopMenuShopModeMenuMain(void) {
 }
 
 void ShopMenuMain(void) {
-    func_801C5194(MENU_DATA_INITIALIZE);
+    ShopMenuUnk32CManager(MENU_DATA_INITIALIZE);
     ShopMenuSetManager(MENU_DATA_INITIALIZE);
-    func_801C525C(MENU_DATA_INITIALIZE);
-    func_801C52C0(MENU_DATA_INITIALIZE);
-    func_801C5324(MENU_DATA_INITIALIZE);
-    func_801C5388(MENU_DATA_INITIALIZE);
-    func_801C53EC(MENU_DATA_INITIALIZE);
-    ShopMenuSetShopData(MENU_DATA_INITIALIZE);
+    ShopMenuSelectionMenuManager(MENU_DATA_INITIALIZE);
+    ShopMenuUnk354Manager(MENU_DATA_INITIALIZE);
+    ShopMenuUnk330Manager(MENU_DATA_INITIALIZE);
+    ShopMenuUnk348Manager(MENU_DATA_INITIALIZE);
+    ShopMenuUnk1E20Manager(MENU_DATA_INITIALIZE);
+    ShopMenuShopManager(MENU_DATA_INITIALIZE);
     g_Menu->pSelectionMenu->unk1180.x = 0x2C0;
     g_Menu->pSelectionMenu->unk1180.y = 0x100;
     g_Menu->pSelectionMenu->unk1180.w = 0x140;
