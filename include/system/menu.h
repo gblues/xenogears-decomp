@@ -164,6 +164,10 @@ typedef struct {
     /* 0xC0 */ u8 unkC0[0xC];
 } MenuUnk6; // Size: 0xCC
 
+typedef struct {
+    /* 0x0 */ u8 unk0[0xDEC];
+} MenuUnk7; // Size: 0xDEC
+
 // Character Info
 typedef struct {
     /* 0x0   */ POLY_FT4 polysDescriptionStrings[18];
@@ -420,7 +424,9 @@ typedef struct {
     /* 0x1DF0 */ MenuCharacter* benchedCharacters[MAX_BENCHED_PARTY_MEMBERS];
     /* 0x1E08 */ MenuCharacter* currentCharacters[MAX_PARTY_MEMBERS];
     /* 0x1E14 */ u8 unk1E14[MAX_GAME_CHARACTERS];
-    /* 0x1E1F */ u8 unk1E1F[0xD];
+    /* 0x1E1F */ u8 unk1E1F;
+    /* 0x1E20 */ MenuUnk7* unk1E20;
+    /* 0x1E24 */ u8 unk1E24[0x8];
     /* 0x1E2C */ void* pShopEntries;
     /* 0x1E30 */ u_char shopItemIDs[MAX_SHOP_ITEMS];
     /* 0x1E60 */ u_char shopItemTypes[MAX_SHOP_ITEMS];

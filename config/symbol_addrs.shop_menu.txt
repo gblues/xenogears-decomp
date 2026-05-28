@@ -4,8 +4,13 @@ ShopMenuGetCharacterBitMask = 0x801C50CC;
 ShopMenuParseNumberToString = 0x801C50E8;
 
 ShopMenuSetManager = 0x801C51F8;
-
-ShopMenuSetShopData = 0x801C5450;
+ShopMenuSelectionMenuManager = 0x801C525C;
+ShopMenuUnk32CManager = 0x801C5194;
+ShopMenuUnk354Manager = 0x801C52C0;
+ShopMenuUnk330Manager = 0x801C5324;
+ShopMenuUnk348Manager = 0x801C5388;
+ShopMenuUnk1E20Manager = 0x801C53EC;
+ShopMenuShopManager = 0x801C5450;
 
 ShopMenuLoadResources = 0x801C54B4;
 ShopMenuInitialize = 0x801C58F4;
