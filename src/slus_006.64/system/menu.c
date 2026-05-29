@@ -27,7 +27,22 @@ void MenuInitializeGfxEnvironments(void) {
     MenuInitializeGfxEnvironment(&g_Menu->gfxEnvs[1]);
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/menu", func_8001BEEC);
+void func_8001BEEC(void) {
+    g_Menu->translation.vz = 0x800;
+    g_Menu->unk228 = 0x800;
+    g_Menu->rotation.vz = 0;
+    g_Menu->rotation.vy = 0;
+    g_Menu->rotation.vx = 0;
+    g_Menu->translation.vy = 0;
+    g_Menu->translation.vx = 0;
+    g_Menu->unk21C = 0;
+    g_Menu->unk21A = 0;
+    g_Menu->unk218 = 0;
+    g_Menu->unk224 = 0;
+    g_Menu->unk220 = 0;
+    g_Menu->unk2E8 = 1;
+    g_Menu->transitionEffectState = 0;
+}
 
 void MenuProcessControllerInput(void) {
     u_char input = MENU_INPUT_IDLE;
