@@ -3,6 +3,8 @@ FieldActorWorldToScreenPosition = 0x80086200;
 
 FieldSetScreenDimensions = 0x80086D8C;
 
+FieldScriptCopyGear = 0x80087580;
+
 FieldScriptSetCharacterGear = 0x80088360;
 
 FieldScriptSetParticleBankDirections = 0x80088D38;

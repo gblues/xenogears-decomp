@@ -145,7 +145,11 @@ void func_8008752C(void) {
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008754C);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80087580);
+void FieldScriptCopyGear(void) {
+    int sourceGearIndex = FieldScriptVMGetArgument(1);
+    g_pGameState->gears[FieldScriptVMGetArgument(3)] = g_pGameState->gears[sourceGearIndex];
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 5;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008764C);
 
