@@ -143,7 +143,10 @@ void func_8008752C(void) {
     g_FieldScriptVMCurActor->scriptInstructionPointer += 3;
 }
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_8008754C);
+void func_8008754C(void) {
+    g_pGameState->unk22B6 |= 0x4000;
+    g_FieldScriptVMCurActor->scriptInstructionPointer += 1;
+}
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc", func_80087580);
 
