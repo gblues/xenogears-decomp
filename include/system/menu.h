@@ -344,7 +344,7 @@ typedef struct {
     /* 0x1D8  */ SVECTOR rotation;
     /* 0x1E0  */ VECTOR translation;
     /* 0x1F0  */ MATRIX matTransform;
-    /* 0x210  */ u8 unk1D8[0xC8];
+    /* 0x210  */ u8 unk210[0xC8];
     /* 0x2D8  */ u32 unk2D8;
     /* 0x2DC  */ void* unk2DC; // Resources / Textured polys
     /* 0x2E0  */ void* unk2E0; // Pointer to resources (bin 3)
