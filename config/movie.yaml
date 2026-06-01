@@ -2,7 +2,7 @@ name: Movie Overlay
 sha1: e7ff2568b918b75e290050597c86584f3499ebdf
 options:
   basename: movie.bin
-  target_path: disc/MOVIE.BIN
+  target_path: disc/movie.bin
   base_path: ../
   platform: psx
   compiler: PSYQ

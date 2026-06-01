@@ -1,26 +1,26 @@
 ---
 overlays:
-  - name: FIELD.BIN
+  - name: field.bin
     file_id: 0x0E
     directory_id: 0x01
     compressed: true
-  - name: WORLD_MAP.BIN
+  - name: world_map.bin
     file_id: 0x0F
     directory_id: 0x01
     compressed: true
-  - name: BATTLING.BIN
+  - name: battling.bin
     file_id: 0x0D
     directory_id: 0x01
     compressed: true
-  - name: BATTLE.BIN
+  - name: battle.bin
     file_id: 0x10
     directory_id: 0x01
     compressed: true
-  - name: MENU.BIN
+  - name: menu.bin
     file_id: 0x11
     directory_id: 0x01
     compressed: true
-  - name: MOVIE.BIN
+  - name: movie.bin
     file_id: 0x12
     directory_id: 0x01
     compressed: true
