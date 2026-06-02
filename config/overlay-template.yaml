@@ -13,6 +13,7 @@
 #                       to take the '.bin' extension off OVERLAY_FILE
 # * OVERLAY_BASE_ADDR   The base address where the overlay is loaded into RAM.
 # * OVERLAY_SIZE_HEX    The size of the overlay, in bytes, in hexadecimal
+# * OVERLAY_EOF_HEX     OVERLAY_BASE_ADDR + OVERLAY_SIZE_HEX in hexadecimal
 # Name is freeform, human-readable.
 name: New Overlay
 # The sha1 is calculated by running `sha1sum disc/OVERLAY_FILE`
@@ -84,4 +85,5 @@ segments:
       # ex: this starts at offset 0x5c0 and generates all code into main/main.c
       # - [0x5c0, c, main/main]
       # there's other types of segments, look at existing config yamls for examples
+      - { vram: OVERLAY_EOF_HEX, type: bss}
   - [OVERLAY_SIZE_HEX]
