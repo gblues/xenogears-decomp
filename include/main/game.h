@@ -61,7 +61,11 @@ typedef struct {
     /* 0x0    */ undefined8 field_0x0[0x26C];
     /* 0x26C  */ GameCharacter characters[MAX_GAME_CHARACTERS];
     /* 0x978  */ GameGear gears[MAX_GAME_GEARS];
-    /* 0x1648 */ undefined8 field_0x1648[0x2DC];
+    /* 0x1648 */ undefined8 unk1648[0x206];
+    /* 0x184E */ undefined16 unk184E;
+    /* 0x1850 */ undefined8 unk1850[0x2];
+    /* 0x1852 */ undefined16 unk1852;
+    /* 0x1854 */ undefined8 unk1854[0xD0];
     /* 0x1924 */ u_int gold;
     /* 0x1928 */ undefined8 unk1928[0x408];
     /* 0x1D30 */ undefined16 unk1D30;
