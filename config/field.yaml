@@ -2,7 +2,7 @@ name: Field Overlay
 sha1: 7bdc0e2be7797ab821fb7d0ce10438a0e91f4c7b
 options:
   basename: field.bin
-  target_path: disc/FIELD.BIN
+  target_path: disc/field.bin
   base_path: ../
   platform: psx
   compiler: PSYQ

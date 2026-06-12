@@ -356,7 +356,7 @@ fn main() {
             .with_implicit(built_objects)
             .variable("ldtarget", &config.compilation.binary);
 
-        let binary_path = format!("{}/out/{}", &config.directories.build, &config.compilation.binary.to_uppercase());
+        let binary_path = format!("{}/out/{}", &config.directories.build, &config.compilation.binary);
         rule_elf
             .build([&binary_path])
             .with([&elf_path]);
@@ -370,7 +370,7 @@ fn main() {
                 .with_implicit(built_objects)
                 .variable("ldtarget", overlay);
         
-            let binary_path = format!("{}/out/{}.bin", &config.directories.build, overlay.to_uppercase());
+            let binary_path = format!("{}/out/{}.bin", &config.directories.build, overlay);
             rule_elf
                 .build([&binary_path])
                 .with([&elf_path]);
