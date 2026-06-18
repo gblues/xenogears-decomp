@@ -1,7 +1,81 @@
 #include "common.h"
 #include "menuhelper/main.h"
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DC5C0);
+
+unsigned func_801DC5C0(MenuScene* menu, s32 degrees) {
+    MATRIX* matrix1;
+    MATRIX* matrix2;
+    MATRIX* nextMatrix2;
+    MenuScene* scene = menu;
+    SVECTOR* vec;
+    short *scratch = (short *)PSX_SCRATCH;
+    unsigned i;
+    unsigned length;
+
+    menu->matrix2.t[0] = menu->unk5C[0];
+    menu->matrix2.t[1] = menu->unk5C[1];
+    menu->matrix2.t[2] = menu->unk5C[2];
+    length = menu->length;
+
+    if (menu->rotDirection != 0) {
+        RotMatrixYXZ(&menu->vec2, &menu->matrix2);
+    } else {
+        RotMatrix(&menu->vec2, &menu->matrix2);
+    }
+
+    scratch[0] = (degrees * menu->vec1.vx) >> 0xC;
+    scratch[1] = 0;
+    scratch[2] = 0;
+    scratch[3] = 0;
+    scratch[4] = (degrees * menu->vec1.vy) >> 0xC;
+    scratch[5] = 0;
+    scratch[6] = 0;
+    scratch[7] = 0;
+    scratch[8] = (degrees * menu->vec1.vz) >> 0xC;
+
+    MulMatrix0(&menu->matrix2, (MATRIX* )scratch, &menu->matrix1);
+
+    menu->matrix1.t[0] = menu->matrix2.t[0];
+    menu->matrix1.t[1] = menu->matrix2.t[1];
+    menu->matrix1.t[2] = menu->matrix2.t[2];
+
+    for(i = 1; i < length; i++) {
+        menu++;
+
+        if(menu->doRotate != 0) {
+            if(menu->rotDirection != 0) {
+                RotMatrixYXZ(&menu->vec2, &menu->matrix1);
+                menu->doRotate = 0;
+            } else {
+                RotMatrix(&menu->vec2, &menu->matrix1);
+                menu->doRotate = 0;
+            }
+        }
+        if ((menu->parent != NULL) && (menu->parent->doTransform == 1)) {
+            menu->doTransform = 1;
+        }
+
+        if(menu->doTransform != 0) {
+            menu->matrix1.t[0] = menu->unk5C[0];
+            menu->matrix1.t[1] = menu->unk5C[1];
+            menu->matrix1.t[2] = menu->unk5C[2];
+
+            if(menu->parent != NULL) {
+                CompMatrix(&menu->parent->matrix2, &menu->matrix1, &menu->matrix2);
+            } else {
+                menu->matrix2 = menu->matrix1;
+            }
+        }
+    }
+
+    for(i = 1; i < length; i++) {
+        scene++;
+        scene->doTransform = 0;
+    }
+
+    return length;
+}
+
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DC848);
 
