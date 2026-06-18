@@ -51,7 +51,7 @@ typedef struct {
     /* 0x0 */ u_short equipFlags; // Which characters can use this item?
     /* 0x2 */ u16 unk2;
     /* 0x4 */ u_short price;
-    /* 0x6 */ u8 unk6[0xA]
+    /* 0x6 */ u8 unk6[0xA];
 } MenuShopWeapon; // Size: 0x10
 
 typedef struct {
@@ -354,7 +354,9 @@ typedef struct {
     /* 0x220  */ undefined32 unk220;
     /* 0x224  */ undefined32 unk224;
     /* 0x228  */ undefined32 unk228;
-    /* 0x22D  */ u8 unk22D[0xAB];
+    /* 0x22C  */ undefined32 unk22C;
+    /* 0x230  */ u8 unk230[0x68];
+    /* 0x298  */ u8 unk298[0x3F];
     /* 0x2D8  */ u32 unk2D8;
     /* 0x2DC  */ void* unk2DC; // Resources / Textured polys
     /* 0x2E0  */ void* unk2E0; // Pointer to resources (bin 3)

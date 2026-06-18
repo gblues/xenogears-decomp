@@ -71,15 +71,15 @@ overlays:
   - name: shop_menu.bin
     directory_id: 0x10
     file_id: 0x09
-#  - name: dir_0x10_file_0xa.bin
-#    file_id: 0x0a
-#    directory_id: 0x10
+  - name: gear_shop_menu.bin
+    file_id: 0x0a
+    directory_id: 0x10
 #  - name: dir_0x10_file_0xb.bin
 #    file_id: 0x0b
 #    directory_id: 0x10
-#  - name: dir_0x10_file_0xc.bin
-#    file_id: 0x0c
-#    directory_id: 0x10
+  - name: gear_shop_helper.bin
+    file_id: 0x0c
+    directory_id: 0x10
 #  - name: dir_0x10_file_0xd.bin
 #    file_id: 0x0d
 #    directory_id: 0x10
