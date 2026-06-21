@@ -168,6 +168,10 @@ typedef struct {
     /* 0x0 */ u8 unk0[0xDEC];
 } MenuUnk7; // Size: 0xDEC
 
+typedef struct {
+    /* 0x0 */ u8 unk0[0x1f00];
+} MenuUnk8;
+
 // Character Info
 typedef struct {
     /* 0x0   */ POLY_FT4 polysDescriptionStrings[18];
@@ -318,7 +322,7 @@ typedef struct {
     /* 0x4720 */ u8 unk4720[0x65];
     /* 0x4785 */ u8 unk4785;
     /* 0x4786 */ u8 unk4786[0x2];
-} MenuShop; // Size: 4788
+} MenuShop; // Size: 0x4788
 
 typedef struct {
     /* 0x0  */ POLY_FT4 polys[2];
@@ -326,6 +330,10 @@ typedef struct {
     /* 0x70 */ u_char renderContext;
     /* 0x71 */ u8 unk71[0x3];
 } MenuScrollBarHandle; // Size: 0x74
+
+typedef struct {
+    /* 0x00 */ u8 unk0[0x1C4];
+} MenuUnknownComponent;
 
 typedef struct {
     /* 0x0  */ POLY_FT4 polys[2];
@@ -345,16 +353,8 @@ typedef struct {
     /* 0x1E0  */ VECTOR translation;
     /* 0x1F0  */ MATRIX matTransform;
     /* 0x210  */ u8 unk1D8[0x8];
-    // Note: The next 8 bytes (4 shorts) could be a SVECTOR
-    /* 0x218  */ undefined16 unk218;
-    /* 0x21A  */ undefined16 unk21A;
-    /* 0x21C  */ undefined16 unk21C;
-    /* 0x21E  */ u8 unk21E[0x2];
-    // Note: the next 16 bytes (4 longs) could be a VECTOR
-    /* 0x220  */ undefined32 unk220;
-    /* 0x224  */ undefined32 unk224;
-    /* 0x228  */ undefined32 unk228;
-    /* 0x22C  */ undefined32 unk22C;
+    /* 0x218  */ SVECTOR unk218;
+    /* 0x220  */ VECTOR unk220;
     /* 0x230  */ u8 unk230[0x68];
     /* 0x298  */ u8 unk298[0x3F];
     /* 0x2D8  */ u32 unk2D8;
@@ -373,7 +373,7 @@ typedef struct {
     /* 0x329  */ u_char transitionEffectState;
     /* 0x32A  */ u8 unk32A; // Sound effects enabled?
     /* 0x32B  */ u8 unk32B;
-    /* 0x32C  */ MenuUnk2* unk32C;
+    /* 0x32C  */ MenuUnk2* menuUnk2;
     /* 0x330  */ MenuUnk6* unk330;
     /* 0x334  */ u8 unk334;
     /* 0x335  */ u8 unk335;
@@ -396,11 +396,12 @@ typedef struct {
     /* 0x428  */ MenuPointerCursors* pCursors;
     /* 0x42C  */ u8 unk42C[0x10];
     /* 0x43C  */ MenuScrollBarHandle* pScrollHandle;
-    /* 0x440  */ u8 unk440[0x4];
+    /* 0x440  */ MenuUnknownComponent* unk440;
     /* 0x444  */ MenuArrowCursor* arrowCursors[MENU_MAX_NUM_ARROW_CURSORS];
     /* 0x44C  */ u8 unk44C[0x4];
     /* 0x450  */ MenuShop* pShop;
-    /* 0x454  */ u8 unk454[0x18];
+    /* 0x454  */ MenuUnk8* menuUnk8;
+    /* 0x458  */ u8 unk458[0x14];
 
     // Window borders
     /* 0x46C  */ u32 unk46C; // UV?

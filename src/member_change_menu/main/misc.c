@@ -70,11 +70,11 @@ u_short MemberChangeMenuIsCharacterFlagSet(u_short value, u_char maskIndex) {
 
 void func_801C5034(u_char isInitialization) {
     if (isInitialization) {
-        g_Menu->unk32C = HeapAlloc(sizeof(MenuUnk2), 0);
-        bzero(g_Menu->unk32C, sizeof(MenuUnk2));
+        g_Menu->menuUnk2 = HeapAlloc(sizeof(MenuUnk2), 0);
+        bzero(g_Menu->menuUnk2, sizeof(MenuUnk2));
         return;
     }
-    HeapFree(g_Menu->unk32C);
+    HeapFree(g_Menu->menuUnk2);
 }
 
 // Initialize or free the manager which handles the menu logic
@@ -160,14 +160,14 @@ void MemberChangeMenuLoadResources(void) {
     // Xenogears Icon TIM
     pResourceEntry = LZSSHeapDecompress(pResources[1], 1);
     OpenTIM(pResourceEntry);
-    ReadTIM(&g_Menu->unk32C->tim);
-    g_Menu->unk32C->unk4B94 = 0x53;
-    g_Menu->unk32C->unk4B95 = 0x43;
-    g_Menu->unk32C->unk4B96 = 0x11;
-    g_Menu->unk32C->unk4B97 = 1;
-    bzero(g_Menu->unk32C->unk4B98, 0x5C);
-    memmove(&g_Menu->unk32C->unk4BF4, g_Menu->unk32C->tim.caddr, 0x20);
-    memmove(&g_Menu->unk32C->unk4C14, g_Menu->unk32C->tim.paddr, 0x80);
+    ReadTIM(&g_Menu->menuUnk2->tim);
+    g_Menu->menuUnk2->unk4B94 = 0x53;
+    g_Menu->menuUnk2->unk4B95 = 0x43;
+    g_Menu->menuUnk2->unk4B96 = 0x11;
+    g_Menu->menuUnk2->unk4B97 = 1;
+    bzero(g_Menu->menuUnk2->unk4B98, 0x5C);
+    memmove(&g_Menu->menuUnk2->unk4BF4, g_Menu->menuUnk2->tim.caddr, 0x20);
+    memmove(&g_Menu->menuUnk2->unk4C14, g_Menu->menuUnk2->tim.paddr, 0x80);
     HeapFree(pResourceEntry);
     
     // Menu TIM Textures
@@ -876,14 +876,14 @@ void MemberChangeMenuDrawCursors(void) {
                 if (g_Menu->pCursors->unk144[i]) {
                     setXY4(
                         &g_Menu->pCursors->polysCursor[i * 2 + g_Menu->pCursors->renderContexts[i]],
-                        D_801CB47C[D_801CB404[g_Menu->unk32C->unk4F7C]] + 8,
-                        D_801CB4FC[D_801CB404[g_Menu->unk32C->unk4F7C]] - 6,
-                        D_801CB47C[D_801CB404[g_Menu->unk32C->unk4F7C]] + 24,
-                        D_801CB4FC[D_801CB404[g_Menu->unk32C->unk4F7C]] - 6,
-                        D_801CB47C[D_801CB404[g_Menu->unk32C->unk4F7C]] + 8,
-                        D_801CB4FC[D_801CB404[g_Menu->unk32C->unk4F7C]] + 10,
-                        D_801CB47C[D_801CB404[g_Menu->unk32C->unk4F7C]] + 24,
-                        D_801CB4FC[D_801CB404[g_Menu->unk32C->unk4F7C]] + 10  
+                        D_801CB47C[D_801CB404[g_Menu->menuUnk2->unk4F7C]] + 8,
+                        D_801CB4FC[D_801CB404[g_Menu->menuUnk2->unk4F7C]] - 6,
+                        D_801CB47C[D_801CB404[g_Menu->menuUnk2->unk4F7C]] + 24,
+                        D_801CB4FC[D_801CB404[g_Menu->menuUnk2->unk4F7C]] - 6,
+                        D_801CB47C[D_801CB404[g_Menu->menuUnk2->unk4F7C]] + 8,
+                        D_801CB4FC[D_801CB404[g_Menu->menuUnk2->unk4F7C]] + 10,
+                        D_801CB47C[D_801CB404[g_Menu->menuUnk2->unk4F7C]] + 24,
+                        D_801CB4FC[D_801CB404[g_Menu->menuUnk2->unk4F7C]] + 10
                     );
                 }
                 
@@ -1550,7 +1550,7 @@ void MemberChangeMenuFree(void) {
     func_801C5160(MENU_DATA_FREE);
     func_801C51C4(MENU_DATA_FREE);
     func_801C5228(MENU_DATA_FREE);
-    
+
     HeapFree(g_Menu->unk2DC);
     HeapFree(g_Menu->unk2E0);
     HeapFree(g_Menu->unk4E0[0].pVramBuffer);
