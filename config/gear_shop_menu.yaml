@@ -1,0 +1,80 @@
+name: New Overlay
+# The sha1 is calculated by running `sha1sum disc/gear_shop_menu.bin`
+sha1: 55091e9d2a1d202284a2c38bd68f2e3eeafd2497
+options:
+  basename: gear_shop_menu.bin
+  target_path: disc/gear_shop_menu.bin
+  base_path: ../
+  platform: psx
+  compiler: PSYQ
+
+  asm_path: asm/gear_shop_menu
+  src_path: src/gear_shop_menu
+  build_path: build/
+
+  ld_script_path: linker/gear_shop_menu.ld
+
+  find_file_boundaries: False
+  # Do not modify gp_value unless you know what you are doing.
+  gp_value: 0x80059170
+  global_vram_start: 0x80010000
+
+  o_as_suffix: False
+  use_legacy_include_asm: False
+
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+
+  section_order: [".rodata", ".text", ".data", ".bss"]
+
+  symbol_addrs_path:
+    - config/symbol_addrs.gear_shop_menu.txt
+    - config/symbol_addrs.slus_006.64.txt
+  reloc_addrs_path:
+    - configs/reloc_addrs.gear_shop_menu.txt
+
+  undefined_funcs_auto_path: linker/undefined_funcs_auto.gear_shop_menu.txt
+  undefined_syms_auto_path: linker/undefined_syms_auto.gear_shop_menu.txt
+
+  extensions_path: tools/splat_ext
+
+  subalign: 4
+
+  string_encoding: ASCII
+  data_string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+  ld_bss_is_noload: true
+segments:
+  - name: gear_shop_menu
+    type: code
+    start: 0x0
+    vram: 0x801c5000
+    bss_size: 0x20000
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata]
+      - [0x11c, c, main/main]
+      # Add subsegments here to capture code!
+      # Syntax:
+      # - [ offset_hex, c, path/file ]
+      # where:
+      #   offset_hex: is the file offset the segment begins at, in hex (don't forget the 0x prefix!).
+      #               if you've analyzed the overlay in ghidra, you can calculate this by taking the address of
+      #               the function and subtracting the overlay's base address from it.
+      #   c:          this is just literally the string "c"
+      #   path/file   will generate the *.c file at the specified file relative to src/gear_shop_menu
+      # ex: this starts at offset 0x5c0 and generates all code into main/main.c
+      # - [0x5c0, c, main/main]
+      # there's other types of segments, look at existing config yamls for examples
+      - [ 0x1197C, data ]
+      - { vram: 0x801d9800, type: bss}
+  - [0x14800]
+#  D_801D70E0
+#  D_801D70E4
+#  D_801D70E8
+#  D_801D70EC
+#  D_801D70F0
+#  D_801D9080

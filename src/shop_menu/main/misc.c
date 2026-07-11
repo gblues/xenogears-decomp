@@ -157,11 +157,11 @@ void ShopMenuParseNumberToString(u_int number) {
 
 void ShopMenuUnk32CManager(u_char isInitialization) {
     if (isInitialization) {
-        g_Menu->unk32C = HeapAlloc(sizeof(MenuUnk2), 0);
-        bzero(g_Menu->unk32C, sizeof(MenuUnk2));
+        g_Menu->menuUnk2 = HeapAlloc(sizeof(MenuUnk2), 0);
+        bzero(g_Menu->menuUnk2, sizeof(MenuUnk2));
         return;
     }
-    HeapFree(g_Menu->unk32C);
+    HeapFree(g_Menu->menuUnk2);
 }
 
 void ShopMenuSetManager(u_char isInitialization) {
@@ -1455,14 +1455,14 @@ void ShopMenuRenderPointerCursors(void) {
                 if (g_Menu->pCursors->unk144[i]) {
                     setXY4(
                         &g_Menu->pCursors->polysCursor[i * 2 + g_Menu->pCursors->renderContexts[i]],
-                        D_801D2094[D_801D201C[g_Menu->unk32C->unk4F7C]] + 8,
-                        D_801D2114[D_801D201C[g_Menu->unk32C->unk4F7C]] - 6,
-                        D_801D2094[D_801D201C[g_Menu->unk32C->unk4F7C]] + 24,
-                        D_801D2114[D_801D201C[g_Menu->unk32C->unk4F7C]] - 6,
-                        D_801D2094[D_801D201C[g_Menu->unk32C->unk4F7C]] + 8,
-                        D_801D2114[D_801D201C[g_Menu->unk32C->unk4F7C]] + 10,
-                        D_801D2094[D_801D201C[g_Menu->unk32C->unk4F7C]] + 24,
-                        D_801D2114[D_801D201C[g_Menu->unk32C->unk4F7C]] + 10  
+                        D_801D2094[D_801D201C[g_Menu->menuUnk2->unk4F7C]] + 8,
+                        D_801D2114[D_801D201C[g_Menu->menuUnk2->unk4F7C]] - 6,
+                        D_801D2094[D_801D201C[g_Menu->menuUnk2->unk4F7C]] + 24,
+                        D_801D2114[D_801D201C[g_Menu->menuUnk2->unk4F7C]] - 6,
+                        D_801D2094[D_801D201C[g_Menu->menuUnk2->unk4F7C]] + 8,
+                        D_801D2114[D_801D201C[g_Menu->menuUnk2->unk4F7C]] + 10,
+                        D_801D2094[D_801D201C[g_Menu->menuUnk2->unk4F7C]] + 24,
+                        D_801D2114[D_801D201C[g_Menu->menuUnk2->unk4F7C]] + 10
                     );
                 }
                 

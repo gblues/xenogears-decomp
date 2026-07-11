@@ -1019,6 +1019,8 @@ g_PartyStreamDataPointers = 0x80065AFC;
 g_GamePartyMemberSkins = 0x8006FABC; // size:0xC
 g_GamePartySkinsInitialized = 0x8004F30C;
 
+g_UnknownHandlerBlocks = 0x8004fe50; // type:UnknownHandlerBlock[] size:0x2A8
+
 g_C1Buffer = 0x800625FC;
 g_C2Buffer = 0x8006261E;
 
