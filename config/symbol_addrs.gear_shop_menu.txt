@@ -1,5 +1,5 @@
 GearMenuEntrypoint = 0x801CE024;
-
+GearMenu_ResolveGoldDigits = 0x801C5298;
 GearMenu_MenuUnk2Manager = 0x801C5344;
 GearMenu_MenuManagerManager = 0x801C53A8;
 GearMenu_SelectionMenuManager = 0x801C540C;
@@ -10,3 +10,4 @@ GearMenu_MenuUnk7Manager = 0x801C559C;
 GearMenu_MenuShopManager = 0x801C5600;
 GearMenu_MenuUnk8Manager = 0x801C5664;
 GearMenu_FilterPartyMembers = 0x801C5B08;
+GearMenu_initRenderContext = 0x801C5C98;

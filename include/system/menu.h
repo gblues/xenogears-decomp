@@ -41,6 +41,55 @@
 #define ITEM_TYPE_ACCESSORY 0x1
 #define ITEM_TYPE_ITEM 0x2
 
+
+/*
+ * Menu Resource type definitions
+ */
+
+/**
+ * This maps to the header of the file. The actual length of offsets[] is contained in count.
+ *
+ * The 0-length array is a workaround to not having C99 features like Flexible Array Member (FAM) that allows
+ * you to write 'u16 offsets[];'
+ */
+typedef struct {
+    u32 count;
+    u16 offsets[0];
+} MenuResourceDirectory; /* size: (2 * count) + 4 */
+
+/* This is the actual record structure */
+typedef struct {
+    /* 0x00 */ u16 u;
+    /* 0x02 */ s16 v;
+    /* 0x04 */ u16 width;
+    /* 0x06 */ u16 height;
+    /* 0x08 */ u16 x;
+    /* 0x0A */ s16 y;
+    /* 0x0C */ s16 unkC;
+    /* 0x0E */ s16 unkE;
+    /* 0x10 */ s16 texPageId;
+    /* 0x12 */ s16 clutX;
+    /* 0x14 */ s16 clutY;
+    /* 0x16 */ u16 texPageX;
+    /* 0x18 */ s16 texPageY;
+    /* 0x1A */ u8 flipX;
+    /* 0x1B */ u8 flipY;
+} MenuResourceTextureMetadata;
+
+/*
+ * Menu Resource Directory Entries (dirent)
+ */
+
+typedef struct {
+    s16 count;
+    s16 pad;
+    MenuResourceTextureMetadata data[0];
+} MenuResourceDirentTextureMetadata; /* size: (count * sizeof(MenuResourceTextureMetadata)) + 4 */
+
+/*
+ * end menu resources
+ */
+
 typedef struct {
     /* 0x0 */ u16 unk0;
     /* 0x2 */ u_short price;
@@ -268,8 +317,8 @@ typedef struct {
 // Shop data
 typedef struct {
     /* 0x0    */ POLY_FT4 polysCharacterPortraits[9*2];
-    /* 0x2D0  */ POLY_FT4 polys2D0[9*2]; // Letter 'E' (for Equip) on character portraits if item is equipped
-    /* 0x5A0  */ POLY_FT4 polysExplanations[4 * 2];
+    /* 0x2D0  */ POLY_FT4 polys2D0[9*2]; // offsets: 0x2D0, 0x2F8, 0x320, 0x348, 0x370, 0x398, 0x3C0, 0x3E8, 0x410, 0x438, 0x460, 0x488, 0x4B0, 0x4D8, 0x500, 0x528, 0x550, 0x578 Letter 'E' (for Equip) on character portraits if item is equipped
+    /* 0x5A0  */ POLY_FT4 polysExplanations[4 * 2]; // offsets: 0x5A0, 0x5C8, 0x5F0, 0x618, 0x640, 0x668, 0x690, 0x6B8
     /* 0x6E0  */ u8 unk6E0[0x5A0];
     /* 0xC80  */ POLY_FT4 polysGoldBefore[9 * 2];
     /* 0xF50  */ POLY_FT4 polysTotalPrice[9 * 2];
@@ -358,7 +407,7 @@ typedef struct {
     /* 0x230  */ u8 unk230[0x68];
     /* 0x298  */ u8 unk298[0x3F];
     /* 0x2D8  */ u32 unk2D8;
-    /* 0x2DC  */ void* unk2DC; // Resources / Textured polys
+    /* 0x2DC  */ MenuResourceDirectory *resources;
     /* 0x2E0  */ void* unk2E0; // Pointer to resources (bin 3)
     /* 0x2E4  */ SoundFile* unk2E4; // Pointer to SEDS file
     /* 0x2E8  */ undefined32 unk2E8;

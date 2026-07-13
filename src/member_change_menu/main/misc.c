@@ -156,7 +156,7 @@ void MemberChangeMenuLoadResources(void) {
 
     pResources = D_8005945C;
     ResolveArchiveEntryPointers(pResources);
-    
+
     // Xenogears Icon TIM
     pResourceEntry = LZSSHeapDecompress(pResources[1], 1);
     OpenTIM(pResourceEntry);
@@ -169,17 +169,17 @@ void MemberChangeMenuLoadResources(void) {
     memmove(&g_Menu->menuUnk2->unk4BF4, g_Menu->menuUnk2->tim.caddr, 0x20);
     memmove(&g_Menu->menuUnk2->unk4C14, g_Menu->menuUnk2->tim.paddr, 0x80);
     HeapFree(pResourceEntry);
-    
+
     // Menu TIM Textures
     pResourceEntry = LZSSHeapDecompress(pResources[2], 1);
     func_8002DD20(pResourceEntry);
     HeapFree(pResourceEntry);
-    
+
     // Table for where to find textures (UVs, sizes etc.) for the TIMs loaded above
-    g_Menu->unk2DC = LZSSHeapDecompress(pResources[3], 0);
+    g_Menu->resources = LZSSHeapDecompress(pResources[3], 0);
 
     g_Menu->unk2E0 = LZSSHeapDecompress(pResources[4], 0);
-    
+
     if (g_MenuDebugEnabled) {
         ArchiveSetIndex(0x10, 0x2);
         D_8006259C = HeapAlloc(ArchiveDecodeAlignedSize(0x5), 0);
@@ -189,7 +189,7 @@ void MemberChangeMenuLoadResources(void) {
         SoundAddSedsEntry(D_8006259C);
     }
     g_Menu->unk2E4 = D_8006259C;
-    
+
     HeapFree(pResources);
 }
 
@@ -203,7 +203,7 @@ void MemberChangeMenuInitialize(void) {
     g_Menu->unk326 = 0x3C;
     g_Menu->unk334 = 0;
     g_Menu->unk335 = 0;
-    
+
     // Check flags to see which characters are available and not
     flags = (g_GameState.unk1D30 & g_GameState.FrMask) & 0x7FF;
     for (i = 0; i < 0x10; i++) {
@@ -262,11 +262,11 @@ void func_801C57A0(MenuString* pString, int index, s32 arg2, u32 attributes) {
         SetSemiTrans(pPoly, 0);
         SetShadeTex(pPoly, 0);
         setRGB0(pPoly, 128, 128, 128);
-        
+
         if (!(attr & 0xFF)) {
             pString->unk7C = (index & 1);
             setTPage(pPoly, 0, 0, 320, 0);
-            
+
             #define texCoordV  (((index + arg2) / 4) * 13)
             #define texCoordU  (((index / 2) & 1) << 7)
             setUV4(
@@ -284,11 +284,11 @@ void func_801C57A0(MenuString* pString, int index, s32 arg2, u32 attributes) {
                 SetSemiTrans(pPoly, 1);
                 setRGB0(pPoly, var_s1, var_s1, var_s1);
             }
-            
+
             pString->unk7C = (attr & 0x7F) + 0xFF;
             setTPage(pPoly, 0, 0, 0x180, 0x80);
             pPoly->tpage = var_s1 | pPoly->tpage;
-            
+
             #define texCoordU ((index & 1) * 0x60)
             #define texCoordV (((index / 2) * 13) + arg2)
             setUV4(
@@ -314,33 +314,33 @@ INCLUDE_ASM("asm/member_change_menu/nonmatchings/main/misc", func_801C5B90);
 
 void MemberChangeMenuInitializeWindowBorders(void) {
     POLY_FT4 _unusued;
-    
-    func_80026338(
-        g_Menu->unk2DC, MENU_TEX_WINDOW_BORDER_TOP, 
-        &g_Menu->unk46C, 
-        &g_Menu->texPage0, 
-        &g_Menu->clutX0, &g_Menu->clutY0, 
+
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, MENU_TEX_WINDOW_BORDER_TOP,
+        &g_Menu->unk46C,
+        &g_Menu->texPage0,
+        &g_Menu->clutX0, &g_Menu->clutY0,
         &g_Menu->texPageX0, &g_Menu->texPageY0
     );
-    func_80026338(
-        g_Menu->unk2DC, MENU_TEX_WINDOW_BORDER_BOTTOM, 
-        &g_Menu->unk484, 
-        &g_Menu->texPage1, 
-        &g_Menu->clutX1, &g_Menu->clutY1, 
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, MENU_TEX_WINDOW_BORDER_BOTTOM,
+        &g_Menu->unk484,
+        &g_Menu->texPage1,
+        &g_Menu->clutX1, &g_Menu->clutY1,
         &g_Menu->texPageX1, &g_Menu->texPageY1
     );
-    func_80026338(
-        g_Menu->unk2DC, MENU_TEX_WINDOW_BORDER_LEFT, 
-        &g_Menu->unk49C, 
-        &g_Menu->texPage2, 
-        &g_Menu->clutX2, &g_Menu->clutY2, 
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, MENU_TEX_WINDOW_BORDER_LEFT,
+        &g_Menu->unk49C,
+        &g_Menu->texPage2,
+        &g_Menu->clutX2, &g_Menu->clutY2,
         &g_Menu->texPageX2, &g_Menu->texPageY2
     );
-    func_80026338(
-        g_Menu->unk2DC, MENU_TEX_WINDOW_BORDER_RIGHT, 
-        &g_Menu->unk4B4, 
-        &g_Menu->texPage3, 
-        &g_Menu->clutX3, &g_Menu->clutY3, 
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, MENU_TEX_WINDOW_BORDER_RIGHT,
+        &g_Menu->unk4B4,
+        &g_Menu->texPage3,
+        &g_Menu->clutX3, &g_Menu->clutY3,
         &g_Menu->texPageX3, &g_Menu->texPageY3
     );
 }
@@ -367,20 +367,20 @@ void MemberChangeMenuInitializeBackground(void) {
     rect.x = 0;
     rect.h = 256;
     rect.w = 256;
-    
+
     func_801C5CF4();
 
     for (i = 0; i < 2; i++) {
         // Unknown effect, seems to be unused
         func_801C5D24(&g_Menu->unk348->polyG4s[i], 128, 128, 0);
         SetSemiTrans(&g_Menu->unk348->polyG4s[i], 1);
-        
+
         SetLineF3(&g_Menu->unk348->lines1[i]);
         setRGB0(&g_Menu->unk348->lines1[i], 0, 64, 0);
-        
+
         SetLineF3(&g_Menu->unk348->lines2[i]);
         setRGB0(&g_Menu->unk348->lines2[i], 0, 64, 0);
-        
+
         // Background dimming screen
         SetPolyF4(&g_Menu->unk348->polysDimEffect[i]);
         setXY4(&g_Menu->unk348->polysDimEffect[i],
@@ -402,15 +402,15 @@ void MemberChangeMenuSetVertices(SVECTOR* pVertices, u_short x, u_short y, u_sho
     pVertices[0].vx = x - 160;
     pVertices[0].vy = y - 112;
     pVertices[0].vz = 0;
-    
+
     pVertices[1].vx = x + width - 160;
     pVertices[1].vy = y - 112;
     pVertices[1].vz = 0;
-    
+
     pVertices[2].vx = x - 160;
     pVertices[2].vy = y + height - 112;
     pVertices[2].vz = 0;
-    
+
     pVertices[3].vx = x + width - 160;
     pVertices[3].vy = y + height - 112;
     pVertices[3].vz = 0;
@@ -428,15 +428,15 @@ void MemberChangeMenuInitializeWindowGraphics(unsigned char index) {
     unsigned char i;
 
     pWindow = g_Menu->windows[index];
-    
+
     rect.y = 0;
     rect.x = 0;
     rect.h = 0x100;
     rect.w = 0x100;
-    
+
     g_Menu->pManager->shouldRenderWindow[index] = FALSE;
     g_Menu->pManager->unk27[index] = 0;
-    
+
     // Window background
     for (i = 0; i < 2; i++) {
         SetPolyG4(&pWindow->polysBackground[i]);
@@ -446,13 +446,13 @@ void MemberChangeMenuInitializeWindowGraphics(unsigned char index) {
         setRGB3(&pWindow->polysBackground[i], 104, 104, 104);
         SetSemiTrans(&pWindow->polysBackground[i], 1);
         SetDrawMode(
-            &pWindow->drawModes[i], 
-            0, 0, 
-            GetTPage(0, 0, g_Menu->texPageX0, g_Menu->texPageY0), 
+            &pWindow->drawModes[i],
+            0, 0,
+            GetTPage(0, 0, g_Menu->texPageX0, g_Menu->texPageY0),
             &rect
         );
     }
-    
+
     // Window borders
     for (i = 0; i < 4; i++) {
         SetPolyFT4(&pWindow->polysWindowBorderTop[i]);
@@ -460,19 +460,19 @@ void MemberChangeMenuInitializeWindowGraphics(unsigned char index) {
         setRGB0(&pWindow->polysWindowBorderTop[i], 0xFF, 0xFF, 0xFF);
         pWindow->polysWindowBorderTop[i].tpage = GetTPage(g_Menu->texPage0, 0, g_Menu->texPageX0, g_Menu->texPageY0);
         pWindow->polysWindowBorderTop[i].clut = GetClut(g_Menu->clutX0, g_Menu->clutY0);
-        
+
         SetPolyFT4(&pWindow->polysWindowBorderBottom[i]);
         SetShadeTex(&pWindow->polysWindowBorderBottom[i], 1);
         setRGB0(&pWindow->polysWindowBorderBottom[i], 0xFF, 0xFF, 0xFF);
         pWindow->polysWindowBorderBottom[i].tpage = GetTPage(g_Menu->texPage1, 0, g_Menu->texPageX1, g_Menu->texPageY1);
         pWindow->polysWindowBorderBottom[i].clut = GetClut(g_Menu->clutX1, g_Menu->clutY1);
-        
+
         SetPolyFT4(&pWindow->polysWindowBorderLeft[i]);
         SetShadeTex(&pWindow->polysWindowBorderLeft[i], 1);
         setRGB0(&pWindow->polysWindowBorderLeft[i], 0xFF, 0xFF, 0xFF);
         pWindow->polysWindowBorderLeft[i].tpage = GetTPage(g_Menu->texPage2, 0, g_Menu->texPageX2, g_Menu->texPageY2);
         pWindow->polysWindowBorderLeft[i].clut = GetClut(g_Menu->clutX2, g_Menu->clutY2);
-        
+
         SetPolyFT4(&pWindow->polysWindowBorderRight[i]);
         SetShadeTex(&pWindow->polysWindowBorderRight[i], 1);
         setRGB0(&pWindow->polysWindowBorderRight[i], 0xFF, 0xFF, 0xFF);
@@ -483,39 +483,39 @@ void MemberChangeMenuInitializeWindowGraphics(unsigned char index) {
 
 void MemberChangeMenuInitializeScrollBar(unsigned char index, u_short x, u_short y, u_short width, u_short height) {
     MenuWindow* pWindow;
-    
+
     pWindow = g_Menu->windows[index];
-    
+
     // Top ornament
     func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_SCROLL_BAR_ORNAMENT, 
-        pWindow->polysScrollBarEnds, 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_SCROLL_BAR_ORNAMENT,
+        pWindow->polysScrollBarEnds,
+        g_Menu->renderContext,
         x, y, 0x1000
     );
 
     // Bottom ornament
     func_800263E4(
-        g_Menu->unk2DC, 
-        MENU_TEX_SCROLL_BAR_ORNAMENT, 
-        &pWindow->polysScrollBarEnds[2], 
-        g_Menu->renderContext, 
-        x, 
-        y + height - 8, 
+        g_Menu->resources,
+        MENU_TEX_SCROLL_BAR_ORNAMENT,
+        &pWindow->polysScrollBarEnds[2],
+        g_Menu->renderContext,
+        x,
+        y + height - 8,
         0x1000, 0, 1
     );
 
     func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_SCROLL_BAR_EMPTY, 
-        pWindow->polysScrollBarEmpty, 
-        g_Menu->renderContext, 
-        x, 
-        y + 8, 
+        g_Menu->resources,
+        MENU_TEX_SCROLL_BAR_EMPTY,
+        pWindow->polysScrollBarEmpty,
+        g_Menu->renderContext,
+        x,
+        y + 8,
         0x1000
     );
-    
+
     MemberChangeMenuSetVertices(pWindow->vertsScrollBarEnds, x, y, 8, 8);
     MemberChangeMenuSetVertices(&pWindow->vertsScrollBarEnds[4], x, y + height, 8, -8);
     MemberChangeMenuSetVertices(pWindow->vertsScrollBarEmpty, x, y + 8, 8, height - 8);
@@ -529,54 +529,54 @@ void MemberChangeMenuInitializeWindowBorderCorners(unsigned char index, u_short 
 
     pWindow->unk710 = 0;
     pWindow->unk710 += func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_WINDOW_BORDER_TOP_LEFT, 
-        &pWindow->polysWindowBorderCorners, 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_WINDOW_BORDER_TOP_LEFT,
+        &pWindow->polysWindowBorderCorners,
+        g_Menu->renderContext,
         0, 0, 0x1000
     );
     pWindow->unk710 += func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_WINDOW_BORDER_TOP_RIGHT, 
-        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710], 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_WINDOW_BORDER_TOP_RIGHT,
+        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710],
+        g_Menu->renderContext,
         0, 0, 0x1000
     );
     pWindow->unk710 += func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_WINDOW_BORDER_BOTTOM_LEFT, 
-        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710], 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_WINDOW_BORDER_BOTTOM_LEFT,
+        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710],
+        g_Menu->renderContext,
         0, 0, 0x1000
     );
     pWindow->unk710 += func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_WINDOW_BORDER_BOTTOM_RIGHT, 
-        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710], 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_WINDOW_BORDER_BOTTOM_RIGHT,
+        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710],
+        g_Menu->renderContext,
         0, 0, 0x1000
     );
-    
+
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderCorners, 
-        x - 8, 
-        y + 8, 
+        pWindow->vertsWindowBorderCorners,
+        x - 8,
+        y + 8,
         16, -16
     );
     MemberChangeMenuSetVertices(
-        &pWindow->vertsWindowBorderCorners[4], 
-        x + width + 8, 
-        y + 8, 
+        &pWindow->vertsWindowBorderCorners[4],
+        x + width + 8,
+        y + 8,
         -16, -16
     );
     MemberChangeMenuSetVertices(
-        &pWindow->vertsWindowBorderCorners[8], 
-        x - 8, 
-        y + height - 8, 
+        &pWindow->vertsWindowBorderCorners[8],
+        x - 8,
+        y + height - 8,
         16, 16
     );
     MemberChangeMenuSetVertices(
-        &pWindow->vertsWindowBorderCorners[0xC], 
+        &pWindow->vertsWindowBorderCorners[0xC],
         x + width + 8,
         y + height - 8,
         -16, 16
@@ -609,23 +609,23 @@ void MemberChangeMenuSetWindowBorderTop(unsigned char index, u_short x, u_short 
         0, 148,
         7, 148
     );
-    
+
     innerWidth = width - (MENU_WINDOW_BORDER_SIZE * 2);
     halfInnerWidth = innerWidth / 2;
-    
+
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderTop1, 
+        pWindow->vertsWindowBorderTop1,
         x + MENU_WINDOW_BORDER_SIZE,
         y - MENU_WINDOW_BORDER_SIZE,
         halfInnerWidth,
         MENU_WINDOW_BORDER_SIZE * 2
     );
-    
+
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderTop2, 
-        x + MENU_WINDOW_BORDER_SIZE + halfInnerWidth, 
+        pWindow->vertsWindowBorderTop2,
+        x + MENU_WINDOW_BORDER_SIZE + halfInnerWidth,
         y - MENU_WINDOW_BORDER_SIZE,
-        halfInnerWidth, 
+        halfInnerWidth,
         MENU_WINDOW_BORDER_SIZE * 2
     );
 
@@ -656,21 +656,21 @@ void MemberChangeMenuSetWindowBorderBottom(u_char index, u_short x, u_short y, u
         8, 148,
         15, 148
     );
-    
+
     innerWidth = width - 16;
     width = innerWidth / 2;
     height = y + height - 8;
-    
+
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderBottom1, 
-        x + 8, 
-        height, 
+        pWindow->vertsWindowBorderBottom1,
+        x + 8,
+        height,
         width, 16
     );
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderBottom2, 
-        x + 8 + width, 
-        height, 
+        pWindow->vertsWindowBorderBottom2,
+        x + 8 + width,
+        height,
         width, 16
     );
 
@@ -684,7 +684,7 @@ void MemberChangeMenuSetWindowBorderLeft(u_char index, u_short x, u_short y, u_s
     int i;
     int innerHeight;
     u_short halfInnerHeight;
-    
+
     pWindow = g_Menu->windows[index];
 
     setUV4(
@@ -705,15 +705,15 @@ void MemberChangeMenuSetWindowBorderLeft(u_char index, u_short x, u_short y, u_s
 
     innerHeight = height - 16;
     halfInnerHeight = innerHeight / 2;
-    
+
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderLeft1, 
-        x - 8, y + 8, 
+        pWindow->vertsWindowBorderLeft1,
+        x - 8, y + 8,
         16, halfInnerHeight
     );
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderLeft2, 
-        x - 8, y + 8 + halfInnerHeight, 
+        pWindow->vertsWindowBorderLeft2,
+        x - 8, y + 8 + halfInnerHeight,
         16, halfInnerHeight
     );
 
@@ -745,18 +745,18 @@ void MemberChangeMenuSetWindowBorderRight(u_char index, u_short x, u_short y, u_
         16, 147,
         32, 147
     );
-    
-    width = x + width - 8;    
+
+    width = x + width - 8;
     innerHeight = height - 16;
     halfInnerHeight = innerHeight / 2;
-    
+
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderRight1, 
-        width, y + 8, 
+        pWindow->vertsWindowBorderRight1,
+        width, y + 8,
         16, halfInnerHeight
     );
     MemberChangeMenuSetVertices(
-        pWindow->vertsWindowBorderRight2, 
+        pWindow->vertsWindowBorderRight2,
         width, y + 8 + halfInnerHeight,
         16, halfInnerHeight
     );
@@ -804,7 +804,7 @@ void MemberChangeMenuInitializeWindow(u_char windowIndex, u_short x, u_short y, 
         bzero(g_Menu->windowParameters[windowIndex] , sizeof(MenuWindowParameters));
         MemberChangeMenuInitializeWindowGraphics(windowIndex);
     }
-    
+
     pWindowParams = g_Menu->windowParameters[windowIndex];
     if (shouldInitializeHandle) {
         pWindowParams->index = windowIndex;
@@ -820,7 +820,7 @@ void MemberChangeMenuInitializeWindow(u_char windowIndex, u_short x, u_short y, 
         pWindowParams->zIndex = zIndex;
         return;
     }
-    
+
     MemberChangeMenuSetWindow(windowIndex, x, y, width, height, arg6, zIndex, hasScrollBar);
 }
 
@@ -832,35 +832,35 @@ void MemberChangeMenuUpdateWindows(void) {
     for (i = 0; i < MENU_MAX_NUM_WINDOWS; i++) {
         pWindowInfo = g_Menu->windowParameters[i];
         if ((g_Menu->pManager->unk27[i]) && pWindowInfo->unk11 == 0) {
-            
+
             flag = 0;
-            
+
             if ((pWindowInfo->unk8 + 32) >= pWindowInfo->width) {
                 pWindowInfo->unk8 = pWindowInfo->width;
                 flag += 1;
             } else {
                 pWindowInfo->unk8 += 32;
             }
-            
+
             if ((pWindowInfo->unkA + 32) >= pWindowInfo->height) {
                 pWindowInfo->unkA = pWindowInfo->height;
                 flag += 1;
             } else {
                 pWindowInfo->unkA += 32;
             }
-            
+
             if (flag == 2) {
                 pWindowInfo->unk11 = 1;
             }
-            
+
             MemberChangeMenuSetWindow(
-                pWindowInfo->index, 
-                (pWindowInfo->x + (pWindowInfo->width / 2)) - (pWindowInfo->unk8 / 2), 
-                (pWindowInfo->y + (pWindowInfo->height / 2)) - (pWindowInfo->unkA / 2), 
-                pWindowInfo->unk8,  
-                pWindowInfo->unkA, 
-                pWindowInfo->unk12, 
-                pWindowInfo->zIndex, 
+                pWindowInfo->index,
+                (pWindowInfo->x + (pWindowInfo->width / 2)) - (pWindowInfo->unk8 / 2),
+                (pWindowInfo->y + (pWindowInfo->height / 2)) - (pWindowInfo->unkA / 2),
+                pWindowInfo->unk8,
+                pWindowInfo->unkA,
+                pWindowInfo->unk12,
+                pWindowInfo->zIndex,
                 pWindowInfo->hasScrollBar
             );
         }
@@ -886,9 +886,9 @@ void MemberChangeMenuDrawCursors(void) {
                         D_801CB4FC[D_801CB404[g_Menu->menuUnk2->unk4F7C]] + 10
                     );
                 }
-                
+
                 AddPrim(
-                    &g_Menu->pGfxEnv->ot[4], 
+                    &g_Menu->pGfxEnv->ot[4],
                     &g_Menu->pCursors->polysCursor[i * 2 + g_Menu->pCursors->renderContexts[i]]
                 );
             }
@@ -925,24 +925,24 @@ void func_801C7EC8(void) {
         if (g_Menu->pManager->unk14[i]) {
             if (g_Menu->unkAE0[i].unk7F) {
                 RotTransPers4(
-                    &g_Menu->unkAE0[i].vertices[0], 
+                    &g_Menu->unkAE0[i].vertices[0],
                     &g_Menu->unkAE0[i].vertices[1],
                     &g_Menu->unkAE0[i].vertices[2],
                     &g_Menu->unkAE0[i].vertices[3],
-                    (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x0, 
+                    (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x0,
                     (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x1,
                     (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x2,
                     (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x3,
-                    &interpolated, 
+                    &interpolated,
                     &flag
                 );
                 AddPrim(
-                    &g_Menu->pGfxEnv->ot[4], 
+                    &g_Menu->pGfxEnv->ot[4],
                     &g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext]
                 );
             } else {
                 AddPrim(
-                    &g_Menu->pGfxEnv->ot[4], 
+                    &g_Menu->pGfxEnv->ot[4],
                     &g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext]
                 );
             }
@@ -963,53 +963,53 @@ void MemberChangeMenuRenderCharacter(MenuCharacter* pCharacter, u_char isBenched
     if (pCharacter->unkBE7) {
         AddPrim(&g_Menu->pGfxEnv->ot[4], &pCharacter->polysPortraitSmall[pCharacter->renderContext]);
         AddPrim(&g_Menu->pGfxEnv->ot[4], &pCharacter->polys4B0[pCharacter->renderContext]);
-        
+
         for (i = 0; i < pCharacter->descriptionStringsLength; i++) {
             AddPrim(
-                &g_Menu->pGfxEnv->ot[4], 
+                &g_Menu->pGfxEnv->ot[4],
                 &pCharacter->polysDescriptionStrings[i * 2 + pCharacter->renderContext]
             );
         }
 
         for (i = 0; i < pCharacter->levelStringLength; i++) {
             AddPrim(
-                &g_Menu->pGfxEnv->ot[4], 
+                &g_Menu->pGfxEnv->ot[4],
                 &pCharacter->polysLevelString[i * 2 + pCharacter->renderContext]
-            );            
+            );
         }
 
         for (i = 0; i < pCharacter->hpStringLength; i++) {
             AddPrim(
-                &g_Menu->pGfxEnv->ot[4], 
+                &g_Menu->pGfxEnv->ot[4],
                 &pCharacter->polysHpString[i * 2 + pCharacter->renderContext]
             );
         }
 
         for (i = 0; i < pCharacter->maxHpStringLength; i++) {
             AddPrim(
-                &g_Menu->pGfxEnv->ot[4], 
+                &g_Menu->pGfxEnv->ot[4],
                 &pCharacter->polysMaxHpString[i * 2 + pCharacter->renderContext]
             );
         }
 
         for (i = 0; i < pCharacter->mpStringLength; i++) {
             AddPrim(
-                &g_Menu->pGfxEnv->ot[4], 
+                &g_Menu->pGfxEnv->ot[4],
                 &pCharacter->polysMpString[i * 2 + pCharacter->renderContext]
             );
         }
 
         for (i = 0; i < pCharacter->maxMpStringLength; i++) {
             AddPrim(
-                &g_Menu->pGfxEnv->ot[4], 
+                &g_Menu->pGfxEnv->ot[4],
                 &pCharacter->polysMaxMpString[i * 2 + pCharacter->renderContext]
             );
         }
-        
+
         if (isBenched) {
             for (i = 0; i < pCharacter->unkBE9; i++) {
                 AddPrim(
-                    &g_Menu->pGfxEnv->ot[4], 
+                    &g_Menu->pGfxEnv->ot[4],
                     &pCharacter->polys2D0[i * 2 + pCharacter->renderContext]
                 );
             }
@@ -1024,7 +1024,7 @@ void MemberChangeMenuRenderCharacters(void) {
         for (i = 0; i < MAX_BENCHED_PARTY_MEMBERS; i++) {
             MemberChangeMenuRenderCharacter(g_Menu->benchedCharacters[i], FALSE);
         }
-        
+
         for (i = 0; i < MAX_PARTY_MEMBERS; i++) {
             MemberChangeMenuRenderCharacter(g_Menu->currentCharacters[i], TRUE);
         }
@@ -1043,38 +1043,38 @@ void MemberChangeMenuRenderTopWindowBorder(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderTop1[0], 
-        &pWindow->vertsWindowBorderTop1[1], 
-        &pWindow->vertsWindowBorderTop1[2], 
-        &pWindow->vertsWindowBorderTop1[3], 
-        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderTop1[0],
+        &pWindow->vertsWindowBorderTop1[1],
+        &pWindow->vertsWindowBorderTop1[2],
+        &pWindow->vertsWindowBorderTop1[3],
+        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderTop[pWindow->renderContext]
     );
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderTop2[0], 
-        &pWindow->vertsWindowBorderTop2[1], 
-        &pWindow->vertsWindowBorderTop2[2], 
-        &pWindow->vertsWindowBorderTop2[3], 
-        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderTop2[0],
+        &pWindow->vertsWindowBorderTop2[1],
+        &pWindow->vertsWindowBorderTop2[2],
+        &pWindow->vertsWindowBorderTop2[3],
+        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderTop[2 + pWindow->renderContext]
     );
 }
@@ -1085,38 +1085,38 @@ void MemberChangeMenuRenderBottomWindowBorder(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderBottom1[0], 
-        &pWindow->vertsWindowBorderBottom1[1], 
-        &pWindow->vertsWindowBorderBottom1[2], 
-        &pWindow->vertsWindowBorderBottom1[3], 
-        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderBottom1[0],
+        &pWindow->vertsWindowBorderBottom1[1],
+        &pWindow->vertsWindowBorderBottom1[2],
+        &pWindow->vertsWindowBorderBottom1[3],
+        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderBottom[pWindow->renderContext]
     );
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderBottom2[0], 
-        &pWindow->vertsWindowBorderBottom2[1], 
-        &pWindow->vertsWindowBorderBottom2[2], 
-        &pWindow->vertsWindowBorderBottom2[3], 
-        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderBottom2[0],
+        &pWindow->vertsWindowBorderBottom2[1],
+        &pWindow->vertsWindowBorderBottom2[2],
+        &pWindow->vertsWindowBorderBottom2[3],
+        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext]
     );
 }
@@ -1127,38 +1127,38 @@ void MemberChangeMenuRenderLeftWindowBorder(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderLeft1[0], 
-        &pWindow->vertsWindowBorderLeft1[1], 
-        &pWindow->vertsWindowBorderLeft1[2], 
-        &pWindow->vertsWindowBorderLeft1[3], 
-        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderLeft1[0],
+        &pWindow->vertsWindowBorderLeft1[1],
+        &pWindow->vertsWindowBorderLeft1[2],
+        &pWindow->vertsWindowBorderLeft1[3],
+        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderLeft[pWindow->renderContext]
     );
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderLeft2[0], 
-        &pWindow->vertsWindowBorderLeft2[1], 
-        &pWindow->vertsWindowBorderLeft2[2], 
-        &pWindow->vertsWindowBorderLeft2[3], 
-        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderLeft2[0],
+        &pWindow->vertsWindowBorderLeft2[1],
+        &pWindow->vertsWindowBorderLeft2[2],
+        &pWindow->vertsWindowBorderLeft2[3],
+        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext]
     );
 }
@@ -1169,38 +1169,38 @@ void MemberChangeMenuRenderRightWindowBorder(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderRight1[0], 
-        &pWindow->vertsWindowBorderRight1[1], 
-        &pWindow->vertsWindowBorderRight1[2], 
-        &pWindow->vertsWindowBorderRight1[3], 
-        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderRight1[0],
+        &pWindow->vertsWindowBorderRight1[1],
+        &pWindow->vertsWindowBorderRight1[2],
+        &pWindow->vertsWindowBorderRight1[3],
+        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderRight[pWindow->renderContext]
     );
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderRight2[0], 
-        &pWindow->vertsWindowBorderRight2[1], 
-        &pWindow->vertsWindowBorderRight2[2], 
-        &pWindow->vertsWindowBorderRight2[3], 
-        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderRight2[0],
+        &pWindow->vertsWindowBorderRight2[1],
+        &pWindow->vertsWindowBorderRight2[2],
+        &pWindow->vertsWindowBorderRight2[3],
+        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderRight[2 + pWindow->renderContext]
     );
 }
@@ -1211,25 +1211,25 @@ void MemberChangeMenuRenderWindowBackground(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsBackground[0], 
+        &pWindow->vertsBackground[0],
         &pWindow->vertsBackground[1],
-        &pWindow->vertsBackground[2], 
+        &pWindow->vertsBackground[2],
         &pWindow->vertsBackground[3],
         (long*) &pWindow->polysBackground[pWindow->renderContext].x0,
         (long*) &pWindow->polysBackground[pWindow->renderContext].x1,
         (long*) &pWindow->polysBackground[pWindow->renderContext].x2,
         (long*) &pWindow->polysBackground[pWindow->renderContext].x3,
-        &interpolated, 
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysBackground[pWindow->renderContext]
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->drawModes[pWindow->renderContext]
     );
 }
@@ -1246,21 +1246,21 @@ void MemberChangeMenuRenderWindowBorderCorners(int index) {
     for (i = 0; i < 4; i++) {
         // Project vertices to x0/y0 coordinates of the polygon
         RotTransPers4(
-            &pWindow->vertsWindowBorderCorners[i * 4], 
+            &pWindow->vertsWindowBorderCorners[i * 4],
             &pWindow->vertsWindowBorderCorners[i * 4 + 1],
-            &pWindow->vertsWindowBorderCorners[i * 4 + 2], 
+            &pWindow->vertsWindowBorderCorners[i * 4 + 2],
             &pWindow->vertsWindowBorderCorners[i * 4 + 3],
-            (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x0, 
+            (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x0,
             (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x1,
             (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x2,
             (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x3,
-            &interpolated, 
+            &interpolated,
             &flag
         );
 
         // Queue polygon for rendering
         AddPrim(
-            &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+            &g_Menu->pGfxEnv->ot[pWindow->zIndex],
             &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext]
         );
     }
@@ -1274,10 +1274,10 @@ void MemberChangeMenuRenderScrollBar(int index) {
     int i;
 
     pWindow = g_Menu->windows[index];
-    
+
     for (i = 0; i < 2; i++) {
         RotTransPers4(
-            &pWindow->vertsScrollBarEnds[i * 4], 
+            &pWindow->vertsScrollBarEnds[i * 4],
             &pWindow->vertsScrollBarEnds[i * 4 + 1],
             &pWindow->vertsScrollBarEnds[i * 4 + 2],
             &pWindow->vertsScrollBarEnds[i * 4 + 3],
@@ -1285,15 +1285,15 @@ void MemberChangeMenuRenderScrollBar(int index) {
             &pWindow->polysScrollBarEnds[i * 2 + pWindow->renderContext].x1,
             &pWindow->polysScrollBarEnds[i * 2 + pWindow->renderContext].x2,
             &pWindow->polysScrollBarEnds[i * 2 + pWindow->renderContext].x3,
-            &interpolated, 
+            &interpolated,
             &flag
         );
         AddPrim(
-            &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+            &g_Menu->pGfxEnv->ot[pWindow->zIndex],
             &pWindow->polysScrollBarEnds[i * 2 + pWindow->renderContext]
         );
     }
-    
+
     RotTransPers4(
         &pWindow->vertsScrollBarEmpty[0],
         &pWindow->vertsScrollBarEmpty[1],
@@ -1303,11 +1303,11 @@ void MemberChangeMenuRenderScrollBar(int index) {
         &pWindow->polysScrollBarEmpty[pWindow->renderContext].x1,
         &pWindow->polysScrollBarEmpty[pWindow->renderContext].x2,
         &pWindow->polysScrollBarEmpty[pWindow->renderContext].x3,
-        &interpolated, 
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysScrollBarEmpty[pWindow->renderContext]
     );
 }
@@ -1338,8 +1338,8 @@ void MemberChangeMenuRenderWindows(void) {
                 SetTransMatrix(&matTransform);
 
                 MemberChangeMenuRenderWindowBorderCorners(i);
-                if (pWindow->hasScrollBar) { 
-                    MemberChangeMenuRenderScrollBar(i); 
+                if (pWindow->hasScrollBar) {
+                    MemberChangeMenuRenderScrollBar(i);
                 }
                 MemberChangeMenuRenderTopWindowBorder(i);
                 MemberChangeMenuRenderBottomWindowBorder(i);
@@ -1350,8 +1350,8 @@ void MemberChangeMenuRenderWindows(void) {
                 PopMatrix();
             } else {
                 MemberChangeMenuRenderWindowBorderCorners(i);
-                if (pWindow->hasScrollBar) { 
-                    MemberChangeMenuRenderScrollBar(i); 
+                if (pWindow->hasScrollBar) {
+                    MemberChangeMenuRenderScrollBar(i);
                 }
                 MemberChangeMenuRenderTopWindowBorder(i);
                 MemberChangeMenuRenderBottomWindowBorder(i);
@@ -1397,14 +1397,14 @@ void MemberChangeMenuPollInput(void) {
             }
             continue;
         }
-        
+
         isLooping--;
         if (wasControllerUnplugged) {
             SoundEnableAllSpuChannels();
             D_80059488 = savedValue;
         }
     }
-    
+
     if (func_80036410()) {
         ControllerResetState();
     } else {
@@ -1481,7 +1481,7 @@ void MemberChangeMenuUpdateAndRender(void) {
     }
     g_Menu->pGfxEnv = pNextGfxEnv;
     g_Menu->renderContext = g_Menu->renderContext == 0;
-    
+
     ClearOTagR(g_Menu->pGfxEnv->ot, 0x10);
     MemberChangeMenuRender();
     renderContext = g_Menu->renderContext == 0;
@@ -1501,13 +1501,13 @@ void MemberChangeMenuParseNumberToString(unsigned int number) {
 
     // 10 ** 8
     curValue = 100000000;
-    
+
     for (i = 0; i < 9; i++) {
         g_Menu->digits[i] = number / curValue;
         number %= curValue;
         curValue /= 10;
     }
-    
+
     for (i = 1; i < 9; i++) {
         if (g_Menu->digits[i]) {
             if (g_Menu->digits[i - 1] == 0) {
@@ -1534,16 +1534,16 @@ void MemberChangeMenuFree(void) {
     for (; numCharactersInParty < MAX_PARTY_MEMBERS; numCharactersInParty++) {
         g_GameState.partyMembers[numCharactersInParty] = 0xFF;
     }
-    
+
     MemberChangeMenuUpdateAndRender();
     MemberChangeMenuUpdateAndRender();
     g_Menu->shouldDrawMenu = FALSE;
-    
+
     MemberChangeMenuUpdateAndRender();
     do {
         MemberChangeMenuUpdateAndRender();
     } while (g_Menu->renderContext != 0);
-    
+
     func_801C5034(MENU_DATA_FREE);
     MemberChangeMenuSetManager(MENU_DATA_FREE);
     MemberChangeMenuSetSelectionMenu(MENU_DATA_FREE);
@@ -1551,7 +1551,7 @@ void MemberChangeMenuFree(void) {
     func_801C51C4(MENU_DATA_FREE);
     func_801C5228(MENU_DATA_FREE);
 
-    HeapFree(g_Menu->unk2DC);
+    HeapFree(g_Menu->resources);
     HeapFree(g_Menu->unk2E0);
     HeapFree(g_Menu->unk4E0[0].pVramBuffer);
     if (g_MenuDebugEnabled != 0) {
@@ -1579,7 +1579,7 @@ void func_801C9908(void) {
                     break;
                 }
             }
-            
+
             if (characterNotInParty) {
                 g_Menu->unk1E14[numAvailableCharacters] = i;
                 numAvailableCharacters++;
@@ -1590,7 +1590,7 @@ void func_801C9908(void) {
     for (; numAvailableCharacters < MAX_GAME_CHARACTERS; numAvailableCharacters++) {
         g_Menu->unk1E14[numAvailableCharacters] = 0xFF;
     }
-    
+
     for (i = 0; i < MAX_GAME_CHARACTERS; i += 2) {
         numAvailableCharacters = i & 0xFF;
         func_801C95A0(numAvailableCharacters, numAvailableCharacters);
@@ -1601,17 +1601,17 @@ void func_801C9A08(MenuCharacter* pCharacter, u_char characterIndex, u_char loca
     int i;
     u_char uvIndex;
     int height;
-    
+
     // LV, HP/, MP/ strings
     pCharacter->descriptionStringsLength = 0;
     for (i = 0; i < 9; i++) {
         if (D_801CB3DC[i] != 0xFFFF) {
             pCharacter->descriptionStringsLength += func_8002675C(
-                g_Menu->unk2DC, D_801CB3DC[i], 
-                &pCharacter->polysDescriptionStrings[pCharacter->descriptionStringsLength * 2], 
-                g_Menu->renderContext, 
-                pPositionsX[i], 
-                (verticalSpacing * localIndex) + pPositionsY[i], 
+                g_Menu->resources, D_801CB3DC[i],
+                &pCharacter->polysDescriptionStrings[pCharacter->descriptionStringsLength * 2],
+                g_Menu->renderContext,
+                pPositionsX[i],
+                (verticalSpacing * localIndex) + pPositionsY[i],
                 0x1000
             );
         }
@@ -1619,19 +1619,19 @@ void func_801C9A08(MenuCharacter* pCharacter, u_char characterIndex, u_char loca
 
     // Small character portraits
     func_8002675C(
-        g_Menu->unk2DC, characterIndex + 0x14E, 
+        g_Menu->resources, characterIndex + 0x14E,
         &pCharacter->polysPortraitSmall, g_Menu->renderContext,
-        pPositionsX[9], 
-        (verticalSpacing * localIndex) + pPositionsY[9], 
+        pPositionsX[9],
+        (verticalSpacing * localIndex) + pPositionsY[9],
         0x1000
     );
-    
+
     SetPolyFT4(&pCharacter->polys4B0[g_Menu->renderContext]);
     setRGB0(&pCharacter->polys4B0[g_Menu->renderContext], 128, 128, 128);
     SetSemiTrans(&pCharacter->polys4B0[g_Menu->renderContext], 0);
     pCharacter->polys4B0[g_Menu->renderContext].tpage = GetTPage(0, 0, 384, 0);
     pCharacter->polys4B0[g_Menu->renderContext].clut = characterIndex % 2 ? g_SystemPalette2 : g_SystemPalette1;
-    
+
     height = verticalSpacing * localIndex;
     setXY4(
         &pCharacter->polys4B0[g_Menu->renderContext],
@@ -1659,30 +1659,30 @@ void MemberChangeMenuSetCharacterLevelStrings(MenuCharacter* pCharacter, u_char 
     int i;
     int j;
     u_char digit;
-    
+
     MemberChangeMenuParseNumberToString(g_GameState.characters[characterIndex].level);
     pCharacter->levelStringLength = 0;
     for (i = 0; i < 3; i++) {
         digit = g_Menu->digits[i + 6];
         if (digit != 0xFF) {
             pCharacter->levelStringLength += func_8002675C(
-                g_Menu->unk2DC, digit, 
-                &pCharacter->polysLevelString[pCharacter->levelStringLength * 2], g_Menu->renderContext, 
+                g_Menu->resources, digit,
+                &pCharacter->polysLevelString[pCharacter->levelStringLength * 2], g_Menu->renderContext,
                 pPositionsX[10] + i * 8,
                 pPositionsY[10] + verticalSpacing * localIndex,
                 0x1000
             );
         }
     }
-    
+
     MemberChangeMenuParseNumberToString(g_GameState.characters[characterIndex].unk63);
     pCharacter->unkBE1 = 0;
     for (i = 0, j = 0; i < 3; i++) {
         digit = g_Menu->digits[i + 6];
         if (digit != 0xFF) {
             pCharacter->unkBE1 += func_8002675C(
-                g_Menu->unk2DC, digit,
-                &pCharacter->polys5F0[pCharacter->unkBE1 * 2], g_Menu->renderContext, 
+                g_Menu->resources, digit,
+                &pCharacter->polys5F0[pCharacter->unkBE1 * 2], g_Menu->renderContext,
                 pPositionsX[11] + j * 8,
                 pPositionsY[11] + verticalSpacing * localIndex,
                 0x1000
@@ -1690,7 +1690,7 @@ void MemberChangeMenuSetCharacterLevelStrings(MenuCharacter* pCharacter, u_char 
             j++;
         }
     }
-    
+
     for (i = 0; i < pCharacter->unkBE1; i++) {
         SetShadeTex(&pCharacter->polys5F0[i * 2 + g_Menu->renderContext], 0);
         setRGB0(&pCharacter->polys5F0[i * 2 + g_Menu->renderContext], 0, 128, 0);
@@ -1708,60 +1708,60 @@ void MemberChangeMenuSetCharacterHpAndMpStrings(MenuCharacter* pCharacter, u_cha
         digit = g_Menu->digits[i + 6];
         if (digit != 0xFF) {
             pCharacter->hpStringLength += func_8002675C(
-                g_Menu->unk2DC, digit, 
-                &pCharacter->polysHpString[pCharacter->hpStringLength * 2], 
-                g_Menu->renderContext, 
-                (i * 8) + pPositionsX[12], 
-                (verticalSpacing * localIndex) + pPositionsY[12], 
+                g_Menu->resources, digit,
+                &pCharacter->polysHpString[pCharacter->hpStringLength * 2],
+                g_Menu->renderContext,
+                (i * 8) + pPositionsX[12],
+                (verticalSpacing * localIndex) + pPositionsY[12],
                 0x1000
             );
         }
     }
-    
+
     MemberChangeMenuParseNumberToString(g_GameState.characters[characterIndex].maxHp);
     pCharacter->maxHpStringLength = 0;
     for (i = 0, j = 0; i < 3; i++) {
         digit = g_Menu->digits[i + 6];
         if (digit != 0xFF) {
             pCharacter->maxHpStringLength += func_8002675C(
-                g_Menu->unk2DC, digit, 
-                &pCharacter->polysMaxHpString[pCharacter->maxHpStringLength * 2], 
-                g_Menu->renderContext, 
-                (j * 8) + pPositionsX[13], 
-                (verticalSpacing * localIndex) + pPositionsY[13], 
+                g_Menu->resources, digit,
+                &pCharacter->polysMaxHpString[pCharacter->maxHpStringLength * 2],
+                g_Menu->renderContext,
+                (j * 8) + pPositionsX[13],
+                (verticalSpacing * localIndex) + pPositionsY[13],
                 0x1000
             );
             j++;
         }
     }
-    
+
     MemberChangeMenuParseNumberToString(g_GameState.characters[characterIndex].mp);
     pCharacter->mpStringLength = 0;
     for (i = 0; i < 2; i++) {
         digit = g_Menu->digits[i + 7];
         if (digit != 0xFF) {
             pCharacter->mpStringLength += func_8002675C(
-                g_Menu->unk2DC, digit, 
-                &pCharacter->polysMpString[pCharacter->mpStringLength * 2], 
-                g_Menu->renderContext, 
-                (i * 8) + pPositionsX[14], 
-                (verticalSpacing * localIndex) + pPositionsY[14], 
+                g_Menu->resources, digit,
+                &pCharacter->polysMpString[pCharacter->mpStringLength * 2],
+                g_Menu->renderContext,
+                (i * 8) + pPositionsX[14],
+                (verticalSpacing * localIndex) + pPositionsY[14],
                 0x1000
             );
         }
     }
-    
+
     MemberChangeMenuParseNumberToString(g_GameState.characters[characterIndex].maxMp);
     pCharacter->maxMpStringLength = 0;
     for (i = 0, j = 0; i < 2; i++) {
         digit = g_Menu->digits[i + 7];
         if (digit != 0xFF) {
             pCharacter->maxMpStringLength += func_8002675C(
-                g_Menu->unk2DC, digit, 
-                &pCharacter->polysMaxMpString[pCharacter->maxMpStringLength * 2], 
-                g_Menu->renderContext, 
-                (j * 8) + pPositionsX[15], 
-                (verticalSpacing * localIndex) + pPositionsY[15], 
+                g_Menu->resources, digit,
+                &pCharacter->polysMaxMpString[pCharacter->maxMpStringLength * 2],
+                g_Menu->renderContext,
+                (j * 8) + pPositionsX[15],
+                (verticalSpacing * localIndex) + pPositionsY[15],
                 0x1000
             );
             j++;
@@ -1769,7 +1769,7 @@ void MemberChangeMenuSetCharacterHpAndMpStrings(MenuCharacter* pCharacter, u_cha
     }
 }
 
-// localIndex here refers to the order / position of the character 
+// localIndex here refers to the order / position of the character
 // in either the current party or the benched members list
 void MemberChangeMenuUpdateCharacter(MenuCharacter* pCharacter, u_char characterIndex, u_char localIndex, int* pPositionsX, int* pPositionsY, int verticalSpacing, u_char isPartyCharacter) {
     func_801C9A08(pCharacter, characterIndex, localIndex, pPositionsX, pPositionsY, verticalSpacing);
@@ -1794,9 +1794,9 @@ void MemberChangeMenuUpdateCharacters(u_char offset) {
         pCharacter = g_Menu->currentCharacters[i];
         if (g_Menu->pManager->currentCharacterIDs[i] != 0xFF) {
             MemberChangeMenuUpdateCharacter(
-                pCharacter, 
-                g_Menu->pManager->currentCharacterIDs[i], i, 
-                pPositionsX, pPositionsY, 
+                pCharacter,
+                g_Menu->pManager->currentCharacterIDs[i], i,
+                pPositionsX, pPositionsY,
                 56,
                 1
             );
@@ -1804,7 +1804,7 @@ void MemberChangeMenuUpdateCharacters(u_char offset) {
             pCharacter->unkBE7 = 0;
         }
     }
-    
+
     g_Menu->pManager->unk46 = 1;
 
     // Benched Characters
@@ -1820,9 +1820,9 @@ void MemberChangeMenuUpdateCharacters(u_char offset) {
         if (g_Menu->unk1E14[characterIndex] != 0xFF) {
             MemberChangeMenuUpdateAndRender();
             MemberChangeMenuUpdateCharacter(
-                pCharacter, 
-                g_Menu->unk1E14[characterIndex], i, 
-                pPositionsX, pPositionsY, 
+                pCharacter,
+                g_Menu->unk1E14[characterIndex], i,
+                pPositionsX, pPositionsY,
                 32,
                 0
             );
@@ -1837,25 +1837,25 @@ void MemberChangeMenuSetCursorToCharacter(u_char isBenchedCharWindowActive, int 
 
     // If the benched character window is active, we add and offset of 3
     offset = -(isBenchedCharWindowActive != 0) & 3;
-    
+
     if (cursorIndex == 0) {
         func_8002675C(
-            g_Menu->unk2DC, MENU_TEX_POINTER_CURSOR, 
-            &g_Menu->pCursors->polysCursor[0], g_Menu->renderContext, 
-            g_MemberChangeMenuCurserPositionsX[offset + characterIndex], 
-            g_MemberChangeMenuCurserPositionsY[offset + characterIndex], 
+            g_Menu->resources, MENU_TEX_POINTER_CURSOR,
+            &g_Menu->pCursors->polysCursor[0], g_Menu->renderContext,
+            g_MemberChangeMenuCurserPositionsX[offset + characterIndex],
+            g_MemberChangeMenuCurserPositionsY[offset + characterIndex],
             0x800
         );
     } else {
         func_8002675C(
-            g_Menu->unk2DC, MENU_TEX_POINTER_CURSOR, 
-            &g_Menu->pCursors->polysCursor[2], g_Menu->renderContext, 
-            g_MemberChangeMenuCurserPositionsX[offset + characterIndex], 
-            g_MemberChangeMenuCurserPositionsY[offset + characterIndex], 
+            g_Menu->resources, MENU_TEX_POINTER_CURSOR,
+            &g_Menu->pCursors->polysCursor[2], g_Menu->renderContext,
+            g_MemberChangeMenuCurserPositionsX[offset + characterIndex],
+            g_MemberChangeMenuCurserPositionsY[offset + characterIndex],
             0x800
         );
     }
-        
+
     g_Menu->pCursors->shouldRender[cursorIndex] = TRUE;
     g_Menu->pCursors->renderContexts[cursorIndex] = g_Menu->renderContext;
     g_Menu->pManager->shouldRenderCursors = TRUE;
@@ -1866,7 +1866,7 @@ void MemberChangeMenuInitializeCursors(unsigned char mode) {
 
     g_Menu->pCursors = HeapAlloc(sizeof(MenuPointerCursors), 0);
     bzero(g_Menu->pCursors, sizeof(MenuPointerCursors));
-    
+
     switch (mode) {
         case 0:
             g_Menu->pManager->shouldRenderCursors = TRUE;
@@ -1876,8 +1876,8 @@ void MemberChangeMenuInitializeCursors(unsigned char mode) {
         case 2:
             for (i = 0; i < MENU_MAX_NUM_CURSORS; i++) {
                 func_8002675C(
-                    g_Menu->unk2DC, MENU_TEX_POINTER_CURSOR, 
-                    &g_Menu->pCursors->polysCursor[i * 2], g_Menu->renderContext, 
+                    g_Menu->resources, MENU_TEX_POINTER_CURSOR,
+                    &g_Menu->pCursors->polysCursor[i * 2], g_Menu->renderContext,
                     D_801CB180[i], D_801CB190[i],
                     0x800
                 );
@@ -1886,9 +1886,9 @@ void MemberChangeMenuInitializeCursors(unsigned char mode) {
             return;
         case 3:
             func_8002675C(
-                g_Menu->unk2DC, MENU_TEX_POINTER_CURSOR, 
-                &g_Menu->pCursors->polysCursor[0], g_Menu->renderContext, 
-                0, 0, 
+                g_Menu->resources, MENU_TEX_POINTER_CURSOR,
+                &g_Menu->pCursors->polysCursor[0], g_Menu->renderContext,
+                0, 0,
                 0x800
             );
             g_Menu->pCursors->renderContexts[0] = g_Menu->renderContext;
@@ -1920,28 +1920,28 @@ void MemberChangeMenuMainLoop(void) {
     u_char isCharSelected;
     u_char isSelectedCharOnBenchedWindow;
 
-    
+
     isRunning = TRUE;
     curCharIndex = 0;
     curCharOffset = 0;
-    
+
     func_801C9908();
     MemberChangeMenuInitializeWindow(2, 0x78, 6, 0xB8, 0xC8, 1, 0, 4, 0);
     MemberChangeMenuInitializeCursors(1);
-    
+
     updateCharactersSignal = 0xFF;
     benchedCharWindowActive = FALSE;
     isCharSelected = FALSE;
-    
+
     if (g_Menu->windowParameters[2]->unk11 == 0) {
         do {
             MemberChangeMenuUpdateAndRender();
         } while (g_Menu->windowParameters[2]->unk11 == 0);
     }
-      
+
     while (isRunning) {
         MemberChangeMenuUpdateAndRender();
-        
+
         if (curCharOffset != updateCharactersSignal) {
             MemberChangeMenuUpdateCharacters(curCharOffset);
             updateCharactersSignal = curCharOffset;
@@ -1960,31 +1960,31 @@ void MemberChangeMenuMainLoop(void) {
                     g_Menu->pCursors->shouldRender[isRunning] = FALSE;
                     break;
                 }
-                
+
                 isRunning = FALSE;
                 break;
-            
+
             case MENU_INPUT_CONFIRM:
                 // We haven't selected our first character yet, so place
                 // a cursor on this character
                 if (!isCharSelected) {
                     isCharSelected = TRUE;
-                    
+
                     MemberChangeMenuSetCursorToCharacter(benchedCharWindowActive, curCharIndex, 1);
-                    
+
                     selectedCharIndex = curCharIndex;
                     curCharIndex = 0;
-                    
+
                     wasBenchedCharWindowActive = benchedCharWindowActive;
                     isSelectedCharOnBenchedWindow = benchedCharWindowActive;
                     benchedCharWindowActive = !wasBenchedCharWindowActive;
-                    
+
                     selectedCharOffset = curCharOffset;
-              
+
                     MemberChangeMenuPlaySoundEffect(2);
                     break;
                 }
-                
+
                 if (MemberChangeMenuSwapCharacters(
                     benchedCharWindowActive, curCharIndex, curCharOffset,
                     isSelectedCharOnBenchedWindow, selectedCharIndex, selectedCharOffset
@@ -1995,10 +1995,10 @@ void MemberChangeMenuMainLoop(void) {
                     MemberChangeMenuPlaySoundEffect(2);
                     break;
                 }
-                
+
                 MemberChangeMenuPlaySoundEffect(4);
                 break;
-            
+
             case MENU_INPUT_DOWN:
                 if (!benchedCharWindowActive) {
                     MemberChangeMenuPlaySoundEffect(1);
@@ -2009,7 +2009,7 @@ void MemberChangeMenuMainLoop(void) {
                     curCharIndex = 0;
                     break;
                 }
-                
+
                 curCharIndex++;
                 if (curCharIndex < 6) {
                     MemberChangeMenuPlaySoundEffect(1);
@@ -2018,7 +2018,7 @@ void MemberChangeMenuMainLoop(void) {
                 curCharIndex = 5;
                 MemberChangeMenuPlaySoundEffect(1);
                 break;
-            
+
             case MENU_INPUT_UP:
                 // Are we on the party member window?
                 if (!benchedCharWindowActive) {
@@ -2036,9 +2036,9 @@ void MemberChangeMenuMainLoop(void) {
                 if (curCharIndex >= 0) {
                     MemberChangeMenuPlaySoundEffect(1);
                     break;
-                }  
+                }
                 curCharIndex = 0;
-                
+
                 curCharOffset--;
                 if (curCharOffset < 0) {
                     curCharOffset = 0;
@@ -2053,26 +2053,26 @@ void MemberChangeMenuMainLoop(void) {
                 // Current party window is to the left, so if we're already
                 // there we can't move further left
                 if (!benchedCharWindowActive) break;
-                
+
                 MemberChangeMenuPlaySoundEffect(1);
                 benchedCharWindowActive = FALSE;
                 curCharIndex = 0;
                 break;
-            
+
             case MENU_INPUT_RIGHT:
                 if (isCharSelected) break;
 
                 // Benched character window is to the right, so if we're already
                 // there we can't move further right
                 if (benchedCharWindowActive) break;
-                
+
                 MemberChangeMenuPlaySoundEffect(1);
                 benchedCharWindowActive = TRUE;
                 curCharIndex = 0;
                 break;
         }
     }
-            
+
     MemberChangeMenuFreeCursors();
     MemberChangeMenuFreeWindow(2);
 

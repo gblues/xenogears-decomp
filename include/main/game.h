@@ -81,7 +81,8 @@ typedef struct {
     /* 0x1F90 */ u_char itemQuantities[MAX_INVENTORY_ITEMS];
     /* 0x2026 */ u_char itemIDs[MAX_INVENTORY_ITEMS];
 
-    /* 0x20BC */ undefined8 unk20BC[0x1F5];
+    /* 0x20BC */ undefined8 unk20BC[0x64];
+    /* 0x2120 */ undefined8 unk2120[0x191];
     /* 0x22B1 */ undefined8 gearRide[MAX_PARTY_MEMBERS];
     /* 0x22B4 */ undefined8 unk22B4[0x2];
     /* 0x22B6 */ undefined16 unk22B6;

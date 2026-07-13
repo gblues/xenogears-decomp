@@ -54,7 +54,8 @@ build_variables = {
     maspsx_flags = "--aspsx-version=2.67 --use-comm-section --run-assembler"
 }
 paths = [
-    "{binary}/system/animation_scripts."
+    "{binary}/system/animation_scripts.",
+    "{binary}/system/temp1."
 ]
 
 [[build_preset]]

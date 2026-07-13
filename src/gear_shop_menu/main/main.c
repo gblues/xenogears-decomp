@@ -8,6 +8,8 @@ extern s32 D_801D905C;
 extern s32 D_801D9060;
 extern s32 D_801D9064;
 extern s8 D_801D9083;
+extern u32 D_801D6A80;
+
 
 u16 func_801C5228(uint, u_char);
 
@@ -15,15 +17,47 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C511C);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C51B8);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5228);
+extern u16 D_801D6C68[];
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5244);
+u16 func_801C5228(u32 arg0, u8 arg1) {
+    return D_801D6C68[arg1] & arg0;
+}
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5260);
+u16 func_801C5244(s32 index) {
+    return D_801D6C68[(u8)index];
+}
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C527C);
+extern int D_801D6C88[];
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5298);
+s32 func_801C5260(int count) {
+    return D_801D6C88[(u8)count];
+}
+
+s32 func_801C527C(s32 arg0, s32 arg1) {
+    return arg0 & D_801D6C88[(u8)arg1];
+}
+
+/* 801C5298 */void GearMenu_ResolveGoldDigits(u32 amount) {
+    u32 place = 100000000;
+    int i;
+
+    for(i = 0; i < 9; i++) {
+        g_Menu->digits[i] = amount / place;
+        amount = amount % place;
+        place /= 10;
+    }
+
+    for(i = 1; i < 9; i++) {
+        if(g_Menu->digits[i] == 0) {
+            g_Menu->digits[i-1] = -1;
+        } else {
+            if(g_Menu->digits[i-1] == 0) {
+                g_Menu->digits[i-1] = -1;
+            }
+            break;
+        }
+    }
+}
 
 /**
  * Manages the memory allocation for MenuUnk2 in the system menu (g_Menu).
@@ -147,7 +181,9 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C56C8);
 }
 
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5C98);
+void GearMenu_initRenderContext(void) {
+    g_Menu->renderContext = 0;
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5CA8);
 
@@ -155,13 +191,37 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5EE8);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6098);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6114);
+/* initMenuGeometry() ? */
+void func_801C6114(void) {
+    SystemTransferPaletteToVRAM(0, 0x1D1);
+    g_Menu->unk4E0[0].pVramBuffer = HeapAlloc(0x38E, 0);
+    func_801C5EE8(g_Menu->unk4E0, &D_801D6A80, 0, 4);
+    func_801C6098();
+}
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6170);
+void func_801C6170(void) {
+    u8 unused[0x28];
+
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, // resource table
+        0xFE, // resource index
+        &g_Menu->unk46C, // out parameter: resource type
+        &g_Menu->texPage0,
+        &g_Menu->clutX0,
+        &g_Menu->clutY0,
+        &g_Menu->texPageX0,
+        &g_Menu->texPageY0);
+    ResourceHelperGetTexCoords(g_Menu->resources, 0x103, &g_Menu->unk484, &g_Menu->texPage1, &g_Menu->clutX1, &g_Menu->clutY1, &g_Menu->texPageX1, &g_Menu->texPageY1);
+    ResourceHelperGetTexCoords(g_Menu->resources, 0x100, &g_Menu->unk49C, &g_Menu->texPage2, &g_Menu->clutX2, &g_Menu->clutY2, &g_Menu->texPageX2, &g_Menu->texPageY2);
+    ResourceHelperGetTexCoords(g_Menu->resources, 0x101, &g_Menu->unk4B4, &g_Menu->texPage3, &g_Menu->clutX3, &g_Menu->clutY3, &g_Menu->texPageX3, &g_Menu->texPageY3);
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6278);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C665C);
+void func_801C665C(void) {
+    g_Menu->pManager->unk4 = 0;
+    g_Menu->pManager->unk3 = 0;
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C668C);
 
@@ -177,7 +237,10 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C765C);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C76A4);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C782C);
+void func_801C782C(void) {
+    g_Menu->pManager->scrollHandleActive = 0;
+    HeapFree(g_Menu->pScrollHandle);
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C7870);
 
@@ -248,7 +311,13 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CAA7C);
 void func_801CABD8(void) {
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CABE0);
+void func_801CABE0(void) {
+    func_801CA754();
+    func_801CA7E4();
+    func_801CA874();
+    func_801CA9EC();
+    func_801CAA7C();
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CAC20);
 
@@ -274,7 +343,11 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CC1C4);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CC31C);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CC4DC);
+void func_801CC4DC(void) {
+    g_Menu->pManager->shouldRenderCursors = 0;
+    func_801CC1C4();
+    HeapFree(g_Menu->pCursors);
+}
 
 void func_801CC520(void) {
 }
@@ -292,9 +365,17 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CCC18);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CCD20);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CCE90);
+void func_801CCE90(s32 count, MenuString *menuString, s8 *arg2) {
+    func_801C5EE8(menuString, arg2, 2, (u8)count);
+}
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CCEBC);
+void func_801CCEBC(s32 count, s8* buffer) {
+    int i;
+
+    for(i = 0; i < (u8)count; i++) {
+        buffer[i] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CCEE8);
 
@@ -342,10 +423,10 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CDD74);
     D_801D9060 = 0;
     D_801D9083 = 0x10;
     GearMenu_FilterPartyMembers();
-    func_801C5C98();
-    func_801C6114();
-    func_801C6708();
-    func_801C6170();
+    GearMenu_initRenderContext();
+    func_801C6114(); // initMenuGeometry()?
+    func_801C6708(); // initMenuUnk1()?
+    func_801C6170(); // get texture page data
     func_801C6E74();
     func_801D5D38();
     g_Menu->unk440 = HeapAlloc(sizeof(MenuUnknownComponent), 0);
@@ -360,7 +441,11 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CDD74);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CE1D0);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CE2E8);
+void func_801CE2E8(void) {
+    g_Menu->pManager->unk52[1] = 0;
+    func_801CC1C4();
+    HeapFree(g_Menu->unk440);
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CE32C);
 
