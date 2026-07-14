@@ -37,7 +37,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     return arg0 & D_801D6C88[(u8)arg1];
 }
 
-/* 801C5298 */void GearMenu_ResolveGoldDigits(u32 amount) {
+/* 801C5298 */void GearShopMenuResolveGoldDigits(u32 amount) {
     u32 place = 100000000;
     int i;
 
@@ -64,7 +64,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
  *
  * @param isInitialization determines action taken; valid values are either MENU_DATA_INITIALIZE or MENU_DATA_FREE
  */
-/* 0x801C5344 */void GearMenu_MenuUnk2Manager(u_char isInitialization) {
+/* 0x801C5344 */void GearShopMenuMenuUnk2Manager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->menuUnk2 = HeapAlloc(sizeof(MenuUnk2), 0);
         bzero(g_Menu->menuUnk2, sizeof(MenuUnk2));
@@ -73,7 +73,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     HeapFree(g_Menu->menuUnk2);
 }
 
-/* 801C53A8 */void GearMenu_MenuManagerManager(u_char isInitialization) {
+/* 801C53A8 */void GearShopMenuMenuManagerManager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->pManager = HeapAlloc(sizeof(MenuManager), 0);
         bzero(g_Menu->pManager, sizeof(MenuManager));
@@ -82,7 +82,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     HeapFree(g_Menu->pManager);
 }
 
-/* 801C540C */ void GearMenu_SelectionMenuManager(u_char isInitialization) {
+/* 801C540C */ void GearShopMenuSelectionMenuManager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->pSelectionMenu = HeapAlloc(sizeof(MenuSelectionMenu), 0);
         bzero(g_Menu->pSelectionMenu, sizeof(MenuSelectionMenu));
@@ -91,7 +91,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     HeapFree(g_Menu->pSelectionMenu);
 }
 
-/* 801C5470 */ void GearMenu_MenuUnk5Manager(u_char isInitialization) {
+/* 801C5470 */ void GearShopMenuMenuUnk5Manager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->unk354 = HeapAlloc(sizeof(MenuUnk5), 0);
         bzero(g_Menu->unk354, sizeof(MenuUnk5));
@@ -100,7 +100,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     HeapFree(g_Menu->unk354);
 }
 
-/* 801C54D4 */ void GearMenu_MenuUnk6Manager(u_char isInitialization) {
+/* 801C54D4 */ void GearShopMenuMenuUnk6Manager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->unk330 = HeapAlloc(sizeof(MenuUnk6), 0);
         bzero(g_Menu->unk330, sizeof(MenuUnk6));
@@ -109,7 +109,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     HeapFree(g_Menu->unk330);
 }
 
-/* 801C5538 */ void GearMenu_MenuUnk1Manager(u_char isInitialization) {
+/* 801C5538 */ void GearShopMenuMenuUnk1Manager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->unk348 = HeapAlloc(sizeof(MenuUnk1), 0);
         bzero(g_Menu->unk348, sizeof(MenuUnk1));
@@ -118,7 +118,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     HeapFree(g_Menu->unk348);
 }
 
-/* 801C559C */ void GearMenu_MenuUnk7Manager(u_char isInitialization) {
+/* 801C559C */ void GearShopMenuMenuUnk7Manager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->unk1E20 = HeapAlloc(sizeof(MenuUnk7), 0);
         bzero(g_Menu->unk1E20, sizeof(MenuUnk7));
@@ -127,7 +127,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     HeapFree(g_Menu->unk1E20);
 }
 
-/* 801C5600 */ void GearMenu_MenuShopManager(u_char isInitialization) {
+/* 801C5600 */ void GearShopMenuMenuShopManager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->pShop = HeapAlloc(sizeof(MenuShop), 0);
         bzero(g_Menu->pShop, sizeof(MenuShop));
@@ -136,7 +136,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
     HeapFree(g_Menu->pShop);
 }
 
-/* 801C5664 */ void GearMenu_MenuUnk8Manager(u_char isInitialization) {
+/* 801C5664 */ void GearShopMenuMenuUnk8Manager(u_char isInitialization) {
     if (isInitialization) {
         g_Menu->menuUnk8 = HeapAlloc(sizeof(MenuUnk8), 0);
         bzero(g_Menu->menuUnk8, sizeof(MenuUnk8));
@@ -147,7 +147,7 @@ s32 func_801C527C(s32 arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C56C8);
 
-/* 801C5B08 */ void GearMenu_FilterPartyMembers(void) {
+/* 801C5B08 */ void GearShopMenuFilterPartyMembers(void) {
     s32 i;
     u_short masked_bits;
 
@@ -181,7 +181,7 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C56C8);
 }
 
 
-void GearMenu_initRenderContext(void) {
+void GearShopMenuInitRenderContext(void) {
     g_Menu->renderContext = 0;
 }
 
@@ -392,15 +392,15 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CDC68);
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CDD74);
 
 /* 0x801CE024 */ void GearMenuEntrypoint(void) {
-    GearMenu_MenuUnk2Manager(MENU_DATA_INITIALIZE);
-    GearMenu_MenuManagerManager(MENU_DATA_INITIALIZE);
-    GearMenu_SelectionMenuManager(MENU_DATA_INITIALIZE);
-    GearMenu_MenuUnk5Manager(MENU_DATA_INITIALIZE);
-    GearMenu_MenuUnk6Manager(MENU_DATA_INITIALIZE);
-    GearMenu_MenuUnk1Manager(MENU_DATA_INITIALIZE);
-    GearMenu_MenuUnk7Manager(MENU_DATA_INITIALIZE);
-    GearMenu_MenuShopManager(MENU_DATA_INITIALIZE);
-    GearMenu_MenuUnk8Manager(MENU_DATA_INITIALIZE);
+    GearShopMenuMenuUnk2Manager(MENU_DATA_INITIALIZE);
+    GearShopMenuMenuManagerManager(MENU_DATA_INITIALIZE);
+    GearShopMenuSelectionMenuManager(MENU_DATA_INITIALIZE);
+    GearShopMenuMenuUnk5Manager(MENU_DATA_INITIALIZE);
+    GearShopMenuMenuUnk6Manager(MENU_DATA_INITIALIZE);
+    GearShopMenuMenuUnk1Manager(MENU_DATA_INITIALIZE);
+    GearShopMenuMenuUnk7Manager(MENU_DATA_INITIALIZE);
+    GearShopMenuMenuShopManager(MENU_DATA_INITIALIZE);
+    GearShopMenuMenuUnk8Manager(MENU_DATA_INITIALIZE);
     g_Menu->pSelectionMenu->unk1180.x = 0x2C0;
     g_Menu->pSelectionMenu->unk1180.y = 0x100;
     g_Menu->pSelectionMenu->unk1180.w = 0x140;
@@ -422,8 +422,8 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CDD74);
     D_801D905C = 0x400;
     D_801D9060 = 0;
     D_801D9083 = 0x10;
-    GearMenu_FilterPartyMembers();
-    GearMenu_initRenderContext();
+    GearShopMenuFilterPartyMembers();
+    GearShopMenuInitRenderContext();
     func_801C6114(); // initMenuGeometry()?
     func_801C6708(); // initMenuUnk1()?
     func_801C6170(); // get texture page data
