@@ -317,28 +317,28 @@ void MemberChangeMenuInitializeWindowBorders(void) {
 
     ResourceHelperGetTexCoords(
         g_Menu->resources, MENU_TEX_WINDOW_BORDER_TOP,
-        &g_Menu->unk46C,
+        &g_Menu->texCount0,
         &g_Menu->texPage0,
         &g_Menu->clutX0, &g_Menu->clutY0,
         &g_Menu->texPageX0, &g_Menu->texPageY0
     );
     ResourceHelperGetTexCoords(
         g_Menu->resources, MENU_TEX_WINDOW_BORDER_BOTTOM,
-        &g_Menu->unk484,
+        &g_Menu->texCount1,
         &g_Menu->texPage1,
         &g_Menu->clutX1, &g_Menu->clutY1,
         &g_Menu->texPageX1, &g_Menu->texPageY1
     );
     ResourceHelperGetTexCoords(
         g_Menu->resources, MENU_TEX_WINDOW_BORDER_LEFT,
-        &g_Menu->unk49C,
+        &g_Menu->texCount2,
         &g_Menu->texPage2,
         &g_Menu->clutX2, &g_Menu->clutY2,
         &g_Menu->texPageX2, &g_Menu->texPageY2
     );
     ResourceHelperGetTexCoords(
         g_Menu->resources, MENU_TEX_WINDOW_BORDER_RIGHT,
-        &g_Menu->unk4B4,
+        &g_Menu->texCount3,
         &g_Menu->texPage3,
         &g_Menu->clutX3, &g_Menu->clutY3,
         &g_Menu->texPageX3, &g_Menu->texPageY3
