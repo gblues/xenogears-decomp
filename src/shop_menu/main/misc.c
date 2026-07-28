@@ -90,10 +90,10 @@ extern int D_801D21B0[];
 
 // Explanations stuff
 extern u_char D_801D2210[]; // Buy menu explanation textures
-// = { MENU_TEX_QUANTITY_EXPLANATION, 
-//     MENU_TEX_STRING_ATTACK, 
-//     MENU_TEX_STRING_DEFENSE, 
-//     MENU_TEX_MINUS 
+// = { MENU_TEX_QUANTITY_EXPLANATION,
+//     MENU_TEX_STRING_ATTACK,
+//     MENU_TEX_STRING_DEFENSE,
+//     MENU_TEX_MINUS
 //    }
 
 extern u_char D_801D2214[]; // Sell menu explanation textures
@@ -137,13 +137,13 @@ void ShopMenuParseNumberToString(u_int number) {
 
     // 10 ** 8
     curValue = 100000000;
-    
+
     for (i = 0; i < MENU_MAX_DIGITS; i++) {
         g_Menu->digits[i] = number / curValue;
         number %= curValue;
         curValue /= 10;
     }
-    
+
     for (i = 1; i < MENU_MAX_DIGITS; i++) {
         if (g_Menu->digits[i]) {
             if (g_Menu->digits[i - 1] == 0) {
@@ -239,7 +239,7 @@ void ShopMenuInitialize(void) {
     g_Menu->unk326 = 0x3C;
     g_Menu->unk334 = 0;
     g_Menu->unk335 = 0;
-    
+
     flags = (g_GameState.unk1D30 & g_GameState.FrMask) & 0x7FF;
     for (i = 0; i < 0x10; i++) {
         if (ShopMenuIsCharacterFlagSet(flags, i)) {
@@ -248,7 +248,7 @@ void ShopMenuInitialize(void) {
             g_Menu->availableCharacters[i] = FALSE;
         }
     }
-    
+
     for (i = 0; i < MAX_PARTY_MEMBERS; i++) {
         characterID = g_GameState.partyMembers[i];
         if (characterID != 0xFF && g_Menu->availableCharacters[characterID]) {
@@ -257,7 +257,7 @@ void ShopMenuInitialize(void) {
             g_Menu->pManager->currentCharacterIDs[i] = 0xFF;
         }
     }
-    
+
     ShopMenuLoadResources();
 }
 
@@ -275,48 +275,48 @@ INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", func_801C5EE8);
 
 void ShopMenuInitializeWindowBorders(void) {
     POLY_FT4 _unusued;
-    
-    func_80026338(
-        g_Menu->unk2DC, MENU_TEX_WINDOW_BORDER_TOP, 
-        &g_Menu->unk46C, 
-        &g_Menu->texPage0, 
-        &g_Menu->clutX0, &g_Menu->clutY0, 
+
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, MENU_TEX_WINDOW_BORDER_TOP,
+        &g_Menu->texCount0,
+        &g_Menu->texPage0,
+        &g_Menu->clutX0, &g_Menu->clutY0,
         &g_Menu->texPageX0, &g_Menu->texPageY0
     );
-    func_80026338(
-        g_Menu->unk2DC, MENU_TEX_WINDOW_BORDER_BOTTOM, 
-        &g_Menu->unk484, 
-        &g_Menu->texPage1, 
-        &g_Menu->clutX1, &g_Menu->clutY1, 
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, MENU_TEX_WINDOW_BORDER_BOTTOM,
+        &g_Menu->texCount1,
+        &g_Menu->texPage1,
+        &g_Menu->clutX1, &g_Menu->clutY1,
         &g_Menu->texPageX1, &g_Menu->texPageY1
     );
-    func_80026338(
-        g_Menu->unk2DC, MENU_TEX_WINDOW_BORDER_LEFT, 
-        &g_Menu->unk49C, 
-        &g_Menu->texPage2, 
-        &g_Menu->clutX2, &g_Menu->clutY2, 
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, MENU_TEX_WINDOW_BORDER_LEFT,
+        &g_Menu->texCount2,
+        &g_Menu->texPage2,
+        &g_Menu->clutX2, &g_Menu->clutY2,
         &g_Menu->texPageX2, &g_Menu->texPageY2
     );
-    func_80026338(
-        g_Menu->unk2DC, MENU_TEX_WINDOW_BORDER_RIGHT, 
-        &g_Menu->unk4B4, 
-        &g_Menu->texPage3, 
-        &g_Menu->clutX3, &g_Menu->clutY3, 
+    ResourceHelperGetTexCoords(
+        g_Menu->resources, MENU_TEX_WINDOW_BORDER_RIGHT,
+        &g_Menu->texCount3,
+        &g_Menu->texPage3,
+        &g_Menu->clutX3, &g_Menu->clutY3,
         &g_Menu->texPageX3, &g_Menu->texPageY3
     );
 }
 
 void ShopMenuMovePointerCursor(int index, u_char arg1) {
     func_8002675C(
-        g_Menu->unk2DC, MENU_TEX_POINTER_CURSOR, 
-        &g_Menu->unk348->polysPointerCursor, g_Menu->renderContext, 
-        D_801D2194[index], D_801D21B0[index], 
+        g_Menu->resources, MENU_TEX_POINTER_CURSOR,
+        &g_Menu->unk348->polysPointerCursor, g_Menu->renderContext,
+        D_801D2194[index], D_801D21B0[index],
         0x1000
     );
     g_Menu->unk348->cursorRenderContext = g_Menu->renderContext;
-    
+
     if (arg1) {
-        // A yellow -> black shaded rectangle of unk15B width, 
+        // A yellow -> black shaded rectangle of unk15B width,
         // with green lines around it. Seems to be cursor-related,
         // as the pointer cursor is set to same position
         setXY4(
@@ -340,7 +340,7 @@ void ShopMenuMovePointerCursor(int index, u_char arg1) {
             D_801D2194[index] + 20, D_801D21B0[index] - 20,
             D_801D2194[index] + (g_Menu->unk348->unk15B + 20), D_801D21B0[index] - 20
         );
-        
+
         g_Menu->unk348->unk159 = g_Menu->renderContext;
         g_Menu->pManager->unk3 = 1;
     }
@@ -367,21 +367,21 @@ void ShopMenuInitializeBackgrounds(void) {
     rect.x = 0;
     rect.h = 256;
     rect.w = 256;
-    
+
     func_801C6430();
 
     for (i = 0; i < 2; i++) {
         // Yellow -> Black gradient
         func_801C6460(&g_Menu->unk348->polyG4s[i], 128, 128, 0);
         SetSemiTrans(&g_Menu->unk348->polyG4s[i], 1);
-        
+
         // Green lines
         SetLineF3(&g_Menu->unk348->lines1[i]);
         setRGB0(&g_Menu->unk348->lines1[i], 0, 64, 0);
-        
+
         SetLineF3(&g_Menu->unk348->lines2[i]);
         setRGB0(&g_Menu->unk348->lines2[i], 0, 64, 0);
-        
+
         // Backgrounds dimming screen
         SetPolyF4(&g_Menu->unk348->polysDimEffect[i]);
         setXY4(&g_Menu->unk348->polysDimEffect[i],
@@ -418,7 +418,7 @@ void ShopMenuLoadShopItemsData(u_char mode) {
             // Shop item descriptions
             g_Menu->pShop->pWeaponDescriptions = LZSSHeapDecompress(pArchive[40], 0);
             g_Menu->pShop->pAccessoryDescriptions = LZSSHeapDecompress(pArchive[41], 0);
-            g_Menu->pShop->pItemDescriptions = LZSSHeapDecompress(pArchive[42], 0);       
+            g_Menu->pShop->pItemDescriptions = LZSSHeapDecompress(pArchive[42], 0);
             break;
         case SHOP_DATA_FREE:
             HeapFree(g_Menu->unk330->pWeaponsData);
@@ -439,12 +439,12 @@ void ShopMenuInitializeShopData(void) {
     int i;
     int j;
     u_char* pShopItemData;
-    
+
     j = 0;
 
     // Data for the items the shop we're loading is carrying
     pShopItemData = &g_Menu->pShopEntries[D_80059171 * 0x5C];
-    
+
     for (i = 0; i < MAX_SHOP_ITEMS; i++) {
         g_Menu->shopItemIDs[i] = 0;
         g_Menu->shopItemTypes[i] = 0;
@@ -460,7 +460,7 @@ void ShopMenuInitializeShopData(void) {
         }
     }
     D_801D1F50 = j;
-    
+
     ShopMenuLoadShopItemsData(SHOP_DATA_INITIALIZE);
 
     // Red highlight around character portraits
@@ -468,7 +468,7 @@ void ShopMenuInitializeShopData(void) {
         for (j = 0; j < 2; j++) {
             SetLineF3(&g_Menu->pShop->linesPortraitHighlight1[i*2 + j]);
             setRGB0(&g_Menu->pShop->linesPortraitHighlight1[i*2 + j], 255, 0, 0);
-            
+
             SetLineF3(&g_Menu->pShop->linesPortraitHighlight2[i*2 + j]);
             setRGB0(&g_Menu->pShop->linesPortraitHighlight2[i*2 + j], 255, 0, 0);
 
@@ -486,7 +486,7 @@ void ShopMenuInitializeShopData(void) {
                 D_801D21CC[i] + 0x18, 0xBC
             );
         }
-        
+
         g_Menu->pShop->unk469C[i] = 0;
     }
 
@@ -507,15 +507,15 @@ void ShopMenuSetVertices(SVECTOR* pVertices, u_short x, u_short y, u_short width
     pVertices[0].vx = x - 160;
     pVertices[0].vy = y - 112;
     pVertices[0].vz = 0;
-    
+
     pVertices[1].vx = x + width - 160;
     pVertices[1].vy = y - 112;
     pVertices[1].vz = 0;
-    
+
     pVertices[2].vx = x - 160;
     pVertices[2].vy = y + height - 112;
     pVertices[2].vz = 0;
-    
+
     pVertices[3].vx = x + width - 160;
     pVertices[3].vy = y + height - 112;
     pVertices[3].vz = 0;
@@ -530,12 +530,12 @@ void ShopMenuSetWindowBorderPrimitive(P_TAG* pPrim) {
 // scrollOffset refers to the index we're currently scrolled down at
 void ShopMenuUpdateScrollBarHandle(int x, int y, int scrollHandleHeight, int numItems, int scrollOffset) {
     int yOffset = 0;
-    
+
     if (!g_Menu->pManager->scrollHandleActive) {
         g_Menu->pScrollHandle = HeapAlloc(sizeof(MenuScrollBarHandle), 0x0);
         bzero(g_Menu->pScrollHandle, sizeof(MenuScrollBarHandle));
     }
-    
+
     // If the total number of items in the window fits within what we can view,
     // there's no need for scrolling so we set the scroll handle height to fill
     // the entire scroll bar.
@@ -548,17 +548,17 @@ void ShopMenuUpdateScrollBarHandle(int x, int y, int scrollHandleHeight, int num
         yOffset = (yOffset * 4000) / 10000;
     }
 
-    func_8002675C(g_Menu->unk2DC, MENU_TEX_SCROLL_BAR_HANDLE, 
-        g_Menu->pScrollHandle->polys, g_Menu->renderContext, 
+    func_8002675C(g_Menu->resources, MENU_TEX_SCROLL_BAR_HANDLE,
+        g_Menu->pScrollHandle->polys, g_Menu->renderContext,
         x, y, 0x1000
     );
-    
+
     ShopMenuSetVertices(
-        g_Menu->pScrollHandle->vertices, 
-        x, y + yOffset, 
+        g_Menu->pScrollHandle->vertices,
+        x, y + yOffset,
         8, scrollHandleHeight
     );
-    
+
     g_Menu->pScrollHandle->renderContext = g_Menu->renderContext;
     g_Menu->pManager->scrollHandleActive = TRUE;
 }
@@ -581,9 +581,9 @@ void ShopMenuUpdateArrowCursor(int selectedIndex, int scrollOffset, u_char arg2,
     POLY_FT4* pPoly;
 
     scrollOffset = 0;
-    
+
     pArrowCursor = g_Menu->arrowCursors[cursorIndex];
-    
+
     // Update animation
     if (++pArrowCursor->animFrameDuration >= 6) {
         pArrowCursor->curAnimFrame--;
@@ -592,30 +592,30 @@ void ShopMenuUpdateArrowCursor(int selectedIndex, int scrollOffset, u_char arg2,
         }
         pArrowCursor->animFrameDuration = 0;
     }
-    
+
     if (!arg2) {
         yOffset = (selectedIndex * FONT_LETTER_HEIGHT) + 50;
     }
-    
+
     if (scrollOffset != 1) {
         func_8002675C(
-            g_Menu->unk2DC, pArrowCursor->curAnimFrame + MENU_TEX_ARROW_CURSOR, 
+            g_Menu->resources, pArrowCursor->curAnimFrame + MENU_TEX_ARROW_CURSOR,
             pArrowCursor->polys, g_Menu->renderContext,
             0, 0, 0x1000
         );
-        
+
         pPoly = &pArrowCursor->polys[g_Menu->renderContext];
 
         ShopMenuSetVertices(
-            pArrowCursor->vertices, 
-            pPoly->x0 + 28, pPoly->y0 + yOffset, 
+            pArrowCursor->vertices,
+            pPoly->x0 + 28, pPoly->y0 + yOffset,
             pPoly->x1 - pPoly->x0, pPoly->y3 - pPoly->y0
         );
         pArrowCursor->renderContext = g_Menu->renderContext;
         g_Menu->pManager->shouldRenderArrowCursor[cursorIndex] = TRUE;
         return;
     }
-    
+
     g_Menu->pManager->shouldRenderArrowCursor[cursorIndex] = FALSE;
 }
 
@@ -630,15 +630,15 @@ void ShopMenuInitializeWindowGraphics(u_char index) {
     u_char i;
 
     pWindow = g_Menu->windows[index];
-    
+
     rect.y = 0;
     rect.x = 0;
     rect.h = 256;
     rect.w = 256;
-    
+
     g_Menu->pManager->shouldRenderWindow[index] = FALSE;
     g_Menu->pManager->unk27[index] = FALSE;
-    
+
     // Window background
     for (i = 0; i < 2; i++) {
         SetPolyG4(&pWindow->polysBackground[i]);
@@ -648,13 +648,13 @@ void ShopMenuInitializeWindowGraphics(u_char index) {
         setRGB3(&pWindow->polysBackground[i], 104, 104, 104);
         SetSemiTrans(&pWindow->polysBackground[i], 1);
         SetDrawMode(
-            &pWindow->drawModes[i], 
-            0, 0, 
-            GetTPage(0, 0, g_Menu->texPageX0, g_Menu->texPageY0), 
+            &pWindow->drawModes[i],
+            0, 0,
+            GetTPage(0, 0, g_Menu->texPageX0, g_Menu->texPageY0),
             &rect
         );
     }
-    
+
     // Window borders
     for (i = 0; i < 4; i++) {
         SetPolyFT4(&pWindow->polysWindowBorderTop[i]);
@@ -662,19 +662,19 @@ void ShopMenuInitializeWindowGraphics(u_char index) {
         setRGB0(&pWindow->polysWindowBorderTop[i], 0xFF, 0xFF, 0xFF);
         pWindow->polysWindowBorderTop[i].tpage = GetTPage(g_Menu->texPage0, 0, g_Menu->texPageX0, g_Menu->texPageY0);
         pWindow->polysWindowBorderTop[i].clut = GetClut(g_Menu->clutX0, g_Menu->clutY0);
-        
+
         SetPolyFT4(&pWindow->polysWindowBorderBottom[i]);
         SetShadeTex(&pWindow->polysWindowBorderBottom[i], 1);
         setRGB0(&pWindow->polysWindowBorderBottom[i], 0xFF, 0xFF, 0xFF);
         pWindow->polysWindowBorderBottom[i].tpage = GetTPage(g_Menu->texPage1, 0, g_Menu->texPageX1, g_Menu->texPageY1);
         pWindow->polysWindowBorderBottom[i].clut = GetClut(g_Menu->clutX1, g_Menu->clutY1);
-        
+
         SetPolyFT4(&pWindow->polysWindowBorderLeft[i]);
         SetShadeTex(&pWindow->polysWindowBorderLeft[i], 1);
         setRGB0(&pWindow->polysWindowBorderLeft[i], 0xFF, 0xFF, 0xFF);
         pWindow->polysWindowBorderLeft[i].tpage = GetTPage(g_Menu->texPage2, 0, g_Menu->texPageX2, g_Menu->texPageY2);
         pWindow->polysWindowBorderLeft[i].clut = GetClut(g_Menu->clutX2, g_Menu->clutY2);
-        
+
         SetPolyFT4(&pWindow->polysWindowBorderRight[i]);
         SetShadeTex(&pWindow->polysWindowBorderRight[i], 1);
         setRGB0(&pWindow->polysWindowBorderRight[i], 0xFF, 0xFF, 0xFF);
@@ -685,37 +685,37 @@ void ShopMenuInitializeWindowGraphics(u_char index) {
 
 void ShopMenuInitializeScrollBar(u_char index, u_short x, u_short y, u_short width, u_short height) {
     MenuWindow* pWindow = g_Menu->windows[index];
-    
+
     // Top ornament
     func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_SCROLL_BAR_ORNAMENT, 
-        pWindow->polysScrollBarEnds, 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_SCROLL_BAR_ORNAMENT,
+        pWindow->polysScrollBarEnds,
+        g_Menu->renderContext,
         x, y, 0x1000
     );
 
     // Bottom ornament
     func_800263E4(
-        g_Menu->unk2DC, 
-        MENU_TEX_SCROLL_BAR_ORNAMENT, 
-        &pWindow->polysScrollBarEnds[2], 
-        g_Menu->renderContext, 
-        x, 
-        y + height - 8, 
+        g_Menu->resources,
+        MENU_TEX_SCROLL_BAR_ORNAMENT,
+        &pWindow->polysScrollBarEnds[2],
+        g_Menu->renderContext,
+        x,
+        y + height - 8,
         0x1000, 0, 1
     );
 
     func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_SCROLL_BAR_EMPTY, 
-        pWindow->polysScrollBarEmpty, 
-        g_Menu->renderContext, 
-        x, 
-        y + 8, 
+        g_Menu->resources,
+        MENU_TEX_SCROLL_BAR_EMPTY,
+        pWindow->polysScrollBarEmpty,
+        g_Menu->renderContext,
+        x,
+        y + 8,
         0x1000
     );
-    
+
     ShopMenuSetVertices(pWindow->vertsScrollBarEnds, x, y, 8, 8);
     ShopMenuSetVertices(&pWindow->vertsScrollBarEnds[4], x, y + height, 8, -8);
     ShopMenuSetVertices(pWindow->vertsScrollBarEmpty, x, y + 8, 8, height - 8);
@@ -729,54 +729,54 @@ void ShopMenuInitializeWindowBorderCorners(u_char index, u_short x, u_short y, u
 
     pWindow->unk710 = 0;
     pWindow->unk710 += func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_WINDOW_BORDER_TOP_LEFT, 
-        &pWindow->polysWindowBorderCorners, 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_WINDOW_BORDER_TOP_LEFT,
+        &pWindow->polysWindowBorderCorners,
+        g_Menu->renderContext,
         0, 0, 0x1000
     );
     pWindow->unk710 += func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_WINDOW_BORDER_TOP_RIGHT, 
-        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710], 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_WINDOW_BORDER_TOP_RIGHT,
+        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710],
+        g_Menu->renderContext,
         0, 0, 0x1000
     );
     pWindow->unk710 += func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_WINDOW_BORDER_BOTTOM_LEFT, 
-        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710], 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_WINDOW_BORDER_BOTTOM_LEFT,
+        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710],
+        g_Menu->renderContext,
         0, 0, 0x1000
     );
     pWindow->unk710 += func_8002675C(
-        g_Menu->unk2DC, 
-        MENU_TEX_WINDOW_BORDER_BOTTOM_RIGHT, 
-        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710], 
-        g_Menu->renderContext, 
+        g_Menu->resources,
+        MENU_TEX_WINDOW_BORDER_BOTTOM_RIGHT,
+        &pWindow->polysWindowBorderCorners[2 * pWindow->unk710],
+        g_Menu->renderContext,
         0, 0, 0x1000
     );
-    
+
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderCorners, 
-        x - 8, 
-        y + 8, 
+        pWindow->vertsWindowBorderCorners,
+        x - 8,
+        y + 8,
         16, -16
     );
     ShopMenuSetVertices(
-        &pWindow->vertsWindowBorderCorners[4], 
-        x + width + 8, 
-        y + 8, 
+        &pWindow->vertsWindowBorderCorners[4],
+        x + width + 8,
+        y + 8,
         -16, -16
     );
     ShopMenuSetVertices(
-        &pWindow->vertsWindowBorderCorners[8], 
-        x - 8, 
-        y + height - 8, 
+        &pWindow->vertsWindowBorderCorners[8],
+        x - 8,
+        y + height - 8,
         16, 16
     );
     ShopMenuSetVertices(
-        &pWindow->vertsWindowBorderCorners[0xC], 
+        &pWindow->vertsWindowBorderCorners[0xC],
         x + width + 8,
         y + height - 8,
         -16, 16
@@ -809,23 +809,23 @@ void ShopMenuSetWindowBorderTop(u_char index, u_short x, u_short y, u_short widt
         0, 148,
         7, 148
     );
-    
+
     innerWidth = width - (MENU_WINDOW_BORDER_SIZE * 2);
     halfInnerWidth = innerWidth / 2;
-    
+
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderTop1, 
+        pWindow->vertsWindowBorderTop1,
         x + MENU_WINDOW_BORDER_SIZE,
         y - MENU_WINDOW_BORDER_SIZE,
         halfInnerWidth,
         MENU_WINDOW_BORDER_SIZE * 2
     );
-    
+
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderTop2, 
-        x + MENU_WINDOW_BORDER_SIZE + halfInnerWidth, 
+        pWindow->vertsWindowBorderTop2,
+        x + MENU_WINDOW_BORDER_SIZE + halfInnerWidth,
         y - MENU_WINDOW_BORDER_SIZE,
-        halfInnerWidth, 
+        halfInnerWidth,
         MENU_WINDOW_BORDER_SIZE * 2
     );
 
@@ -856,21 +856,21 @@ void ShopMenuSetWindowBorderBottom(u_char index, u_short x, u_short y, u_short w
         8, 148,
         15, 148
     );
-    
+
     innerWidth = width - 16;
     width = innerWidth / 2;
     height = y + height - 8;
-    
+
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderBottom1, 
-        x + 8, 
-        height, 
+        pWindow->vertsWindowBorderBottom1,
+        x + 8,
+        height,
         width, 16
     );
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderBottom2, 
-        x + 8 + width, 
-        height, 
+        pWindow->vertsWindowBorderBottom2,
+        x + 8 + width,
+        height,
         width, 16
     );
 
@@ -884,7 +884,7 @@ void ShopMenuSetWindowBorderLeft(u_char index, u_short x, u_short y, u_short hei
     int i;
     int innerHeight;
     u_short halfInnerHeight;
-    
+
     pWindow = g_Menu->windows[index];
 
     setUV4(
@@ -905,15 +905,15 @@ void ShopMenuSetWindowBorderLeft(u_char index, u_short x, u_short y, u_short hei
 
     innerHeight = height - 16;
     halfInnerHeight = innerHeight / 2;
-    
+
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderLeft1, 
-        x - 8, y + 8, 
+        pWindow->vertsWindowBorderLeft1,
+        x - 8, y + 8,
         16, halfInnerHeight
     );
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderLeft2, 
-        x - 8, y + 8 + halfInnerHeight, 
+        pWindow->vertsWindowBorderLeft2,
+        x - 8, y + 8 + halfInnerHeight,
         16, halfInnerHeight
     );
 
@@ -945,18 +945,18 @@ void ShopMenuSetWindowBorderRight(u_char index, u_short x, u_short y, u_short wi
         16, 147,
         32, 147
     );
-    
-    width = x + width - 8;    
+
+    width = x + width - 8;
     innerHeight = height - 16;
     halfInnerHeight = innerHeight / 2;
-    
+
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderRight1, 
-        width, y + 8, 
+        pWindow->vertsWindowBorderRight1,
+        width, y + 8,
         16, halfInnerHeight
     );
     ShopMenuSetVertices(
-        pWindow->vertsWindowBorderRight2, 
+        pWindow->vertsWindowBorderRight2,
         width, y + 8 + halfInnerHeight,
         16, halfInnerHeight
     );
@@ -1004,7 +1004,7 @@ void ShopMenuInitializeWindow(u_char windowIndex, u_short x, u_short y, u_short 
         bzero(g_Menu->windowParameters[windowIndex] , sizeof(MenuWindowParameters));
         ShopMenuInitializeWindowGraphics(windowIndex);
     }
-    
+
     pWindowParams = g_Menu->windowParameters[windowIndex];
     if (shouldInitializeHandle) {
         pWindowParams->index = windowIndex;
@@ -1020,7 +1020,7 @@ void ShopMenuInitializeWindow(u_char windowIndex, u_short x, u_short y, u_short 
         pWindowParams->zIndex = zIndex;
         return;
     }
-    
+
     ShopMenuSetWindow(windowIndex, x, y, width, height, arg6, zIndex, hasScrollBar);
 }
 
@@ -1032,35 +1032,35 @@ void ShopMenuUpdateWindows(void) {
     for (i = 0; i < MENU_MAX_NUM_WINDOWS; i++) {
         pWindowInfo = g_Menu->windowParameters[i];
         if ((g_Menu->pManager->unk27[i]) && pWindowInfo->unk11 == 0) {
-            
+
             flag = 0;
-            
+
             if ((pWindowInfo->unk8 + 32) >= pWindowInfo->width) {
                 pWindowInfo->unk8 = pWindowInfo->width;
                 flag += 1;
             } else {
                 pWindowInfo->unk8 += 32;
             }
-            
+
             if ((pWindowInfo->unkA + 32) >= pWindowInfo->height) {
                 pWindowInfo->unkA = pWindowInfo->height;
                 flag += 1;
             } else {
                 pWindowInfo->unkA += 32;
             }
-            
+
             if (flag == 2) {
                 pWindowInfo->unk11 = 1;
             }
-            
+
             ShopMenuSetWindow(
-                pWindowInfo->index, 
-                (pWindowInfo->x + (pWindowInfo->width / 2)) - (pWindowInfo->unk8 / 2), 
-                (pWindowInfo->y + (pWindowInfo->height / 2)) - (pWindowInfo->unkA / 2), 
-                pWindowInfo->unk8,  
-                pWindowInfo->unkA, 
-                pWindowInfo->unk12, 
-                pWindowInfo->zIndex, 
+                pWindowInfo->index,
+                (pWindowInfo->x + (pWindowInfo->width / 2)) - (pWindowInfo->unk8 / 2),
+                (pWindowInfo->y + (pWindowInfo->height / 2)) - (pWindowInfo->unkA / 2),
+                pWindowInfo->unk8,
+                pWindowInfo->unkA,
+                pWindowInfo->unk12,
+                pWindowInfo->zIndex,
                 pWindowInfo->hasScrollBar
             );
         }
@@ -1075,15 +1075,15 @@ void ShopMenuRenderPolygons(int numPolygons, SVECTOR* pVertices, POLY_FT4* pPoly
 
     for (i = 0; i < numPolygons; i++) {
         RotTransPers4(
-            &pVertices[i*4 + 0], 
-            &pVertices[i*4 + 1], 
-            &pVertices[i*4 + 2], 
-            &pVertices[i*4 + 3], 
-            &pPolys[i*2 + renderContext].x0, 
+            &pVertices[i*4 + 0],
+            &pVertices[i*4 + 1],
+            &pVertices[i*4 + 2],
+            &pVertices[i*4 + 3],
+            &pPolys[i*2 + renderContext].x0,
             &pPolys[i*2 + renderContext].x1,
             &pPolys[i*2 + renderContext].x2,
             &pPolys[i*2 + renderContext].x3,
-            &interpolated, 
+            &interpolated,
             &flag
         );
 
@@ -1096,7 +1096,7 @@ void ShopMenuRenderString(int stringLength, POLY_FT4* pPolys, int renderContext)
 
     for (i = 0; i < stringLength; i++) {
         AddPrim(
-            &g_Menu->pGfxEnv->ot[4], 
+            &g_Menu->pGfxEnv->ot[4],
             &pPolys[i * 2 + renderContext]
         );
     }
@@ -1110,13 +1110,13 @@ void ShopMenuRenderScrollBarHandle(void) {
 
 void func_801C8E28(void) {
     AddPrim(
-        &g_Menu->pGfxEnv->ot[4], 
+        &g_Menu->pGfxEnv->ot[4],
         &g_Menu->unk348->drModes1[g_Menu->unk348->unk159]
     );
-    
+
     if (g_Menu->pManager->unk4) {
         AddPrim(
-            &g_Menu->pGfxEnv->ot[4], 
+            &g_Menu->pGfxEnv->ot[4],
             &g_Menu->unk348->polysPointerCursor[g_Menu->unk348->cursorRenderContext]
         );
     }
@@ -1128,38 +1128,38 @@ void ShopMenuRenderTopWindowBorder(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderTop1[0], 
-        &pWindow->vertsWindowBorderTop1[1], 
-        &pWindow->vertsWindowBorderTop1[2], 
-        &pWindow->vertsWindowBorderTop1[3], 
-        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderTop1[0],
+        &pWindow->vertsWindowBorderTop1[1],
+        &pWindow->vertsWindowBorderTop1[2],
+        &pWindow->vertsWindowBorderTop1[3],
+        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderTop[pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderTop[pWindow->renderContext]
     );
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderTop2[0], 
-        &pWindow->vertsWindowBorderTop2[1], 
-        &pWindow->vertsWindowBorderTop2[2], 
-        &pWindow->vertsWindowBorderTop2[3], 
-        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderTop2[0],
+        &pWindow->vertsWindowBorderTop2[1],
+        &pWindow->vertsWindowBorderTop2[2],
+        &pWindow->vertsWindowBorderTop2[3],
+        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderTop[2 + pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderTop[2 + pWindow->renderContext]
     );
 }
@@ -1170,38 +1170,38 @@ void ShopMenuRenderBottomWindowBorder(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderBottom1[0], 
-        &pWindow->vertsWindowBorderBottom1[1], 
-        &pWindow->vertsWindowBorderBottom1[2], 
-        &pWindow->vertsWindowBorderBottom1[3], 
-        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderBottom1[0],
+        &pWindow->vertsWindowBorderBottom1[1],
+        &pWindow->vertsWindowBorderBottom1[2],
+        &pWindow->vertsWindowBorderBottom1[3],
+        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderBottom[pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderBottom[pWindow->renderContext]
     );
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderBottom2[0], 
-        &pWindow->vertsWindowBorderBottom2[1], 
-        &pWindow->vertsWindowBorderBottom2[2], 
-        &pWindow->vertsWindowBorderBottom2[3], 
-        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderBottom2[0],
+        &pWindow->vertsWindowBorderBottom2[1],
+        &pWindow->vertsWindowBorderBottom2[2],
+        &pWindow->vertsWindowBorderBottom2[3],
+        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderBottom[2 + pWindow->renderContext]
     );
 }
@@ -1212,38 +1212,38 @@ void ShopMenuRenderLeftWindowBorder(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderLeft1[0], 
-        &pWindow->vertsWindowBorderLeft1[1], 
-        &pWindow->vertsWindowBorderLeft1[2], 
-        &pWindow->vertsWindowBorderLeft1[3], 
-        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderLeft1[0],
+        &pWindow->vertsWindowBorderLeft1[1],
+        &pWindow->vertsWindowBorderLeft1[2],
+        &pWindow->vertsWindowBorderLeft1[3],
+        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderLeft[pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderLeft[pWindow->renderContext]
     );
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderLeft2[0], 
-        &pWindow->vertsWindowBorderLeft2[1], 
-        &pWindow->vertsWindowBorderLeft2[2], 
-        &pWindow->vertsWindowBorderLeft2[3], 
-        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderLeft2[0],
+        &pWindow->vertsWindowBorderLeft2[1],
+        &pWindow->vertsWindowBorderLeft2[2],
+        &pWindow->vertsWindowBorderLeft2[3],
+        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderLeft[2 + pWindow->renderContext]
     );
 }
@@ -1254,38 +1254,38 @@ void ShopMenuRenderRightWindowBorder(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderRight1[0], 
-        &pWindow->vertsWindowBorderRight1[1], 
-        &pWindow->vertsWindowBorderRight1[2], 
-        &pWindow->vertsWindowBorderRight1[3], 
-        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderRight1[0],
+        &pWindow->vertsWindowBorderRight1[1],
+        &pWindow->vertsWindowBorderRight1[2],
+        &pWindow->vertsWindowBorderRight1[3],
+        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderRight[pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderRight[pWindow->renderContext]
     );
-    
+
     RotTransPers4(
-        &pWindow->vertsWindowBorderRight2[0], 
-        &pWindow->vertsWindowBorderRight2[1], 
-        &pWindow->vertsWindowBorderRight2[2], 
-        &pWindow->vertsWindowBorderRight2[3], 
-        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x0, 
-        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x1, 
-        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x2, 
-        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x3, 
-        &interpolated, 
+        &pWindow->vertsWindowBorderRight2[0],
+        &pWindow->vertsWindowBorderRight2[1],
+        &pWindow->vertsWindowBorderRight2[2],
+        &pWindow->vertsWindowBorderRight2[3],
+        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x0,
+        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x1,
+        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x2,
+        (long*) &pWindow->polysWindowBorderRight[2 + pWindow->renderContext].x3,
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysWindowBorderRight[2 + pWindow->renderContext]
     );
 }
@@ -1296,25 +1296,25 @@ void ShopMenuRenderWindowBackground(int index) {
     MenuWindow* pWindow;
 
     pWindow = g_Menu->windows[index];
-    
+
     RotTransPers4(
-        &pWindow->vertsBackground[0], 
+        &pWindow->vertsBackground[0],
         &pWindow->vertsBackground[1],
-        &pWindow->vertsBackground[2], 
+        &pWindow->vertsBackground[2],
         &pWindow->vertsBackground[3],
         (long*) &pWindow->polysBackground[pWindow->renderContext].x0,
         (long*) &pWindow->polysBackground[pWindow->renderContext].x1,
         (long*) &pWindow->polysBackground[pWindow->renderContext].x2,
         (long*) &pWindow->polysBackground[pWindow->renderContext].x3,
-        &interpolated, 
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysBackground[pWindow->renderContext]
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->drawModes[pWindow->renderContext]
     );
 }
@@ -1330,21 +1330,21 @@ void ShopMenuRenderWindowBorderCorners(int index) {
     for (i = 0; i < 4; i++) {
         // Project vertices to x0/y0 coordinates of the polygon
         RotTransPers4(
-            &pWindow->vertsWindowBorderCorners[i * 4], 
+            &pWindow->vertsWindowBorderCorners[i * 4],
             &pWindow->vertsWindowBorderCorners[i * 4 + 1],
-            &pWindow->vertsWindowBorderCorners[i * 4 + 2], 
+            &pWindow->vertsWindowBorderCorners[i * 4 + 2],
             &pWindow->vertsWindowBorderCorners[i * 4 + 3],
-            (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x0, 
+            (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x0,
             (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x1,
             (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x2,
             (long*) &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext].x3,
-            &interpolated, 
+            &interpolated,
             &flag
         );
 
         // Queue polygon for rendering
         AddPrim(
-            &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+            &g_Menu->pGfxEnv->ot[pWindow->zIndex],
             &pWindow->polysWindowBorderCorners[i * 2 + pWindow->renderContext]
         );
     }
@@ -1357,10 +1357,10 @@ void ShopMenuRenderScrollBar(int index) {
     int i;
 
     pWindow = g_Menu->windows[index];
-    
+
     for (i = 0; i < 2; i++) {
         RotTransPers4(
-            &pWindow->vertsScrollBarEnds[i * 4], 
+            &pWindow->vertsScrollBarEnds[i * 4],
             &pWindow->vertsScrollBarEnds[i * 4 + 1],
             &pWindow->vertsScrollBarEnds[i * 4 + 2],
             &pWindow->vertsScrollBarEnds[i * 4 + 3],
@@ -1368,15 +1368,15 @@ void ShopMenuRenderScrollBar(int index) {
             &pWindow->polysScrollBarEnds[i * 2 + pWindow->renderContext].x1,
             &pWindow->polysScrollBarEnds[i * 2 + pWindow->renderContext].x2,
             &pWindow->polysScrollBarEnds[i * 2 + pWindow->renderContext].x3,
-            &interpolated, 
+            &interpolated,
             &flag
         );
         AddPrim(
-            &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+            &g_Menu->pGfxEnv->ot[pWindow->zIndex],
             &pWindow->polysScrollBarEnds[i * 2 + pWindow->renderContext]
         );
     }
-    
+
     RotTransPers4(
         &pWindow->vertsScrollBarEmpty[0],
         &pWindow->vertsScrollBarEmpty[1],
@@ -1386,11 +1386,11 @@ void ShopMenuRenderScrollBar(int index) {
         &pWindow->polysScrollBarEmpty[pWindow->renderContext].x1,
         &pWindow->polysScrollBarEmpty[pWindow->renderContext].x2,
         &pWindow->polysScrollBarEmpty[pWindow->renderContext].x3,
-        &interpolated, 
+        &interpolated,
         &flag
     );
     AddPrim(
-        &g_Menu->pGfxEnv->ot[pWindow->zIndex], 
+        &g_Menu->pGfxEnv->ot[pWindow->zIndex],
         &pWindow->polysScrollBarEmpty[pWindow->renderContext]
     );
 }
@@ -1421,8 +1421,8 @@ void ShopMenuRenderWindows(void) {
                 SetTransMatrix(&matTransform);
 
                 ShopMenuRenderWindowBorderCorners(i);
-                if (pWindow->hasScrollBar) { 
-                    ShopMenuRenderScrollBar(i); 
+                if (pWindow->hasScrollBar) {
+                    ShopMenuRenderScrollBar(i);
                 }
                 ShopMenuRenderTopWindowBorder(i);
                 ShopMenuRenderBottomWindowBorder(i);
@@ -1433,8 +1433,8 @@ void ShopMenuRenderWindows(void) {
                 PopMatrix();
             } else {
                 ShopMenuRenderWindowBorderCorners(i);
-                if (pWindow->hasScrollBar) { 
-                    ShopMenuRenderScrollBar(i); 
+                if (pWindow->hasScrollBar) {
+                    ShopMenuRenderScrollBar(i);
                 }
                 ShopMenuRenderTopWindowBorder(i);
                 ShopMenuRenderBottomWindowBorder(i);
@@ -1465,9 +1465,9 @@ void ShopMenuRenderPointerCursors(void) {
                         D_801D2114[D_801D201C[g_Menu->menuUnk2->unk4F7C]] + 10
                     );
                 }
-                
+
                 AddPrim(
-                    &g_Menu->pGfxEnv->ot[4], 
+                    &g_Menu->pGfxEnv->ot[4],
                     &g_Menu->pCursors->polysCursor[i * 2 + g_Menu->pCursors->renderContexts[i]]
                 );
             }
@@ -1494,7 +1494,7 @@ void func_801CA00C(void) {
     for (i = 0; i < 8; i++) {
         if (g_Menu->pManager->unkC[i]) {
             AddPrim(
-                &g_Menu->pGfxEnv->ot[4], 
+                &g_Menu->pGfxEnv->ot[4],
                 &g_Menu->unk6E0[i].polys[g_Menu->unk6E0[i].renderContext]
             );
         }
@@ -1510,24 +1510,24 @@ void func_801CA09C(void) {
         if (g_Menu->pManager->unk14[i]) {
             if (g_Menu->unkAE0[i].unk7F) {
                 RotTransPers4(
-                    &g_Menu->unkAE0[i].vertices[0], 
+                    &g_Menu->unkAE0[i].vertices[0],
                     &g_Menu->unkAE0[i].vertices[1],
                     &g_Menu->unkAE0[i].vertices[2],
                     &g_Menu->unkAE0[i].vertices[3],
-                    (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x0, 
+                    (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x0,
                     (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x1,
                     (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x2,
                     (long*)&g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext].x3,
-                    &interpolated, 
+                    &interpolated,
                     &flag
                 );
                 AddPrim(
-                    &g_Menu->pGfxEnv->ot[4], 
+                    &g_Menu->pGfxEnv->ot[4],
                     &g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext]
                 );
             } else {
                 AddPrim(
-                    &g_Menu->pGfxEnv->ot[4], 
+                    &g_Menu->pGfxEnv->ot[4],
                     &g_Menu->unkAE0[i].polys[g_Menu->unkAE0[i].renderContext]
                 );
             }
@@ -1554,22 +1554,22 @@ void func_801CA22C(void) {
             pString = g_Menu->unk1DE0[i];
             if (pString->unk7F) {
                 RotTransPers4(
-                    &pString->vertices[0], 
-                    &pString->vertices[1], 
+                    &pString->vertices[0],
+                    &pString->vertices[1],
                     &pString->vertices[2],
-                    &pString->vertices[3], 
-                    (long*) &pString->polys[pString->renderContext].x0, 
-                    (long*) &pString->polys[pString->renderContext].x1, 
-                    (long*) &pString->polys[pString->renderContext].x2, 
-                    (long*) &pString->polys[pString->renderContext].x3, 
-                    &interpolated, 
+                    &pString->vertices[3],
+                    (long*) &pString->polys[pString->renderContext].x0,
+                    (long*) &pString->polys[pString->renderContext].x1,
+                    (long*) &pString->polys[pString->renderContext].x2,
+                    (long*) &pString->polys[pString->renderContext].x3,
+                    &interpolated,
                     &flag
                 );
                 AddPrim(&g_Menu->pGfxEnv->ot[4], &pString->polys[pString->renderContext]);
             } else {
                 AddPrim(&g_Menu->pGfxEnv->ot[4], &pString->polys[pString->renderContext]);
             }
-            
+
         }
     }
 }
@@ -1626,7 +1626,7 @@ void ShopMenuRenderSelectionMenu(void) {
                     setRGB0(&g_Menu->pSelectionMenu->polysCursors[i*2 + g_Menu->pSelectionMenu->cursorsRenderCtx], 128, 128, 128);
                 }
             }
-            
+
             g_Menu->pSelectionMenu->unk1193 = g_Menu->pSelectionMenu->unk1192;
         }
 
@@ -1644,12 +1644,12 @@ void func_801CAB0C(void) {
 
 void ShopMenuRenderArrowCursors(void) {
     int i;
-    
+
     for (i = 0; i < MENU_MAX_NUM_ARROW_CURSORS; i++) {
         if (g_Menu->pManager->shouldRenderArrowCursor[i]) {
-            ShopMenuRenderPolygons(1, 
-                g_Menu->arrowCursors[i]->vertices, 
-                g_Menu->arrowCursors[i]->polys, 
+            ShopMenuRenderPolygons(1,
+                g_Menu->arrowCursors[i]->vertices,
+                g_Menu->arrowCursors[i]->polys,
                 g_Menu->arrowCursors[i]->renderContext
             );
         }
@@ -1697,14 +1697,14 @@ void ShopMenuPollInput(void) {
             }
             continue;
         }
-        
+
         isLooping--;
         if (wasControllerUnplugged) {
             SoundEnableAllSpuChannels();
             D_80059488 = savedValue;
         }
     }
-    
+
     if (func_80036410()) {
         ControllerResetState();
     } else {
@@ -1831,7 +1831,7 @@ void ShopMenuUpdateAndRender(void) {
     if (*D_8005917C != -1) {
         asm("break 0x400");
     }
-    
+
     ShopMenuPollInput();
     GameCheckAndHandleSoftReset();
 
@@ -1841,7 +1841,7 @@ void ShopMenuUpdateAndRender(void) {
         pNextGfxEnv = &g_Menu->gfxEnvs[1];
     }
     g_Menu->pGfxEnv = pNextGfxEnv;
-    
+
     g_Menu->renderContext = g_Menu->renderContext == 0;
     ClearOTagR(g_Menu->pGfxEnv->ot, 0x10);
     ShopMenuUpdateTransitionEffect();
@@ -1860,7 +1860,7 @@ void ShopMenuInitializePointerCursors(u_char mode) {
 
     g_Menu->pCursors = HeapAlloc(sizeof(MenuPointerCursors), 0);
     bzero(g_Menu->pCursors, sizeof(MenuPointerCursors));
-    
+
     switch (mode) {
         case 0:
             g_Menu->pManager->shouldRenderCursors = TRUE;
@@ -1870,8 +1870,8 @@ void ShopMenuInitializePointerCursors(u_char mode) {
         case 2:
             for (i = 0; i < MENU_MAX_NUM_CURSORS; i++) {
                 func_8002675C(
-                    g_Menu->unk2DC, MENU_TEX_POINTER_CURSOR, 
-                    &g_Menu->pCursors->polysCursor[i * 2], g_Menu->renderContext, 
+                    g_Menu->resources, MENU_TEX_POINTER_CURSOR,
+                    &g_Menu->pCursors->polysCursor[i * 2], g_Menu->renderContext,
                     D_801D1FF8[i], D_801D2008[i],
                     0x800
                 );
@@ -1880,9 +1880,9 @@ void ShopMenuInitializePointerCursors(u_char mode) {
             return;
         case 3:
             func_8002675C(
-                g_Menu->unk2DC, MENU_TEX_POINTER_CURSOR, 
-                &g_Menu->pCursors->polysCursor[0], g_Menu->renderContext, 
-                0, 0, 
+                g_Menu->resources, MENU_TEX_POINTER_CURSOR,
+                &g_Menu->pCursors->polysCursor[0], g_Menu->renderContext,
+                0, 0,
                 0x800
             );
             g_Menu->pCursors->renderContexts[0] = g_Menu->renderContext;
@@ -1913,9 +1913,9 @@ void ShopMenuConfirmationWindowInitialize(u_char stringIndex) {
     MenuString* pString;
     int i;
     int xPosition;
-    
-    xPosition = 0x50; 
-    
+
+    xPosition = 0x50;
+
     ShopMenuInitializeWindow(4, 0x42, 0x46, 0xBC, 0x40, 1, 1, 4, 0);
     pWindowParams = g_Menu->windowParameters[4];
     while (!pWindowParams->unk11) {
@@ -1945,7 +1945,7 @@ void ShopMenuConfirmationWindowInitialize(u_char stringIndex) {
     for (i = 0; i < 3; i++) {
         pString = g_Menu->unk1DE0[i];
         pString->width = SystemRenderStringEntry(
-            GetStringEntry(g_Menu->unk2E0, stringIndex + i), 
+            GetStringEntry(g_Menu->unk2E0, stringIndex + i),
             pString->pVramBuffer, 0x36, i % 2
         );
         func_801C5A7C(pString, i, 0, 0);
@@ -1965,7 +1965,7 @@ void ShopMenuConfirmationWindowInitialize(u_char stringIndex) {
     LoadImage(&g_Menu->unk1DE0[0]->vramDest, g_Menu->unk1DE0[0]->pVramBuffer);
     LoadImage(&g_Menu->unk1DE0[2]->vramDest, g_Menu->unk1DE0[2]->pVramBuffer);
     DrawSync(0);
-    
+
     g_Menu->pManager->unk2B = 1;
     HeapFree(g_Menu->unk1DE0[0]->pVramBuffer);
     HeapFree(g_Menu->unk1DE0[2]->pVramBuffer);
@@ -1994,7 +1994,7 @@ u_char ShopMenuConfirmationWindowGetChoice(u_char mode) {
     u_char choice;
     u_char isRunning;
     u_char curTimer;
-    
+
     isRunning = TRUE;
     choice = MENU_CHOICE_NO;
     curTimer = 60;
@@ -2005,11 +2005,11 @@ u_char ShopMenuConfirmationWindowGetChoice(u_char mode) {
             g_Menu->pCursors->shouldRender[3] = FALSE;
 
             // Was any button pressed?
-            if (g_Menu->input != MENU_INPUT_IDLE) 
+            if (g_Menu->input != MENU_INPUT_IDLE)
                 break;
-            
+
             curTimer--;
-            if (curTimer == 0) 
+            if (curTimer == 0)
                 break;
         }
 
@@ -2033,14 +2033,14 @@ u_char ShopMenuConfirmationWindowGetChoice(u_char mode) {
                 g_Menu->pCursors->shouldRender[3] = TRUE;
                 choice = MENU_CHOICE_NO;
                 break;
-        }    
+        }
     }
-    
+
     g_Menu->pCursors->shouldRender[2] = FALSE;
     g_Menu->pCursors->shouldRender[3] = FALSE;
 
     POSSIBLE_DEBUG_CODE;
-    
+
     return choice;
 }
 
@@ -2051,7 +2051,7 @@ int ShopMenuConfirmationWindow(u_char stringIndex, u_char stringIndex2, u_char m
     g_Menu->pCursors->shouldRender[3] = TRUE;
     choice = ShopMenuConfirmationWindowGetChoice(mode);
     ShopMenuConfirmationWindowFree();
-    
+
     // If we chose yes and have another window, run that confirmation window as well
     if (stringIndex2 != 0xFF) {
         if (choice != MENU_CHOICE_NO) {
@@ -2060,7 +2060,7 @@ int ShopMenuConfirmationWindow(u_char stringIndex, u_char stringIndex2, u_char m
             choice = ShopMenuConfirmationWindowGetChoice(mode);
             ShopMenuConfirmationWindowFree();
         }
-    } 
+    }
     return choice;
 }
 
@@ -2080,7 +2080,7 @@ void ShopMenuFree(void) {
     ShopMenuUnk348Manager(MENU_DATA_FREE);
     ShopMenuLoadShopItemsData(0x10);
     ShopMenuShopManager(MENU_DATA_FREE);
-    HeapFree(g_Menu->unk2DC);
+    HeapFree(g_Menu->resources);
     HeapFree(g_Menu->unk2E0);
     HeapFree(g_Menu->unk4E0[0].pVramBuffer);
     if (g_MenuDebugEnabled) {
@@ -2108,21 +2108,21 @@ void ShopMenuInitializeShopModeSelectionMenu(int numTextures, int* pTextureIDs) 
     g_Menu->pSelectionMenu->unk1193 = FALSE;
 
     g_Menu->pManager->shouldRenderSelectionMenu = TRUE;
-    
+
     // Another weird loop case similar to the one in ShopMenuUpdateCharacterPortraits.
     // We loop one and one cursor & text texture entry up to our current counter,
     // rebuild the cursor and text primitives and rerender the whole menu.
-    for (i = 1; i <= numTextures; i++) {   
-        
+    for (i = 1; i <= numTextures; i++) {
+
         // Cursors for each menu option
         if (i != numTextures) {
             g_Menu->pSelectionMenu->numCursors = 0;
             for (j = 0; j < i; j++) {
                 g_Menu->pSelectionMenu->numCursors += func_8002675C(
-                    g_Menu->unk2DC, pTextureIDs[j * 2], 
-                    &g_Menu->pSelectionMenu->polysCursors[g_Menu->pSelectionMenu->numCursors * 2], 
-                    g_Menu->renderContext, 
-                    160, 150, 
+                    g_Menu->resources, pTextureIDs[j * 2],
+                    &g_Menu->pSelectionMenu->polysCursors[g_Menu->pSelectionMenu->numCursors * 2],
+                    g_Menu->renderContext,
+                    160, 150,
                     0x1000
                 );
             }
@@ -2134,10 +2134,10 @@ void ShopMenuInitializeShopModeSelectionMenu(int numTextures, int* pTextureIDs) 
         if (i != 1) {
             for (j = 0; j < i - 1; j++) {
                 g_Menu->pSelectionMenu->numTexts += func_8002675C(
-                    g_Menu->unk2DC, pTextureIDs[j * 2 + 1],
-                    &g_Menu->pSelectionMenu->polysTexts[g_Menu->pSelectionMenu->numTexts * 2], 
-                    g_Menu->renderContext, 
-                    160, 150, 
+                    g_Menu->resources, pTextureIDs[j * 2 + 1],
+                    &g_Menu->pSelectionMenu->polysTexts[g_Menu->pSelectionMenu->numTexts * 2],
+                    g_Menu->renderContext,
+                    160, 150,
                     0x1000
                 );
             }
@@ -2167,24 +2167,24 @@ void ShopMenuUpdateShopModeSelectionMenu(u_char numOptions, u_char selectedIndex
         } else {
             cursorTextureID = pTextureIDs[i * 2];
         }
-        
+
         g_Menu->pSelectionMenu->numCursors += func_8002675C(
-            g_Menu->unk2DC, cursorTextureID, 
+            g_Menu->resources, cursorTextureID,
             &g_Menu->pSelectionMenu->polysCursors[g_Menu->pSelectionMenu->numCursors * 2],
-            g_Menu->renderContext, 
-            160, 150, 
+            g_Menu->renderContext,
+            160, 150,
             0x1000
         );
-        
+
         g_Menu->pSelectionMenu->numTexts += func_8002675C(
-            g_Menu->unk2DC, pTextureIDs[i * 2 + 1], 
-            &g_Menu->pSelectionMenu->polysTexts[g_Menu->pSelectionMenu->numTexts * 2], 
+            g_Menu->resources, pTextureIDs[i * 2 + 1],
+            &g_Menu->pSelectionMenu->polysTexts[g_Menu->pSelectionMenu->numTexts * 2],
             g_Menu->renderContext,
-            160, 150, 
+            160, 150,
             0x1000
         );
     }
-    
+
     g_Menu->pSelectionMenu->cursorsRenderCtx = g_Menu->renderContext;
     g_Menu->pSelectionMenu->textsRenderCtx = g_Menu->renderContext;
 
@@ -2213,12 +2213,12 @@ u_char ShopMenuShopModeMenuHandleSelectedOption() {
             result = ShopMenuBuyMenu();
             break;
     }
-    
+
     if (result) {
         ShopMenuStartCloseMenuTransition();
         func_801CBC88(1, 4, g_Menu->unk6E0, &D_801D1FCC, g_Menu->pManager->unkC);
     }
-    
+
     func_801D1F10();
 
     // Render the selection menu as active again
@@ -2229,7 +2229,7 @@ u_char ShopMenuShopModeMenuHandleSelectedOption() {
     g_Menu->pManager->unk3 = TRUE;
     g_Menu->unk337 = 0xFF;
     g_Menu->pManager->unkA = FALSE;
-    
+
     return isRunning;
 }
 
@@ -2243,7 +2243,7 @@ void ShopMenuShopModeMenuMain(void) {
     ShopMenuInitializeShopModeSelectionMenu(4, &D_801D1F54);
 
     func_801CBC88(1, 4, g_Menu->unk6E0, &D_801D1FCC, g_Menu->pManager->unkC);
-    
+
     while (isRunning) {
         ShopMenuUpdateAndRender();
 
@@ -2283,7 +2283,7 @@ void ShopMenuShopModeMenuMain(void) {
         // Update the selected option to the active one if we need to
         if (g_Menu->menu1Choice != g_Menu->unk337) {
             ShopMenuUpdateShopModeSelectionMenu(3, g_Menu->menu1Choice, &D_801D1F54);
-            func_801CBCF0(4, g_Menu->unk6E0, &D_801D1FCC, &D_801D1FD8, 
+            func_801CBCF0(4, g_Menu->unk6E0, &D_801D1FCC, &D_801D1FD8,
                 g_Menu->pManager->unkC, g_Menu->menu1Choice, 0, 0
             );
             g_Menu->unk337 = g_Menu->menu1Choice;
@@ -2317,7 +2317,7 @@ void ShopMenuMain(void) {
     ShopMenuFree();
 }
 
-// tmp 
+// tmp
 void func_801CCE1C(void*, u8);
 INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", func_801CCE1C);
 
@@ -2349,26 +2349,26 @@ void ShopMenuUpdateCharacterPortraits(void) {
     int numCharacters;
 
     g_Menu->pManager->unk5A = 1;
-    
+
     // This loop seems horribly inefficient, because for each character index, all
     // portraits are recomputed and the entire menu redrawn...
     for (i = 1; i < MAX_GAME_CHARACTERS + 1; i++) {
         g_Menu->pShop->numPortraits = 0;
-        
+
         numCharacters = 0;
         for (characterIndex = 0; characterIndex < i; characterIndex++) {
             if (g_Menu->availableCharacters[characterIndex]) {
                 g_Menu->pShop->numPortraits += func_8002675C(
-                    g_Menu->unk2DC, characterIndex + MENU_TEX_CHARACTER_PORTRAITS_SMALL, 
-                    &g_Menu->pShop->polysCharacterPortraits[numCharacters * 2], 
-                    g_Menu->renderContext, 
-                    D_801D21CC[numCharacters], 166, 
+                    g_Menu->resources, characterIndex + MENU_TEX_CHARACTER_PORTRAITS_SMALL,
+                    &g_Menu->pShop->polysCharacterPortraits[numCharacters * 2],
+                    g_Menu->renderContext,
+                    D_801D21CC[numCharacters], 166,
                     0x1000
                 );
                 numCharacters++;
             }
         }
-        
+
         g_Menu->pShop->portraitsRenderCtx = g_Menu->renderContext;
         ShopMenuUpdateAndRender();
     }
@@ -2381,10 +2381,10 @@ void ShopMenuUpdateBuyMenuExplanationGraphics(void) {
     g_Menu->pShop->explanationsLen = 0;
     for (i = 0; i < 4; i++) {
         g_Menu->pShop->explanationsLen += func_8002675C(
-            g_Menu->unk2DC, D_801D2210[i], 
+            g_Menu->resources, D_801D2210[i],
             &g_Menu->pShop->polysExplanations[g_Menu->pShop->explanationsLen * 2],
-            g_Menu->renderContext, 
-            D_801D2218[i], D_801D2230[i], 
+            g_Menu->renderContext,
+            D_801D2218[i], D_801D2230[i],
             0x1000
         );
     }
@@ -2397,10 +2397,10 @@ void ShopMenuUpdateSellMenuExplanationGraphics(void) {
     g_Menu->pShop->explanationsLen = 0;
     for (i = 0; i < 2; i++) {
         g_Menu->pShop->explanationsLen += func_8002675C(
-            g_Menu->unk2DC, D_801D2214[i], 
+            g_Menu->resources, D_801D2214[i],
             &g_Menu->pShop->polysExplanations[g_Menu->pShop->explanationsLen * 2],
-            g_Menu->renderContext, 
-            D_801D2228[i], D_801D2240[i], 
+            g_Menu->renderContext,
+            D_801D2228[i], D_801D2240[i],
             0x1000
         );
     }
@@ -2417,48 +2417,48 @@ void ShopMenuUpdateGoldGraphics(u_int goldBefore, u_int totalPrice, u_int goldAf
         digit = g_Menu->digits[i];
         if (digit != 0xFF) {
             g_Menu->pShop->goldBeforeStrLen += func_8002675C(
-                g_Menu->unk2DC, digit, 
-                &g_Menu->pShop->polysGoldBefore[g_Menu->pShop->goldBeforeStrLen * 2], 
-                g_Menu->renderContext, 
-                (i * 8) + D_801D2248, D_801D224C, 
+                g_Menu->resources, digit,
+                &g_Menu->pShop->polysGoldBefore[g_Menu->pShop->goldBeforeStrLen * 2],
+                g_Menu->renderContext,
+                (i * 8) + D_801D2248, D_801D224C,
                 0x1000
             );
         }
     }
     g_Menu->pShop->goldBeforeRenderCtx = g_Menu->renderContext;
-    
+
     ShopMenuParseNumberToString(totalPrice);
     g_Menu->pShop->totalPriceStrLen = 0;
     for (i = 0; i < MENU_MAX_DIGITS; i++) {
         digit = g_Menu->digits[i];
         if (digit != 0xFF) {
             g_Menu->pShop->totalPriceStrLen += func_8002675C(
-                g_Menu->unk2DC, digit, 
-                &g_Menu->pShop->polysTotalPrice[g_Menu->pShop->totalPriceStrLen * 2], 
-                g_Menu->renderContext, 
-                (i * 8) + D_801D2250, D_801D2254, 
+                g_Menu->resources, digit,
+                &g_Menu->pShop->polysTotalPrice[g_Menu->pShop->totalPriceStrLen * 2],
+                g_Menu->renderContext,
+                (i * 8) + D_801D2250, D_801D2254,
                 0x1000
             );
         }
     }
     g_Menu->pShop->totalPriceRenderCtx = g_Menu->renderContext;
-    
+
     ShopMenuParseNumberToString(goldAfter);
     g_Menu->pShop->goldAfterStrLen = 0;
     for (i = 0; i < MENU_MAX_DIGITS; i++) {
         digit = g_Menu->digits[i];
         if (digit != 0xFF) {
             g_Menu->pShop->goldAfterStrLen += func_8002675C(
-                g_Menu->unk2DC, digit, 
-                &g_Menu->pShop->polysGoldAfter[g_Menu->pShop->goldAfterStrLen * 2], 
-                g_Menu->renderContext, 
-                (i * 8) + D_801D2258, D_801D225C, 
+                g_Menu->resources, digit,
+                &g_Menu->pShop->polysGoldAfter[g_Menu->pShop->goldAfterStrLen * 2],
+                g_Menu->renderContext,
+                (i * 8) + D_801D2258, D_801D225C,
                 0x1000
             );
         }
     }
     g_Menu->pShop->goldAfterRenderCtx = g_Menu->renderContext;
-    
+
     g_Menu->pShop->unk46B2 = 1;
 }
 
@@ -2467,9 +2467,9 @@ u_short ShopMenuGetCharacterEquippedItemFlags(u_char itemID, u_char itemType) {
     int j;
     u_char isItemEquipped;
     u_short equippedFlags;
-    
+
     equippedFlags = 0;
-    
+
     if (itemID) {
         if (itemType != ITEM_TYPE_ITEM) {
             for (i = 0; i < 0x10; i++) {
@@ -2492,7 +2492,7 @@ u_short ShopMenuGetCharacterEquippedItemFlags(u_char itemID, u_char itemType) {
                                 }
                             }
                             break;
-                        
+
                         case ITEM_TYPE_ACCESSORY:
                             for (j = 0; j < 3; j++) {
                                 if (g_GameState.characters[i].unk74[j] == itemID) {
@@ -2503,12 +2503,12 @@ u_short ShopMenuGetCharacterEquippedItemFlags(u_char itemID, u_char itemType) {
                             break;
                     }
                 }
-                
+
                 if (isItemEquipped) {
                     equippedFlags |= ShopMenuGetCharacterBitMask(i);
                 }
             }
-        }   
+        }
     }
 
     return equippedFlags;
@@ -2533,12 +2533,12 @@ void ShopMenuHandleBoughtItems(u_int newGoldnewWeaponAmount) {
     u_char newItemnewWeaponAmount;
 
     ShopMenuPlaySoundEffect(0xD1);
-    
+
     g_GameState.gold = newGoldnewWeaponAmount;
     if (newGoldnewWeaponAmount > 9999999) {
         g_GameState.gold = 9999999;
     }
-    
+
     for (i = 0; i < MAX_SHOP_ITEMS; i++) {
         // Did we buy any of this item?
         if (g_Menu->shopItemIDs[i] && g_Menu->pShop->curItemQuantities[i]) {
@@ -2633,10 +2633,10 @@ void ShopMenuSetFinalPriceGraphics(unsigned int number) {
         digit = g_Menu->digits[i];
         if (digit != 0xFF) {
             g_Menu->pShop->finalPriceStrLen += func_8002675C(
-                g_Menu->unk2DC, digit, 
+                g_Menu->resources, digit,
                 &g_Menu->pShop->polysFinalPrice[g_Menu->pShop->finalPriceStrLen * 2],
-                g_Menu->renderContext, 
-                107 + i * 8, 84, 
+                g_Menu->renderContext,
+                107 + i * 8, 84,
                 0x1000
             );
         }
@@ -2663,30 +2663,30 @@ u_char ShopMenuBuyMenu(void) {
     shouldInitialize = TRUE;
     isRunning = TRUE;
     refreshGoldGraphics = TRUE;
-    
+
     curChoice = 0;
     prevChoice = 0xFF;
     scrollOffset = 0;
     prevScrollOffset = 0xFF;
-    
+
     initialGold = g_GameState.gold;
     totalPrice = 0;
     newGoldAmount = g_GameState.gold;
-    
+
     for (i = 0; i < MAX_GAME_CHARACTERS; i++) {
         func_801CCE1C(g_Menu->unk330, i);
         g_Menu->pShop->unk46E0[i] = g_Menu->unk330->unkB8;
         g_Menu->pShop->unk4700[i] = g_Menu->unk330->unkBC;
     }
-    
+
     bzero(g_Menu->pShop->curItemQuantities, MAX_SHOP_ITEMS);
     g_Menu->pSelectionMenu->unk1192 = TRUE;
-    
+
     ShopMenuInitializeArrowCursor(0);
-    
+
     while (isRunning) {
         ShopMenuUpdateAndRender();
-        
+
         if ((scrollOffset != prevScrollOffset) || refreshGoldGraphics) {
             func_801CDD14(scrollOffset, newGoldAmount, &sp28);
             ShopMenuUpdateScrollBarHandle(12, 50, 60, D_801D1F50, scrollOffset);
@@ -2699,9 +2699,9 @@ u_char ShopMenuBuyMenu(void) {
             prevScrollOffset = scrollOffset;
             g_Menu->pManager->unk5A = TRUE;
         }
-        
+
         ShopMenuUpdateArrowCursor(curChoice, scrollOffset, 0, 0);
-        
+
         if (shouldInitialize) {
             func_801CBC88(1, 2, g_Menu->unk6E0, &D_801D1FD4, g_Menu->pManager->unkC);
             func_801CBCF0(2, g_Menu->unk6E0, &D_801D1FD4, &D_801D1FE8, g_Menu->pManager->unkC, 0, 0, 1);
@@ -2718,12 +2718,12 @@ u_char ShopMenuBuyMenu(void) {
             }
             g_Menu->pManager->unkC[0] = TRUE;
         }
-        
+
         if (refreshGoldGraphics) {
             ShopMenuUpdateGoldGraphics(initialGold, totalPrice, newGoldAmount);
             refreshGoldGraphics = FALSE;
         }
-        
+
         switch (g_Menu->input) {
             case MENU_INPUT_CONFIRM:
                 if (totalPrice != 0) {
@@ -2756,7 +2756,7 @@ u_char ShopMenuBuyMenu(void) {
                     ShopMenuPlaySoundEffect(4);
                 }
                 break;
-            
+
             case MENU_INPUT_BACK:
                 isRunning = FALSE;
                 g_Menu->pManager->unkC[0] = 0;
@@ -2783,7 +2783,7 @@ u_char ShopMenuBuyMenu(void) {
                 }
                 ShopMenuUpdateAndRender();
                 break;
-            
+
             case MENU_INPUT_DOWN:
                 curChoice++;
 
@@ -2799,7 +2799,7 @@ u_char ShopMenuBuyMenu(void) {
                     }
                 }
                 break;
-            
+
             case MENU_INPUT_UP:
                 curChoice--;
                 if (curChoice < 0) {
@@ -2834,7 +2834,7 @@ u_char ShopMenuBuyMenu(void) {
                 break;
         }
     }
-    
+
     g_Menu->pShop->unk4785 = 0;
     return TRUE;
 }
@@ -2851,36 +2851,36 @@ INCLUDE_ASM("asm/shop_menu/nonmatchings/main/misc", ShopMenuSellEquipmentMenu);
 
 void ShopMenuSellAccessoriesMenu(void) {
     ShopMenuSellMenu(
-        MAX_INVENTORY_ACCESSORIES, 
-        g_GameState.accessoryIDs, 
-        g_GameState.accessoryQuantities, 
-        ITEM_TYPE_ACCESSORY, 
-        1, 
-        g_GameState.accessoryQuantities, 
+        MAX_INVENTORY_ACCESSORIES,
+        g_GameState.accessoryIDs,
+        g_GameState.accessoryQuantities,
+        ITEM_TYPE_ACCESSORY,
+        1,
+        g_GameState.accessoryQuantities,
         0
     );
 }
 
 void ShopMenuSellWeaponsMenu(void) {
     ShopMenuSellMenu(
-        MAX_INVENTORY_WEAPONS, 
-        g_GameState.weaponIDs, 
-        g_GameState.weaponQuantities, 
-        ITEM_TYPE_WEAPON, 
-        1, 
-        g_GameState.weaponQuantities, 
+        MAX_INVENTORY_WEAPONS,
+        g_GameState.weaponIDs,
+        g_GameState.weaponQuantities,
+        ITEM_TYPE_WEAPON,
+        1,
+        g_GameState.weaponQuantities,
         0
     );
 }
 
 void ShopMenuSellItemsMenu(void) {
     ShopMenuSellMenu(
-        MAX_INVENTORY_ITEMS, 
-        g_GameState.itemIDs, 
-        g_GameState.itemQuantities, 
-        ITEM_TYPE_ITEM, 
-        1, 
-        g_GameState.itemQuantities, 
+        MAX_INVENTORY_ITEMS,
+        g_GameState.itemIDs,
+        g_GameState.itemQuantities,
+        ITEM_TYPE_ITEM,
+        1,
+        g_GameState.itemQuantities,
         0
     );
 }
@@ -2906,7 +2906,7 @@ void func_801D1968(u_char arg0, u_char arg1) {
         g_Menu->pShop->unk4684[i] = 0;
         g_Menu->pShop->unk468C[i] = 0;
     }
-    
+
     if (arg0) {
         ShopMenuFreeWindow(2);
         ShopMenuFreeWindow(3);
@@ -2925,13 +2925,13 @@ void ShopMenuSellModeMenuHandleSelectedOption(void) {
     g_Menu->pManager->unk3 = 0;
     g_Menu->pManager->unkA = 0;
     func_801CBC88(0, 4, g_Menu->unk6E0, &D_801D1FD0, g_Menu->pManager->unkC);
-    
+
     var_a0 = 1;
     switch (g_Menu->menu2Choice) {
         case MENU_CHOCIE_EQUIPMENT:
             var_a0 = ShopMenuSellEquipmentMenu();
             break;
-        
+
         case MENU_CHOICE_ACCESSORIES:
             ShopMenuSellAccessoriesMenu();
             break;
@@ -2944,7 +2944,7 @@ void ShopMenuSellModeMenuHandleSelectedOption(void) {
             ShopMenuSellItemsMenu();
             break;
     }
-    
+
     func_801D1968(var_a0, 0);
     g_Menu->pManager->unkA = 1;
     g_Menu->pManager->unk4 = 1;
@@ -2961,23 +2961,23 @@ int ShopMenuSellModeMenu() {
     shouldInitialize = TRUE;
     g_Menu->menu2Choice = MENU_CHOICE_ITEMS;
     g_Menu->unk339 = 0xFF;
-    
+
     while (isRunning) {
         ShopMenuUpdateAndRender();
-        
+
         if (shouldInitialize) {
             func_801CBC88(1, 4, g_Menu->unk6E0, &D_801D1FD0, g_Menu->pManager->unkC);
             ShopMenuStartOpenMenuTransition();
             func_801CC278(0);
             shouldInitialize = FALSE;
         }
-        
+
         if (g_Menu->menu2Choice != g_Menu->unk339) {
             func_801CBCF0(4, g_Menu->unk6E0, &D_801D1FD0, &D_801D1FE8, g_Menu->pManager->unkC, g_Menu->menu2Choice, 3, 0);
             func_801CC720(0);
             g_Menu->unk339 = g_Menu->menu2Choice;
         }
-        
+
         switch (g_Menu->input) {
             case MENU_INPUT_CONFIRM:
                 ShopMenuPlaySoundEffect(2);
@@ -2988,7 +2988,7 @@ int ShopMenuSellModeMenu() {
             case MENU_INPUT_BACK:
                 isRunning = FALSE;
                 break;
-            
+
             case MENU_INPUT_DOWN:
                 if (g_Menu->menu2Choice != 0) {
                     g_Menu->menu2Choice--;
@@ -3004,7 +3004,7 @@ int ShopMenuSellModeMenu() {
                 break;
         }
     }
-    
+
     g_Menu->pManager->unk4 = 0;
     g_Menu->pManager->unk3 = 0;
     func_801CBC88(0, 4, g_Menu->unk6E0, &D_801D1FD0, g_Menu->pManager->unkC);

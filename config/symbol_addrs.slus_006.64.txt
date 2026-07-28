@@ -81,6 +81,8 @@ GfxAllocateWorkBuffers = 0x80024F64;
 GfxFreeWorkBuffers = 0x80024FB8;
 GfxSetCurrentOT = 0x80024FE4;
 
+ResourceHelperGetTexCoords = 0x80026338;
+
 GfxLineScrollInitialize = 0x80027D64;
 GfxLineScrollUpdate = 0x80027EAC;
 GfxLineScrollFree = 0x8002800C;

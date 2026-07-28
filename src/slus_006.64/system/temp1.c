@@ -1,4 +1,6 @@
 #include "common.h"
+#include "system/menu.h"
+#include "system/animation.h"
 
 // Sprite / Animation functions
 
@@ -54,20 +56,6 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80023290);
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80023340);
 
 // Allocate struct stuff
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_800233A4);
-/*
-Matches on  GCC 2.7.2-970404, ASPSX 2.67
-
-typedef struct {
-    WorkListEntry task1;
-    WorkListEntry task2;
-    SpriteData spriteData;
-} AnimTask;
-
-extern u8 D_800591AF;
-extern WorkListCallback_t func_80022DF4[];
-extern WorkListCallback_t func_80022EB8[];
-
 AnimTask* func_800233A4(void* pData, int dataSize) {
     AnimTask* pEntry;
     WorkListEntry* pTask1;
@@ -85,7 +73,6 @@ AnimTask* func_800233A4(void* pData, int dataSize) {
     WorkListTaskSetOnFreeCallback(pEntry, &func_80022EB8);
     return pEntry;
 }
-*/
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80023440);
 
@@ -157,7 +144,7 @@ void GfxAllocateWorkBuffers(int workBufferSize, unsigned int allocFlag) {
     g_GfxWorkBuffer2 = pWorkBuffers + workBufferSize;
     D_80059304 = 0;
     D_80059300 = 0;
-    g_GfxImageList = NULL;
+    g_GfxImageList[0] = NULL;
     func_8001D298();
 }
 */
@@ -447,7 +434,30 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80025D4C);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80025FA8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_80026338);
+void ResourceHelperGetTexCoords(MenuResourceDirectory *dir, u32 index,
+                   s32* outDirentCount,
+                   s32* outtexPageId,
+                   s32* outClutX, s32* outClutY, s32* outTexPageX, s32* outTexPageY) {
+    int texPageX_lsb, u_shifted;
+    MenuResourceDirentTextureMetadata *dirent;
+    MenuResourceTextureMetadata *data;
+    dirent = (MenuResourceDirentTextureMetadata *)(dir->offsets[index] + (unsigned) dir);
+    data = &dirent->data[0];
+
+    *outDirentCount = dirent->count;
+
+    u_shifted = data->u << 0x10;
+    if (data->texPageId != 0) {
+        texPageX_lsb = u_shifted >> 0x12;
+    } else {
+        texPageX_lsb = u_shifted >> 0x14;
+    }
+    *outtexPageId = data->texPageId;
+    *outClutX = data->clutX;
+    *outClutY = data->clutY;
+    *outTexPageX = (s16) (data->texPageX & 0xFFC0) + texPageX_lsb;
+    *outTexPageY = (s16) (data->texPageY & 0xFF00) + data->v;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp1", func_800263E4);
 

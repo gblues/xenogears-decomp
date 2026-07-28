@@ -14,30 +14,26 @@ extern s16 g_SystemPalette2;
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80032F54);
 
-unsigned int ResolveArchiveEntryPointers(u32* pFile) {
+unsigned int ResolveArchiveEntryPointers(u32* header) {
     int i;
-    u32* pEntries;
-    u32 offset;
+    u32 base_address = (u32)header;
+    u32* pointers = header;
 
-    offset = (u32)pFile;
-    pEntries = pFile;
-    for (i = 1; i <= *pFile; i++) {
-        pFile[i] += offset;
+    for (i = 1; i <= *header; i++) {
+        pointers[i] += base_address;
     }
-    
-    return *pFile;
+
+    return *header;
 }
 
 // Same as ResolveArchiveEntryPointers, but no return value
-void ResolveFileEntryPointers(u32* pFile) {
+void ResolveFileEntryPointers(u32* header) {
     int i;
-    u32* pEntries;
-    u32 offset;
+    u32 base_address = (u32)header;
+    u32* pointers = header;
 
-    offset = (u32)pFile;
-    pEntries = pFile;
-    for (i = 1; i <= *pFile; i++) {
-        pFile[i] += offset;
+    for (i = 1; i <= *header; i++) {
+        pointers[i] += base_address;
     }
 }
 
@@ -90,7 +86,9 @@ void SystemTransferPaletteToVRAM(short xDest, short yDest) {
     g_SystemPalette2 = GetClut(xDest + 16, yDest);
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", GetStringEntry);
+void* GetStringEntry(void* stringData, u32 entry) {
+    return stringData + ((u16 *)stringData)[entry+2];
+}
 
 // TODO: Cleanup code
 // Dialog data format:

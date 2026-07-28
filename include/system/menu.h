@@ -41,11 +41,85 @@
 #define ITEM_TYPE_ACCESSORY 0x1
 #define ITEM_TYPE_ITEM 0x2
 
+
+/*
+ * Menu Resource type definitions
+ */
+
+/**
+ * This maps to the header of the file. The actual length of offsets[] is contained in count.
+ *
+ * The 0-length array is a workaround to not having C99 features like Flexible Array Member (FAM) that allows
+ * you to write 'u16 offsets[];'
+ */
+typedef struct {
+    u32 count;
+    u16 offsets[0];
+} MenuResourceDirectory; /* size: (2 * count) + 4 */
+
+/* This is the actual record structure */
+typedef struct {
+    /* 0x00 */ u16 u;
+    /* 0x02 */ s16 v;
+    /* 0x04 */ u16 width;
+    /* 0x06 */ u16 height;
+    /* 0x08 */ u16 x;
+    /* 0x0A */ s16 y;
+    /* 0x0C */ s16 unkC;
+    /* 0x0E */ s16 unkE;
+    /* 0x10 */ s16 texPageId;
+    /* 0x12 */ s16 clutX;
+    /* 0x14 */ s16 clutY;
+    /* 0x16 */ u16 texPageX;
+    /* 0x18 */ s16 texPageY;
+    /* 0x1A */ u8 flipX;
+    /* 0x1B */ u8 flipY;
+} MenuResourceTextureMetadata;
+
+/*
+ * Menu Resource Directory Entries (dirent)
+ */
+
+typedef struct {
+    s16 count;
+    s16 pad;
+    MenuResourceTextureMetadata data[0];
+} MenuResourceDirentTextureMetadata; /* size: (count * sizeof(MenuResourceTextureMetadata)) + 4 */
+
+/*
+ * end menu resources
+ */
+
 typedef struct {
     /* 0x0 */ u16 unk0;
     /* 0x2 */ u_short price;
     /* 0x4 */ u8 unk4[0xC];
 } MenuShopItem; // Size: 0x10
+
+/* this is probably a Gear part but don't know which one */
+typedef struct {
+    u16 unk0;
+    u16 unk2;
+    u16 unk4;
+    u16 unk6;
+    u16 unk8;
+    u16 unkA;
+    u16 unkC;
+    u16 unkE;
+    u16 unk10;
+    u16 unk12;
+} MenuUnkItem; /* size: 0x14 */
+
+typedef struct {
+    /* 0x0  */ POLY_FT4 polys[2];
+    /* 0x50 */ SVECTOR vertices[4];
+    /* 0x70 */ RECT vramDest;
+    /* 0x78 */ void* pVramBuffer;
+    /* 0x7C */ u8 unk7C; // Palette?
+    /* 0x7D */ u8 renderContext;
+    /* 0x7E */ u8 width;
+    /* 0x7F */ u8 unk7F;
+} MenuString; // Size: 0x80
 
 typedef struct {
     /* 0x0 */ u_short equipFlags; // Which characters can use this item?
@@ -63,7 +137,7 @@ typedef struct {
 typedef struct {
     /* 0x0  */ DRAWENV drawEnv;
     /* 0x5C */ DISPENV dispEnv;
-    /* 0x70 */ unsigned long ot[16];
+    /* 0x70 */ unsigned long ot[16];  // 0x70 = ot[0], 0x74 = ot[1], 0x78 = ot[2], 0x7C = ot[3], 0x80 = ot[4]
     /* 0xB0 */ u32 unkB0;
 } GfxEnvironment; // Size: 0xB4
 
@@ -94,7 +168,16 @@ typedef struct {
     /* 0x4C14 */ u8 unk4C14[0x80];
     /* 0x4C94 */ u8 unk4C94[0x2E8];
     /* 0x4F7C */ s32 unk4F7C;
-    /* 0x4F80 */ u8 unk4F80[0xB4];
+    /* 0x4F80 */ u8 unk4F80[0x4E];
+    /* 0x4FCE */ u16 unk4FCE;
+    /* 0x4FD0 */ u16 unk4FD0;
+    /* 0x4FD2 */ u16 unk4FD2;
+    /* 0x4FD4 */ u16 unk4FD4;
+    /* 0x4FD6 */ u16 unk4FD6;
+    /* 0x4FD8 */ u16 unk4FD8;
+    /* 0x4FDA */ u8 unk4FDA;
+    /* 0x4FDB */ u8 unk4FDB;
+    /* 0x4FDC */ u8 unk4FDC[0x58];
 } MenuUnk2; // Size: 0x5034
 
 typedef struct {
@@ -154,11 +237,57 @@ typedef struct {
 } MenuUnk5; // Size: 0x140C
 
 typedef struct {
+    /* 0x00 */ int unk00; // always 0x8003?
+    /* 0x04 */ int hp; // 0x9c4 or 2500
+    /* 0x08 */ u16 weight; // 0xDAC or 3500
+    /* 0x0A */ u16 unkA; // 0x320 or 800
+    /* 0x0C */ int unkC; // 0
+    /* 0x10 */ int unk10; // 0
+    /* 0x14 */ u8 unk14; // 10 -- agility?
+    /* 0x15 */ u8 unk15; // 10 -- eth amp?
+    /* 0x16 */ u8 unk16; // 0
+    /* 0x17 */ u8 unk17; // 0
+} GearStatsPreview; /* size: 0x18 */
+
+/* most of these are placeholder */
+typedef struct {
+    u16 unk0;
+    u16 unk2;
+    u16 unk4;
+    u16 maxFuel; // this is definitely a u16
+    u16 unk8;
+    u16 unkA;
+    u8 unkC; // these are definitely u8s
+    u8 unkD;
+    u8 unkE;
+    u8 unkF;
+} MenuUnk6UnkCItem; /* size: 0x10 */ // todo: make a better name for this
+
+typedef struct {
     /* 0x0  */ MenuShopWeapon* pWeaponsData;
     /* 0x4  */ MenuShopAccessory* pAccessoriesData;
-    /* 0x8  */ u8 unk8[0x14];
+    /* 0x8  */ GearStatsPreview* pGearStatsPreview; // 0 <= index < MAX_GAME_GEARS
+    /* 0xC  */ MenuUnk6UnkCItem *unkC;
+    /* 0x10 */ MenuUnkItem *unk10;
+    /* 0x14 */ void *unk14;
+    /* 0x18 */ MenuUnkItem *unkItemData;
     /* 0x1C */ MenuShopItem* pItemsData;
-    /* 0x20 */ u8 unk20[0x98];
+    /* 0x20 */ u8 unk20[0x7C];
+    /* 0x9C */ int hp; // hp
+    /* 0xA0 */ int maxHp; // maxHp
+    /* 0xA4 */ u16 totalDefense; // totalDefense
+    /* 0xA6 */ u16 totalEtherDefense; // totalEtherDefense
+    /* 0xA8 */ u16 totalWeight;
+    /* 0xAA */ u16 unkAA;
+    /* 0xAC */ u16 fuel;
+    /* 0xAE */ u16 maxFuel;
+    /* 0xB0 */ u16 unkB0; // maybe ether??
+    /* 0xB2 */ u8 totalResponsiveness; // responsiveness
+    /* 0xB3 */ u8 unkB3;
+    /* 0xB4 */ u8 unkB4;
+    /* 0xB5 */ u8 unkB5;
+    /* 0xB6 */ u8 unkB6;
+    /* 0xB7 */ u8 unkB7;
     /* 0xB8 */ s32 unkB8;
     /* 0xBC */ s32 unkBC;
     /* 0xC0 */ u8 unkC0[0xC];
@@ -169,7 +298,45 @@ typedef struct {
 } MenuUnk7; // Size: 0xDEC
 
 typedef struct {
-    /* 0x0 */ u8 unk0[0x1f00];
+    /* 0x0000 */ MenuString unk0;
+    /* 0x0080 */ u8 unk80[0x50];
+    /* 0x00D0 */ POLY_FT4 polys[12];
+    /* 0x0120 */ u8 unk2B0[0x1C20];
+    /* 0x1ED0 */ u8 unk1ED0;
+    /* 0x1ED0 */ u8 unk1ED1;
+    /* 0x1ED0 */ u8 unk1ED2;
+    /* 0x1ED0 */ u8 unk1ED3;
+    /* 0x1ED0 */ u8 unk1ED4;
+    /* 0x1ED0 */ u8 unk1ED5;
+    /* 0x1ED0 */ u8 unk1ED6;
+    /* 0x1ED0 */ u8 unk1ED7;
+    /* 0x1ED8 */ u8 unk1ED8;
+    /* 0x1ED9 */ u8 unk1ED9;
+    /* 0x1EDA */ u8 unk1EDA;
+    /* 0x1EDB */ u8 unk1EDB;
+    /* 0x1EDC */ u8 unk1EDC;
+    /* 0x1EDD */ u8 unk1EDD;
+    /* 0x1EDE */ u8 unk1EDE;
+    /* 0x1EDF */ u8 unk1EDF;
+    /* 0x1EE0 */ u8 unk1EE0;
+    /* 0x1EE1 */ u8 unk1EE1;
+    /* 0x1EE1 */ u8 unk1EE2;
+    /* 0x1EE1 */ u8 unk1EE3;
+    /* 0x1EE1 */ u8 unk1EE4;
+    /* 0x1EE1 */ u8 unk1EE5;
+    /* 0x1EE1 */ u8 unk1EE6;
+    /* 0x1EE1 */ u8 unk1EE7;
+    /* 0x1EE1 */ u8 unk1EE8;
+    /* 0x1EE1 */ u8 unk1EE9;
+    /* 0x1EE1 */ u8 unk1EEA;
+    /* 0x1EE1 */ u8 unk1EEB;
+    /* 0x1EE1 */ u8 unk1EEC;
+    /* 0x1EE1 */ u8 unk1EED;
+    /* 0x1EE1 */ u8 unk1EEE;
+    /* 0x1EE1 */ u8 unk1EEF;
+    /* 0x1EF0 */ u16 unk1EF0;
+    /* 0x1EF2 */ u16 unk1EF2;
+    /* 0x1EF4 */ u8 unk1EF4[0xC];
 } MenuUnk8;
 
 // Character Info
@@ -201,17 +368,6 @@ typedef struct {
     /* 0xBE9 */ u8 unkBE9;
     /* 0xBEA */ u8 unkBEA[0x2];
 } MenuCharacter; // Size: 0xBEC
-
-typedef struct {
-    /* 0x0  */ POLY_FT4 polys[2];
-    /* 0x50 */ SVECTOR vertices[4];
-    /* 0x70 */ RECT vramDest;
-    /* 0x78 */ void* pVramBuffer;
-    /* 0x7C */ u8 unk7C; // Palette?
-    /* 0x7D */ u8 renderContext;
-    /* 0x7E */ u8 width;
-    /* 0x7F */ u8 unk7F;
-} MenuString; // Size: 0x80
 
 typedef struct {
     /* 0x0   */ POLY_FT4 polysWindowBorderCorners[8];
@@ -268,8 +424,8 @@ typedef struct {
 // Shop data
 typedef struct {
     /* 0x0    */ POLY_FT4 polysCharacterPortraits[9*2];
-    /* 0x2D0  */ POLY_FT4 polys2D0[9*2]; // Letter 'E' (for Equip) on character portraits if item is equipped
-    /* 0x5A0  */ POLY_FT4 polysExplanations[4 * 2];
+    /* 0x2D0  */ POLY_FT4 polys2D0[9*2]; // offsets: 0x2D0, 0x2F8, 0x320, 0x348, 0x370, 0x398, 0x3C0, 0x3E8, 0x410, 0x438, 0x460, 0x488, 0x4B0, 0x4D8, 0x500, 0x528, 0x550, 0x578 Letter 'E' (for Equip) on character portraits if item is equipped
+    /* 0x5A0  */ POLY_FT4 polysExplanations[4 * 2]; // offsets: 0x5A0, 0x5C8, 0x5F0, 0x618, 0x640, 0x668, 0x690, 0x6B8
     /* 0x6E0  */ u8 unk6E0[0x5A0];
     /* 0xC80  */ POLY_FT4 polysGoldBefore[9 * 2];
     /* 0xF50  */ POLY_FT4 polysTotalPrice[9 * 2];
@@ -332,8 +488,11 @@ typedef struct {
 } MenuScrollBarHandle; // Size: 0x74
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x1C4];
-} MenuUnknownComponent;
+    /* 0x000 */ POLY_FT4 polys[8];
+    /* 0x140 */ SVECTOR unk140[16];
+    /* 0x1C0 */ u8 unk1C0;
+    /* 0x1C1 */ u8 unk1C1[3];
+} MenuUnknownComponent; /* size: 0x1C4 */
 
 typedef struct {
     /* 0x0  */ POLY_FT4 polys[2];
@@ -346,6 +505,16 @@ typedef struct {
 } MenuArrowCursor; // Size: 0x78
 
 typedef struct {
+    /* 0x00 */ u8 *unk0; // data read from CD
+    /* 0x04 */ u8 *unk4;
+    /* 0x08 */ int unk8;
+    /* 0x0C */ int unkC;
+    /* 0x10 */ u16 unk10;
+    /* 0x12 */ s8 unk12;
+    /* 0x13 */ u8 unk13;
+} SystemMenuArchiveData; /* size: 0x14 */
+
+typedef struct {
     /* 0x0    */ u8 unk0[108];
     /* 0x6C   */ GfxEnvironment gfxEnvs[2];
     /* 0x1D4  */ GfxEnvironment* pGfxEnv;
@@ -356,9 +525,33 @@ typedef struct {
     /* 0x218  */ SVECTOR unk218;
     /* 0x220  */ VECTOR unk220;
     /* 0x230  */ u8 unk230[0x68];
-    /* 0x298  */ u8 unk298[0x3F];
+    /* 0x298  */ s16 unk298;
+    /* 0x29A  */ s16 unk29A;
+    /* 0x29C  */ s16 unk29C;
+    /* 0x29E  */ s16 unk29E;
+    /* 0x2A0  */ s16 unk2A0;
+    /* 0x2A2  */ s16 unk2A2;
+    /* 0x2A4  */ s16 unk2A4;
+    /* 0x2A6  */ s16 unk2A6;
+    /* 0x2A8  */ s16 unk2A8;
+    /* 0x2AA  */ s16 unk2AA;
+    /* 0x2AC  */ s16 unk2AC;
+    /* 0x2AE  */ s16 unk2AE;
+    /* 0x2B0  */ s16 unk2B0;
+    /* 0x2B2  */ s16 unk2B2;
+    /* 0x2B4  */ s16 unk2B4;
+    /* 0x2B6  */ s16 unk2B6;
+    /* 0x2B8  */ s16 unk2B8;
+    /* 0x2BA  */ s16 unk2BA;
+    /* 0x2BC  */ s16 unk2BC;
+    /* 0x2BE  */ s16 unk2BE;
+    /* 0x2C0  */ s16 unk2C0;
+    /* 0x2C2  */ s16 unk2C2;
+    /* 0x2C4  */ s16 unk2C4;
+    /* 0x2C8  */ s16 unk2C8;
+    /* 0x2CA  */ s16 unk2CA[7];
     /* 0x2D8  */ u32 unk2D8;
-    /* 0x2DC  */ void* unk2DC; // Resources / Textured polys
+    /* 0x2DC  */ MenuResourceDirectory *resources;
     /* 0x2E0  */ void* unk2E0; // Pointer to resources (bin 3)
     /* 0x2E4  */ SoundFile* unk2E4; // Pointer to SEDS file
     /* 0x2E8  */ undefined32 unk2E8;
@@ -401,28 +594,33 @@ typedef struct {
     /* 0x44C  */ u8 unk44C[0x4];
     /* 0x450  */ MenuShop* pShop;
     /* 0x454  */ MenuUnk8* menuUnk8;
-    /* 0x458  */ u8 unk458[0x14];
+    /* 0x458  */ SystemMenuArchiveData *unk458[2];
+    /* 0x460  */ u8 unk460[0x8];
+    /* 0x468  */ u8 unk468;
+    /* 0x469  */ u8 unk469;
+    /* 0x46A  */ u8 unk46A;
+    /* 0x46B  */ u8 unk46B;
 
     // Window borders
-    /* 0x46C  */ u32 unk46C; // UV?
+    /* 0x46C  */ u32 texCount0;
     /* 0x470  */ s32 texPage0;
     /* 0x474  */ s32 clutX0;
     /* 0x478  */ s32 clutY0;
     /* 0x47C  */ s32 texPageX0;
     /* 0x480  */ s32 texPageY0;
-    /* 0x484  */ u32 unk484; // UV?
+    /* 0x484  */ u32 texCount1;
     /* 0x488  */ s32 texPage1;
     /* 0x48C  */ s32 clutX1;
     /* 0x490  */ s32 clutY1;
     /* 0x494  */ s32 texPageX1;
     /* 0x498  */ s32 texPageY1;
-    /* 0x49C  */ u32 unk49C; // UV?
+    /* 0x49C  */ u32 texCount2;
     /* 0x4A0  */ s32 texPage2;
     /* 0x4A4  */ s32 clutX2;
     /* 0x4A8  */ s32 clutY2;
     /* 0x4AC  */ s32 texPageX2;
     /* 0x4B0  */ s32 texPageY2;
-    /* 0x4B4  */ u32 unk4B4; // UV?
+    /* 0x4B4  */ u32 texCount3;
     /* 0x4B8  */ s32 texPage3;
     /* 0x4BC  */ s32 clutX3;
     /* 0x4C0  */ s32 clutY3;
@@ -433,7 +631,8 @@ typedef struct {
     /* 0x4E0  */ MenuString unk4E0[4];
     /* 0x6E0  */ MenuString unk6E0[8];
     /* 0xAE0  */ MenuString unkAE0[6];
-    /* 0xDE0  */ u8 unk8D0[0x1000];
+    /* 0xDE0  */ MenuString unkDE0[6];
+    /* 0x10E0 */ u8 unk0x10E0[0xD00];
     /* 0x1DE0 */ MenuString* unk1DE0[4];
     /* 0x1DF0 */ MenuCharacter* benchedCharacters[MAX_BENCHED_PARTY_MEMBERS];
     /* 0x1E08 */ MenuCharacter* currentCharacters[MAX_PARTY_MEMBERS];

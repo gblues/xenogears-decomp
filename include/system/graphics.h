@@ -14,4 +14,7 @@ typedef struct {
     /* 0x14 */ u_short* unk14;
 } LineScroll;
 
+extern u16 g_SystemPalette1;
+extern u16 g_SystemPalette2;
+
 #endif

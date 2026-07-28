@@ -16,7 +16,9 @@
 
 
 typedef struct {
-    /* 0x0  */ undefined8 field_0x0[0x4C];
+    /* 0x0  */ u8 unk00[0x2C];
+    /* 0x2C */ u8 etherDefenseFromEquipment;
+    /* 0x2D  */ undefined8 unk2D[0x1F];
     /* 0x4C */ u_short hp;
     /* 0x4E */ u_short maxHp;
     /* 0x50 */ u_short mp;
@@ -26,7 +28,7 @@ typedef struct {
     /* 0x59 */ u_char defense;
     /* 0x5A */ u_char agility;
     /* 0x5B */ u_char ether;
-    /* 0x5C */ u_char etherDefence;
+    /* 0x5C */ u_char etherDefense;
     /* 0x5D */ undefined8 field_0x5D;
     /* 0x5E */ u_char hitPercentage;
     /* 0x5F */ u_char evadePercentage;
@@ -45,22 +47,93 @@ typedef struct {
 
 
 typedef struct {
-    /* 0x0  */ undefined8 field_0x0[0x10];
-    /* 0x10 */ short ether;
-    /* 0x12 */ short maxEther;
-    /* 0x14 */ undefined8 field_0x14[0x24];
-    /* 0x38 */ int fuel;
-    /* 0x3C */ int maxFuel;
-    /* 0x40 */ undefined8 field_0x40[0x20];
-    /* 0x60 */ u_int hp;
-    /* 0x64 */ u_int maxHp;
-    /* 0x68 */ undefined8 field_0x68[0x3C];
+    /* 0x0  */ u8 unk0[0x9];
+    /* 0x09 */ u8 accessorySlot1;
+    /* 0x0A */ u8 accessorySlot2;
+    /* 0x0B */ u8 accessorySlot3;
+    /* 0x0C */ u8 unkC;
+    /* 0x0D */ u8 unkD;
+    /* 0x0E */ u16 unkE;
+    /* 0x10 */ s16 ether;
+    /* 0x12 */ u8 maxEther;
+    /* 0x13 */ u8 unk13;
+    /* 0x14 */ u8 unk14;
+    /* 0x15 */ u8 unk15;
+    /* 0x16 */ u16 unk16;
+    /* 0x18 */ u16 unk18;
+    /* 0x1A */ u8 unk1A;
+    /* 0x1B */ u8 unk1B;
+    /* 0x1C */ u8 unk1C;
+    /* 0x1D */ u8 unk1D;
+    /* 0x1E */ u16 unk1E;
+    /* 0x20 */ u16 unk20;
+    /* 0x22 */ u8 unk22;
+    /* 0x23 */ u8 unk23;
+    /* 0x24 */ u8 unk24;
+    /* 0x25 */ u8 unk25;
+    /* 0x26 */ u8 unk26[0x12];
+    /* 0x38 */ u16 fuel;
+    /* 0x3A */ u16 maxFuel;
+    /* 0x3C */ u8 unk3C;
+    /* 0x3D */ u8 unk3D;
+    /* 0x3E */ u8 unk3E;
+    /* 0x3F */ u8 unk3F;
+    /* 0x40 */ u16 defenseFromEquipment; // total of defense boosts from slot1 + slot 2 + slot 3
+    /* 0x42 */ u16 etherDefenseFromEquipment;
+    /* 0x44 */ u16 weightFromEquipment;
+    /* 0x46 */ u16 unk46;
+    /* 0x48 */ u16 unk48;
+    /* 0x4A */ u16 unk4A;
+    /* 0x4C */ u8 unk4C;
+    /* 0x4D */ u8 responsiveness;
+    /* 0x4E */ u8 unk4E;
+    /* 0x50 */ u16 unk50;
+    /* 0x52 */ u16 unk52;
+    /* 0x54 */ u16 unk54;
+    /* 0x56 */ u8 unk56;
+    /* 0x57 */ u8 unk57;
+    /* 0x58 */ u16 unk58;
+    /* 0x5A */ u16 unk5A;
+    /* 0x5C */ u8 unk5C;
+    /* 0x5D */ u8 unk5D;
+    /* 0x5E */ u8 unk5E;
+    /* 0x5F */ u8 unk5F;
+    /* 0x60 */ u32 hp;
+    /* 0x64 */ u32 maxHp;
+    /* 0x68 */ u16 weight;
+    /* 0x6A */ u16 unk6A;
+    /* 0x6C */ u16 unk6C;
+    /* 0x6E */ u16 unk6E;
+    /* 0x70 */ u16 baseDefense;
+    /* 0x72 */ u16 baseEtherDefense;
+    /* 0x74 */ u8 unk74;
+    /* 0x75 */ u8 unk75;
+    /* 0x76 */ u8 unk76[0x10];
+    /* 0x86 */ u16 unk86;
+    /* 0x88 */ u8 unk88[0x10];
+    /* 0x98 */ u8 unk98;
+    /* 0x99 */ u8 unk99;
+    /* 0x9a */ u8 unk9A;
+    /* 0x9b */ u8 unk9B;
+    /* 0x9c */ u8 unk9C;
+    /* 0x9d */ u8 unk9D;
+    /* 0x9e */ u8 unk9E;
+    /* 0x9f */ u8 unk9F;
+    /* 0xA0 */ int unkA0;
 } GameGear; // size: 0xA4
 
 typedef struct {
-    /* 0x0    */ undefined8 field_0x0[0x26C];
-    /* 0x26C  */ GameCharacter characters[MAX_GAME_CHARACTERS];
-    /* 0x978  */ GameGear gears[MAX_GAME_GEARS];
+    /* 0x00 */ int unk0;
+    /* 0x04 */ int unk4;
+    /* 0x08 */ int unk8;
+    /* 0x0C */ int unkC;
+    /* 0x10 */ int unk10;
+} StringEntry; /* size: 0x14 */
+
+typedef struct {
+    /* 0x0000 */ StringEntry strings[31];
+    /* 0x026C */ GameCharacter characters[MAX_GAME_CHARACTERS];
+    /* 0x0978 */ GameGear gears[MAX_GAME_GEARS];
     /* 0x1648 */ undefined8 unk1648[0x206];
     /* 0x184E */ undefined16 unk184E;
     /* 0x1850 */ undefined8 unk1850[0x2];
@@ -81,7 +154,11 @@ typedef struct {
     /* 0x1F90 */ u_char itemQuantities[MAX_INVENTORY_ITEMS];
     /* 0x2026 */ u_char itemIDs[MAX_INVENTORY_ITEMS];
 
-    /* 0x20BC */ undefined8 unk20BC[0x1F5];
+    /* 0x20BC */ undefined8 unk20BC[0x64];
+    /* 0x2120 */ undefined8 unk2120[0x64];
+    /* 0x2184 */ undefined8 unk2184[0x96];
+    /* 0x221A */ undefined8 unk221A[0x96];
+    /* 0x22B0 */ undefined8 unk22B0;
     /* 0x22B1 */ undefined8 gearRide[MAX_PARTY_MEMBERS];
     /* 0x22B4 */ undefined8 unk22B4[0x2];
     /* 0x22B6 */ undefined16 unk22B6;

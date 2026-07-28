@@ -1,32 +1,12 @@
 #include "common.h"
 #include "system/memory.h"
+#include "system/animation.h"
 
 /* A lot of this TU has been matched already, but due to SBSS/SDATA symbols
  * issues it's currently unable to be compiled in. */
 
 // TU is compiled on GCC 2.7.2 or 2.6.0
 
-typedef void (*WorkListCallback_t)(void*);
-
-typedef struct {
-    struct WorkListEntry* unk0; // 
-    void* unk4; // pSpriteData, at least in some cases. Could be a more general pointer to data
-    WorkListCallback_t onTriggerCallback;
-    WorkListCallback_t onFreeCallback;
-
-    // Flags, shrug
-    u32 unk10: 29;
-    u32 unk10_1: 1;
-    u32 unk10_2: 1;
-    u32 unk10_3 : 1;
-
-    u32 unk14: 29;
-    u32 unk14_1: 1;
-    u32 unk14_2: 1;
-    u32 unk14_3 : 1;
-
-    struct WorkListEntry* pNext;
-} WorkListEntry;
 
 
 /*
