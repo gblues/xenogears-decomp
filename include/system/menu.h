@@ -168,7 +168,16 @@ typedef struct {
     /* 0x4C14 */ u8 unk4C14[0x80];
     /* 0x4C94 */ u8 unk4C94[0x2E8];
     /* 0x4F7C */ s32 unk4F7C;
-    /* 0x4F80 */ u8 unk4F80[0xB4];
+    /* 0x4F80 */ u8 unk4F80[0x4E];
+    /* 0x4FCE */ u16 unk4FCE;
+    /* 0x4FD0 */ u16 unk4FD0;
+    /* 0x4FD2 */ u16 unk4FD2;
+    /* 0x4FD4 */ u16 unk4FD4;
+    /* 0x4FD6 */ u16 unk4FD6;
+    /* 0x4FD8 */ u16 unk4FD8;
+    /* 0x4FDA */ u8 unk4FDA;
+    /* 0x4FDB */ u8 unk4FDB;
+    /* 0x4FDC */ u8 unk4FDC[0x58];
 } MenuUnk2; // Size: 0x5034
 
 typedef struct {

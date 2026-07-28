@@ -66,22 +66,18 @@ s32 func_8002675C(MenuResourceDirectory*, s32, POLY_FT4 *, s32, s32, s32, u32);
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C511C);
 
 void func_801C51B8(POLY_FT4* quad, s16 x, s16 y, s8 u, s8 v, s16 width, s16 height) {
-    quad->x0 = x;
-    quad->y0 = y;
-    quad->x1 = x + width;
-    quad->y1 = y;
-    quad->x2 = x;
-    quad->y2 = y + height;
-    quad->x3 = x + width;
-    quad->y3 = y + height;
-    quad->u0 = u;
-    quad->v0 = v;
-    quad->u1 = u + width;
-    quad->v1 = v;
-    quad->u2 = u;
-    quad->v2 = v + height;
-    quad->u3 = u + width;
-    quad->v3 = v + height;
+    setXY4(quad,
+        x, y,
+        x + width, y,
+        x, y + height,
+        x + width, y + height
+    );
+    setUV4(quad,
+        u, v,
+        u + width, v,
+        u, v + height,
+        u + width, v + height
+    );
 }
 
 u16 GearShopMenuIsCharacterFlagSet(u32 arg0, u8 arg1) {
@@ -365,18 +361,10 @@ void func_801C665C(void) {
 
 void func_801C668C(POLY_G4* poly, u8 r, u8 g, u8 b) {
     SetPolyG4(poly);
-    poly->r0 = r;
-    poly->g0 = g;
-    poly->b0 = b;
-    poly->r1 = r;
-    poly->g1 = g;
-    poly->b1 = b;
-    poly->r2 = 0;
-    poly->g2 = 0;
-    poly->b2 = 0;
-    poly->r3 = 0;
-    poly->g3 = 0;
-    poly->b3 = 0;
+    setRGB0(poly, r, g, b);
+    setRGB1(poly, r, g, b);
+    setRGB2(poly, 0, 0, 0);
+    setRGB3(poly, 0, 0, 0);
 }
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6708);
@@ -1209,8 +1197,6 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CDD74);
     GearShopMenuFree();
 }
 
-// INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CE1D0);
-
 void func_801CE1D0(void) {
     int i;
     POLY_FT4 *poly;
@@ -1219,7 +1205,7 @@ void func_801CE1D0(void) {
     for(i = 0; i < 2; i++) {
         func_8002675C(
             g_Menu->resources,
-            0x164 + i,
+            MENU_TEX_L1_RED_ARROW + i,
             &g_Menu->unk440->polys[i*4],
             g_Menu->renderContext,
             D_801D6FD0[i],
@@ -1371,14 +1357,10 @@ void func_801D0054(s32 count, POLY_FT4 *polys, u8 mode) {
         SetShadeTex(&polys[(i*2)+g_Menu->renderContext], 0);
         switch(mode) {
             case 0:
-                polys[(i*2)+g_Menu->renderContext].r0 = 0x80;
-                polys[(i*2)+g_Menu->renderContext].g0 = 0x40;
-                polys[(i*2)+g_Menu->renderContext].b0 = 0x40;
+                setRGB0(&polys[(i*2)+g_Menu->renderContext], 0x80, 0x40, 0x40);
                 break;
             case 1:
-                polys[(i*2)+g_Menu->renderContext].r0 = 0x40;
-                polys[(i*2)+g_Menu->renderContext].g0 = 0x40;
-                polys[(i*2)+g_Menu->renderContext].b0 = 0x80;
+                setRGB0(&polys[(i*2)+g_Menu->renderContext], 0x40, 0x40, 0x80);
                 break;
         }
     }

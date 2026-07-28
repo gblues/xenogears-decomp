@@ -53,7 +53,10 @@
 #define MENU_TEX_UNUSED_PORTRAIT_SMALL 0x157 // Possibly intended for Margie?
 #define MENU_TEX_EMERALDA_ADULT_PORTRAIT_SMALL 0x158
 
-// Start of arrow cursor frames, 5 frames total
+// Start of arrow cursor frames, 5 frames total: 0x15B, 0x15C, 0x15D, 0x15E, 0x15F
 #define MENU_TEX_ARROW_CURSOR 0x15B
+
+#define MENU_TEX_L1_RED_ARROW 0x164
+#define MENU_TEX_R1_RED_ARROW 0x165
 
 #endif
