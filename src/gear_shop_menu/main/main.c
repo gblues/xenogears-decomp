@@ -1,5 +1,6 @@
 #include "common.h"
 #include "system/menu.h"
+#include "system/controller.h"
 #include "system/archive.h"
 #include "system/graphics.h"
 // probably something like: DEBUGGER_ATTACHED, guards a breakpoint left in the code
@@ -498,13 +499,193 @@ void GearShopMenuInitializeWindowBorderCorners(u8 windowId, u16 arg1, u16 arg2, 
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", GearShopMenuSetWindowBorderTop);
+void GearShopMenuSetWindowBorderTop(u8 windowId, u16 x, u16 y, u16 width) {
+    MenuWindow *window = g_Menu->windows[windowId];
+    s32 innerWidth;
+    u16 halfInnerWidth;
+    int i;
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", GearShopMenuSetWindowBorderBottom);
+    setUV4(
+        &window->polysWindowBorderTop[g_Menu->renderContext],
+        0, 132,
+        7, 132,
+        0, 148,
+        7, 148
+    );
+    setUV4(
+        &window->polysWindowBorderTop[2 + g_Menu->renderContext],
+        0, 132,
+        7, 132,
+        0, 148,
+        7, 148
+    );
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", GearShopMenuSetWindowBorderLeft);
+    innerWidth = width - (MENU_WINDOW_BORDER_SIZE * 2);
+    halfInnerWidth = innerWidth / 2;
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", GearShopMenuSetWindowBorderRight);
+    GearShopMenuSetVertices(
+        window->vertsWindowBorderTop1,
+        (u16)(x + MENU_WINDOW_BORDER_SIZE),
+        (u16)(y - MENU_WINDOW_BORDER_SIZE),
+        halfInnerWidth,
+        MENU_WINDOW_BORDER_SIZE * 2
+    );
+    GearShopMenuSetVertices(
+        window->vertsWindowBorderTop2,
+        (u16)(x + MENU_WINDOW_BORDER_SIZE + halfInnerWidth),
+        (u16)(y - MENU_WINDOW_BORDER_SIZE),
+        halfInnerWidth,
+        MENU_WINDOW_BORDER_SIZE * 2
+    );
+
+    for (i = 0; i < 2; i++) {
+        GearShopMenuSetWindowBorderPrimitive(
+            (P_TAG *)&window->polysWindowBorderTop[i * 2 + g_Menu->renderContext]
+        );
+    }
+}
+
+void GearShopMenuSetWindowBorderBottom(u8 windowId, u16 x, u16 y, u16 width, u16 height) {
+    MenuWindow* window;
+    int i;
+    int innerWidth;
+
+    window = g_Menu->windows[windowId];
+
+    setUV4(
+        &window->polysWindowBorderBottom[g_Menu->renderContext],
+        8, 132,
+        15, 132,
+        8, 148,
+        15, 148
+    );
+
+    setUV4(
+        &window->polysWindowBorderBottom[2 + g_Menu->renderContext],
+        8, 132,
+        15, 132,
+        8, 148,
+        15, 148
+    );
+
+    innerWidth = width - 16;
+    width = innerWidth / 2;
+    height = y + height - 8;
+
+    GearShopMenuSetVertices(
+        window->vertsWindowBorderBottom1,
+        (u16)(x + 8),
+        height,
+        (u16)width,
+        16
+    );
+    GearShopMenuSetVertices(
+        window->vertsWindowBorderBottom2,
+        (u16)(x + 8 + width),
+        height,
+        width,
+        16
+    );
+
+    for (i = 0; i < 2; i++) {
+        GearShopMenuSetWindowBorderPrimitive((P_TAG *)&window->polysWindowBorderBottom[i * 2 + g_Menu->renderContext]);
+    }
+}
+
+void GearShopMenuSetWindowBorderLeft(u8 windowId, u16 x, u16 y, u16 height) {
+    MenuWindow* window;
+    int i;
+    int innerHeight;
+    u16 halfInnerHeight;
+
+    window = g_Menu->windows[windowId];
+
+    setUV4(
+        &window->polysWindowBorderLeft[g_Menu->renderContext],
+        16, 132,
+        32, 132,
+        16, 139,
+        32, 139
+    );
+
+    setUV4(
+        &window->polysWindowBorderLeft[2 + g_Menu->renderContext],
+        16, 132,
+        32, 132,
+        16, 139,
+        32, 139
+    );
+
+    innerHeight = height - 16;
+    halfInnerHeight = innerHeight / 2;
+
+    GearShopMenuSetVertices(
+        window->vertsWindowBorderLeft1,
+        (u16)(x - 8),
+        (u16)(y + 8),
+        16,
+        halfInnerHeight
+    );
+    GearShopMenuSetVertices(
+        window->vertsWindowBorderLeft2,
+        (u16)(x - 8),
+        (u16)(y + 8 + halfInnerHeight),
+        16,
+        halfInnerHeight
+    );
+
+    for (i = 0; i < 2; i++) {
+        GearShopMenuSetWindowBorderPrimitive((P_TAG *)&window->polysWindowBorderLeft[i * 2 + g_Menu->renderContext]);
+    }
+}
+
+void GearShopMenuSetWindowBorderRight(u8 windowId, u16 x, u16 y, u16 width, u16 height) {
+    MenuWindow* window;
+    int i;
+    int innerHeight;
+    u16 halfInnerHeight;
+
+    window = g_Menu->windows[windowId];
+
+    setUV4(
+        &window->polysWindowBorderRight[g_Menu->renderContext],
+        16, 140,
+        32, 140,
+        16, 147,
+        32, 147
+    );
+
+    setUV4(
+        &window->polysWindowBorderRight[2 + g_Menu->renderContext],
+        16, 140,
+        32, 140,
+        16, 147,
+        32, 147
+    );
+
+    width = x + width - 8;
+    innerHeight = height - 16;
+    halfInnerHeight = innerHeight / 2;
+
+    GearShopMenuSetVertices(
+        window->vertsWindowBorderRight1,
+        width,
+        (u16)(y + 8),
+        16,
+        halfInnerHeight
+    );
+    GearShopMenuSetVertices(
+        window->vertsWindowBorderRight2,
+        width,
+        (u16)(y + 8 + halfInnerHeight),
+        16,
+        halfInnerHeight
+    );
+
+    for (i = 0; i < 2; i++) {
+        GearShopMenuSetWindowBorderPrimitive(&window->polysWindowBorderRight[i * 2 + g_Menu->renderContext]);
+    }
+}
 
 void GearShopMenuSetWindow(u8 windowId, u16 arg1, u16 arg2, u16 arg3, u16 arg4, u8 arg5, s32 zIndex, u8 hasScrollbar) {
     MenuWindow* window;
@@ -609,7 +790,28 @@ void GearShopMenuUpdateWindows(void) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", GearShopMenuRenderPolygons);
+void GearShopMenuRenderPolygons(int count, SVECTOR* vertices, POLY_FT4* quads, int renderContext) {
+    long interpolated;
+    long flag;
+    int i;
+
+    for (i = 0; i < count; i++) {
+        RotTransPers4(
+            &vertices[i*4 + 0],
+            &vertices[i*4 + 1],
+            &vertices[i*4 + 2],
+            &vertices[i*4 + 3],
+            (long *)&quads[i*2 + renderContext].x0,
+            (long *)&quads[i*2 + renderContext].x1,
+            (long *)&quads[i*2 + renderContext].x2,
+            (long *)&quads[i*2 + renderContext].x3,
+            &interpolated,
+            &flag
+        );
+
+        AddPrim(&g_Menu->pGfxEnv->ot[4], &quads[i*2 + renderContext]);
+    }
+}
 
 void GearShopMenuRenderString(s32 count, POLY_FT4* polys, u32 renderContext) {
     int i;
@@ -846,7 +1048,87 @@ void GearShopMenuPlaySoundEffect(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", GearShopMenuPollInput);
+void GearShopMenuPollInput(void) {
+    u8 wasControllerUnplugged;
+    u8 isLooping;
+    int savedValue;
+    u8 input;
+
+    input = MENU_INPUT_IDLE;
+    isLooping = TRUE;
+    wasControllerUnplugged = FALSE;
+    while (isLooping) {
+        // Is the main controller not plugged in?
+        if (ControllerGetType(0) == CONTROLLER_TYPE_NONE) {
+            if (wasControllerUnplugged == 0) {
+                wasControllerUnplugged++;
+                SoundMuteAllSpuChannels();
+                savedValue = D_80059488;
+            }
+            continue;
+        }
+
+        isLooping--;
+        if (wasControllerUnplugged) {
+            SoundEnableAllSpuChannels();
+            D_80059488 = savedValue;
+        }
+    }
+
+    if (func_80036410()) {
+        ControllerResetState();
+    } else {
+        while (ControllerPopState()) {
+            if (g_C1ButtonStatePressedOnce & CTRL_BTN_RIGHT) {
+                input = MENU_INPUT_RIGHT;
+                GearShopMenuPlaySoundEffect(1);
+                break;
+            }
+            if (g_C1ButtonStatePressedOnce & CTRL_BTN_DOWN) {
+                input = MENU_INPUT_DOWN;
+                GearShopMenuPlaySoundEffect(1);
+                break;
+            }
+            if (g_C1ButtonStatePressedOnce & CTRL_BTN_LEFT) {
+                input = MENU_INPUT_LEFT;
+                GearShopMenuPlaySoundEffect(1);
+                break;
+            }
+            if (g_C1ButtonStatePressedOnce & CTRL_BTN_UP) {
+                input = MENU_INPUT_UP;
+                GearShopMenuPlaySoundEffect(1);
+                break;
+            }
+            if (g_C1ButtonStateReleased & CTRL_BTN_CIRCLE) {
+                input = MENU_INPUT_CONFIRM;
+                break;
+            }
+            if (g_C1ButtonStateReleased & CTRL_BTN_CROSS) {
+                input = MENU_INPUT_BACK;
+                GearShopMenuPlaySoundEffect(3);
+                break;
+            }
+            if (g_C1ButtonStateReleased & CTRL_BTN_SQUARE) {
+                input = 6;
+                break;
+            }
+            if (g_C1ButtonStateReleased & CTRL_BTN_TRIANGLE) {
+                input = 7;
+                break;
+            }
+            if (g_C1ButtonStatePressedOnce & CTRL_BTN_L1) {
+                input = 10;
+                break;
+            }
+            if (g_C1ButtonStatePressedOnce & CTRL_BTN_R1) {
+                input = 9;
+                break;
+            }
+        }
+    }
+    g_Menu->input = input;
+}
+
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CB690);
 
