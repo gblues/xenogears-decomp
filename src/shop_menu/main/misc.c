@@ -2535,8 +2535,8 @@ void ShopMenuHandleBoughtItems(u_int newGoldnewWeaponAmount) {
     ShopMenuPlaySoundEffect(0xD1);
 
     g_GameState.gold = newGoldnewWeaponAmount;
-    if (newGoldnewWeaponAmount > 9999999) {
-        g_GameState.gold = 9999999;
+    if (newGoldnewWeaponAmount > MAX_GOLD_AMOUNT) {
+        g_GameState.gold = MAX_GOLD_AMOUNT;
     }
 
     for (i = 0; i < MAX_SHOP_ITEMS; i++) {
