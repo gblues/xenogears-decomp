@@ -32,9 +32,6 @@
 #define MENU_AUTO_ADVANCE 0
 #define MENU_MANUAL_CHOICE 0xFF
 
-// Max items to display in the window at a time
-#define MAX_ITEMS_IN_VIEW 8
-
 // Debug-related?
 extern s32* D_8005917C;
 
@@ -539,12 +536,12 @@ void ShopMenuUpdateScrollBarHandle(int x, int y, int scrollHandleHeight, int num
     // If the total number of items in the window fits within what we can view,
     // there's no need for scrolling so we set the scroll handle height to fill
     // the entire scroll bar.
-    if (numItems <= MAX_ITEMS_IN_VIEW) {
+    if (numItems <= SHOP_MAX_ITEMS_IN_VIEW) {
         scrollHandleHeight = 100;
     }
     // Compute the Y offset based on our current scroll offset
     else {
-        yOffset = (scrollOffset * 100) / (numItems - MAX_ITEMS_IN_VIEW);
+        yOffset = (scrollOffset * 100) / (numItems - SHOP_MAX_ITEMS_IN_VIEW);
         yOffset = (yOffset * 4000) / 10000;
     }
 
@@ -2788,13 +2785,13 @@ u_char ShopMenuBuyMenu(void) {
                 curChoice++;
 
                 // If we move beyond the items visible at a time, we need to scroll down
-                if (curChoice >= MAX_ITEMS_IN_VIEW) {
-                    curChoice = MAX_ITEMS_IN_VIEW - 1;
+                if (curChoice >= SHOP_MAX_ITEMS_IN_VIEW) {
+                    curChoice = SHOP_MAX_ITEMS_IN_VIEW - 1;
                     scrollOffset++;
 
                     // If we're at the bottom of the window, we undo our scrolling,
                     // since there's nothing mroe to scroll to
-                    if ((D_801D1F50 - MAX_ITEMS_IN_VIEW) < scrollOffset) {
+                    if ((D_801D1F50 - SHOP_MAX_ITEMS_IN_VIEW) < scrollOffset) {
                         scrollOffset--;
                     }
                 }

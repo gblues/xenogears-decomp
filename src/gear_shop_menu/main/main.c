@@ -53,7 +53,7 @@ u8 func_8001BD40(int, u8);
 u16 GearShopMenuIsCharacterFlagSet(uint, u_char);
 void func_801D2054(u8, u8*, u8*, s8, u8, u8 *, u8);
 s32 func_801CCA40(u8, u8);
-void ShopMenuConfirmationWindowInitialize(u8);
+void GearShopMenuConfirmationWindowInitialize(u8);
 void GearShopMenuSetWindow(u8, u16, u16, u16, u16, u8, s32, u8);
 void GearShopMenuSetVertices(SVECTOR*, u32, u32, u32, u32);
 void GearShopMenuInitializeScrollBar(u8, u16, u16, u16, u16);
@@ -399,7 +399,40 @@ void GearShopMenuSetWindowBorderPrimitive(P_TAG* tag) {
     setRGB0(tag, 128, 128, 128);
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C76A4);
+void GearShopMenuUpdateScrollBarHandle(int x, int y, int scrollHandleHeight, int numItems, int scrollOffset) {
+    int yOffset = 0;
+
+    if (!g_Menu->pManager->scrollHandleActive) {
+        g_Menu->pScrollHandle = HeapAlloc(sizeof(MenuScrollBarHandle), 0x0);
+        bzero((u8 *)g_Menu->pScrollHandle, sizeof(MenuScrollBarHandle));
+    }
+
+    // If the total number of items in the window fits within what we can view,
+    // there's no need for scrolling so we set the scroll handle height to fill
+    // the entire scroll bar.
+    if (numItems <= SHOP_MAX_ITEMS_IN_VIEW) {
+        scrollHandleHeight = 100;
+    }
+    // Compute the Y offset based on our current scroll offset
+    else {
+        yOffset = (scrollOffset * 100) / (numItems - SHOP_MAX_ITEMS_IN_VIEW);
+        yOffset = (yOffset * 4000) / 10000;
+    }
+
+    func_8002675C(g_Menu->resources, MENU_TEX_SCROLL_BAR_HANDLE,
+        g_Menu->pScrollHandle->polys, g_Menu->renderContext,
+        x, y, 0x1000
+    );
+
+    GearShopMenuSetVertices(
+        g_Menu->pScrollHandle->vertices,
+        (u16)x, (u16)(y + yOffset),
+        (u16)8, (u16)scrollHandleHeight
+    );
+
+    g_Menu->pScrollHandle->renderContext = g_Menu->renderContext;
+    g_Menu->pManager->scrollHandleActive = TRUE;
+}
 
 void GearShopMenuFreeScrollBarHandle(void) {
     g_Menu->pManager->scrollHandleActive = FALSE;
@@ -1667,7 +1700,7 @@ void func_801CC520(void) {
 void func_801CC528(void) {
 }
 
-void ShopMenuConfirmationWindowInitialize(u8 stringIndex) {
+void GearShopMenuConfirmationWindowInitialize(u8 stringIndex) {
     MenuWindowParameters* pWindowParams;
     MenuString* pString;
     int i;
@@ -1763,7 +1796,7 @@ s32 func_801CCC18(u8 arg0, s32 arg1, s32 arg2) {
     u8 unkBool = TRUE;
     u8 result;
 
-    ShopMenuConfirmationWindowInitialize(arg0);
+    GearShopMenuConfirmationWindowInitialize(arg0);
     if ((u8)arg1 == 0xFF) {
         g_Menu->pCursors->shouldRender[3] = TRUE;
     } else {
@@ -1777,7 +1810,7 @@ s32 func_801CCC18(u8 arg0, s32 arg1, s32 arg2) {
 
     if ((u8)arg1 != 0xFF) {
         g_Menu->pCursors->shouldRender[3] = TRUE;
-        ShopMenuConfirmationWindowInitialize(arg1);
+        GearShopMenuConfirmationWindowInitialize(arg1);
         g_Menu->pCursors->shouldRender[3] = TRUE;
         result = func_801CCA40(arg2, 1);
         GearShopMenuConfirmationWindowFree();
