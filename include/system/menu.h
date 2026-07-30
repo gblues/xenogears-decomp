@@ -28,6 +28,9 @@
 #define MENU_WINDOW_BORDER_SIZE 0x8
 #define MENU_MAX_DIGITS 0x9
 
+// Max items to display in the shop at a time
+#define SHOP_MAX_ITEMS_IN_VIEW 8
+
 // Modes for memory management functions
 #define MENU_DATA_INITIALIZE 0x1
 #define MENU_DATA_FREE 0x0
@@ -421,6 +424,10 @@ typedef struct {
     /* 0x13 */ u8 unk14[0x4];
 } MenuWindowParameters; // Size: 0x18
 
+typedef struct {
+    u8 itemIds[0x14];
+} ShopItemTableEntry;
+
 // Shop data
 typedef struct {
     /* 0x0    */ POLY_FT4 polysCharacterPortraits[9*2];
@@ -475,7 +482,8 @@ typedef struct {
     /* 0x46D7 */ u8 unk46D7[0x9]; // Render contexts
     /* 0x46E0 */ u16 unk46E0[0x10];
     /* 0x4700 */ u16 unk4700[0x10];
-    /* 0x4720 */ u8 unk4720[0x65];
+    /* 0x4720 */ ShopItemTableEntry itemTables[5];
+    /* 0x4784 */ u8 unk4784;
     /* 0x4785 */ u8 unk4785;
     /* 0x4786 */ u8 unk4786[0x2];
 } MenuShop; // Size: 0x4788
