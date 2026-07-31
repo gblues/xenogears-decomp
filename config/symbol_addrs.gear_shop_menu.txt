@@ -58,4 +58,4 @@ GearShopMenuConfirmationWindowFree         =  0x801CC9A0;
 GearShopMenuFree                           =  0x801CCD20;
 GearShopMenuMain                           =  0x801CE024;
 GearShopMenuUpdateCharacterPortraits       =  0x801D0220;
-GEAR_SHOP_AVAILABLE_CHARACTER_COUNT        =  0x801D6FD8; // type:s32
+g_gearShopAvailableCharacterCount        =  0x801D6FD8; // type:s32

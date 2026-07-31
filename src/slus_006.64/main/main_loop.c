@@ -1,6 +1,7 @@
 #include "common.h"
 #include "main/main.h"
 #include "system/memory.h"
+#include "system/archive.h"
 #include "system/controller.h"
 
 #include "psyq/libetc.h"
@@ -57,7 +58,7 @@ void* LoadGameStateOverlay(unsigned int overlayIndex) {
         nPrevHeapUser = HeapGetCurrentUser();
         ArchiveGetArchiveOffsetIndices(&nPrevSectionIndex, &nPrevEntryIndex);
         HeapSetCurrentUser(HEAP_USER_SUGI);
-        ArchiveSetIndex(0x0, 0x1);
+        ArchiveSetIndex(ARCHIVE_DIR_CORE, 0x1);
         nPrevHeapErrorHandlerStatus = HeapToggleErrorHandler(0x1);
 
         nFileSize = ArchiveDecodeSize(g_GameStateOverlayArchiveOffsets[overlayIndex]);

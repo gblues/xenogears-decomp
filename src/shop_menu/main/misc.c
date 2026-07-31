@@ -348,6 +348,7 @@ void func_801C6430(void) {
     g_Menu->pManager->unk3 = 0;
 }
 
+// ShopMenuSetPolyGradientColor
 void func_801C6460(POLY_G4* pPoly, u_char red, u_char green, u_char blue) {
     SetPolyG4(pPoly);
     setRGB0(pPoly, red, green, blue);

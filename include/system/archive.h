@@ -3,6 +3,11 @@
 
 #include "psyq/libcd.h"
 
+#define ARCHIVE_DIR_CORE 0x0
+#define ARCHIVE_DIR_FIELD 0x4
+#define ARCHIVE_DIR_MENUS 0x10
+#define ARCHIVE_DIR_MOVIES 0x18
+
 #define CD_SECTOR_SIZE 0x800
 #define RETRY_COUNT 0x4
 

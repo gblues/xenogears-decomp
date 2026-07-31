@@ -39,7 +39,7 @@ void func_8001ACA4(void) {
     D_8004F334 = -1;
     D_8004F330 = -1;
     HeapChangeCurrentUser(HEAP_USER_YOSI, 0);
-    ArchiveSetIndex(4, 0);
+    ArchiveSetIndex(ARCHIVE_DIR_FIELD, 0);
     GamePartyStreamLoadSkinData(1);
 }
 

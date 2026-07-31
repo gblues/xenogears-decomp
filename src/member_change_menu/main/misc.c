@@ -1,6 +1,7 @@
 #include "common.h"
 
 #include "psyq/libgpu.h"
+#include "system/archive.h"
 #include "system/controller.h"
 #include "system/menu.h"
 #include "main/game.h"
@@ -181,11 +182,11 @@ void MemberChangeMenuLoadResources(void) {
     g_Menu->unk2E0 = LZSSHeapDecompress(pResources[4], 0);
 
     if (g_MenuDebugEnabled) {
-        ArchiveSetIndex(0x10, 0x2);
+        ArchiveSetIndex(ARCHIVE_DIR_MENUS, 0x2);
         D_8006259C = HeapAlloc(ArchiveDecodeAlignedSize(0x5), 0);
         ArchiveReadFileToBuffer(0x5, D_8006259C, 0, 0x80);
         ArchiveCdDataSync(0);
-        ArchiveSetIndex(0x10, 0x0);
+        ArchiveSetIndex(ARCHIVE_DIR_MENUS, 0x0);
         SoundAddSedsEntry(D_8006259C);
     }
     g_Menu->unk2E4 = D_8006259C;

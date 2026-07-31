@@ -315,7 +315,7 @@ void func_800A2714(void) {
     if (g_GamePartySkinsInitialized) {
         // Read animation files
         for (i = 0; i < D_800ADBFC; i++) {
-            ArchiveSetIndex(0x4, 0x0);
+            ArchiveSetIndex(ARCHIVE_DIR_FIELD, 0x0);
             pActor = g_FieldActors[i].pActorData;
             if (pActor->unk124 != -1) {
                 g_FieldScriptVMCurActor = pActor;
