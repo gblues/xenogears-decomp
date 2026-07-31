@@ -56,6 +56,7 @@ GearShopMenuFreePointerCursors             =  0x801CC4DC;
 GearShopMenuConfirmationWindowInitialize   =  0x801CC530;
 GearShopMenuConfirmationWindowFree         =  0x801CC9A0;
 GearShopMenuFree                           =  0x801CCD20;
+GearShopMenuInitializeShopModeSelectionMenu = 0x801CD310;
 GearShopMenuMain                           =  0x801CE024;
 GearShopMenuUpdateCharacterPortraits       =  0x801D0220;
 g_gearShopAvailableCharacterCount        =  0x801D6FD8; // type:s32

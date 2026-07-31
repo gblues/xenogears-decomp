@@ -60,6 +60,17 @@ extern u8  D_801D9084;
 extern s32 g_gearShopAvailableCharacterCount;
 extern u8* D_801D9088;
 
+extern s32 D_801D6980[];
+// = {
+//    MENU_TEX_BALL_CURSOR_1, MENU_TEX_STRING_BUY,
+//    MENU_TEX_BALL_CURSOR_2, MENU_TEX_STRING_SELL,
+//    MENU_TEX_BALL_CURSOR_3, MENU_TEX_STRING_EXIT,
+//    MENU_TEX_BALL_CURSOR_4, MENU_TEX_STRING_TUNE_UP,
+//    }
+extern s32 D_801D6A30[];
+
+
+
 /* this function doesn't seem to get called by anything, possibly dead code? I spent a little time decomping this
  * and got it to 94% but don't want to spend a ton of time on it.
  *
@@ -1948,11 +1959,11 @@ void func_801CCEBC(s32 count, s8* buffer) {
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CCEE8);
 
-void func_801CD310(s32 count, s32* resourceIds) {
+void GearShopMenuInitializeShopModeSelectionMenu(int count, int* pResourceIDs) {
     int i, j;
 
-    g_Menu->pSelectionMenu->unk1192 = 0;
-    g_Menu->pSelectionMenu->unk1193 = 0;
+    g_Menu->pSelectionMenu->unk1192 = FALSE;
+    g_Menu->pSelectionMenu->unk1193 = FALSE;
 
     g_Menu->pManager->shouldRenderSelectionMenu = TRUE;
 
@@ -1962,7 +1973,7 @@ void func_801CD310(s32 count, s32* resourceIds) {
             for(j = 0; j < i; j++) {
                 g_Menu->pSelectionMenu->numCursors += func_8002675C(
                     g_Menu->resources,
-                    resourceIds[j*2],
+                    pResourceIDs[j * 2],
                     &g_Menu->pSelectionMenu->polysCursors[g_Menu->pSelectionMenu->numCursors*2],
                     g_Menu->renderContext,
                     0xA0,
@@ -1979,7 +1990,7 @@ void func_801CD310(s32 count, s32* resourceIds) {
             for (j = 0; j < i - 1; j++) {
                 g_Menu->pSelectionMenu->numTexts += func_8002675C(
                     g_Menu->resources,
-                    resourceIds[(j*2)+1],
+                    pResourceIDs[j * 2 + 1],
                     &g_Menu->pSelectionMenu->polysTexts[g_Menu->pSelectionMenu->numTexts*2],
                     g_Menu->renderContext,
                     0xA0,
@@ -2040,33 +2051,110 @@ void func_801CDA0C(u8 arg0) {
     g_Menu->pManager->unk4 = TRUE;
 }
 
+// GearShopMenuShopModeMenuHandleSelectedOption
+u_char func_801CDC68(void) {
+    u_char isRunning;
+    u_char selection;
 
-s32 func_801CDC68(void) {
-    s32 result;
-    u8 selection;
-
-    result = 1;
+    isRunning = TRUE;
     if (g_Menu->menu1Choice) {
+        // Always returns true?
         selection = func_801D5828();
     } else {
-        result = 0;
+        // "Exit" option was selected
+        isRunning = FALSE;
     }
+
     // intentionally using selection w/o intialization
     if (selection) {
         func_801CC528();
         func_801CCE90(4, g_Menu->unk6E0, &D_801D6A20, g_Menu->pManager->unkC);
     }
-    g_Menu->pSelectionMenu->unk1192 = 0;
-    g_Menu->pSelectionMenu->unk1193 = 1;
-    g_Menu->pManager->unk4 = 1;
-    g_Menu->pManager->unk3 = 1;
+
+    // Render selection menu as active agian
+    g_Menu->pSelectionMenu->unk1192 = FALSE;
+    g_Menu->pSelectionMenu->unk1193 = TRUE;
+
+    g_Menu->pManager->unk4 = TRUE;
+    g_Menu->pManager->unk3 = TRUE;
     g_Menu->unk337 = 0xFF;
-    g_Menu->pManager->unkA = 0;
-    return result;
+    g_Menu->pManager->unkA = FALSE;
+    
+    return isRunning;
 }
 
-// Function handling the logic for chooising which submenu to enter
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CDD74);
+// Tune up / Buy / Sell / Exit menu
+void func_801CDD74(void) {
+    u_char isRunning;
+
+    isRunning = TRUE;
+    func_801CFAB8(1, D_801D9084);
+    g_Menu->pManager->unk5C[7] = 1;
+
+    // Options here are "Tune up", "Buy", "Sell", "Exit"
+    g_Menu->menu1Choice = 2; // Start cursor at "Buy" option
+    GearShopMenuInitializeShopModeSelectionMenu(5, &D_801D6980);
+
+    func_801CCE90(4, g_Menu->unk6E0, &D_801D6A20, g_Menu->pManager->unkC);
+    if (g_gearShopAvailableCharacterCount >= 2) {
+        g_Menu->pManager->unk52[1] = 1;
+    }
+    
+    while (isRunning) {
+        GearShopMenuUpdateAndRender();
+        switch (g_Menu->input) {
+            case MENU_INPUT_CONFIRM:
+                GearShopMenuPlaySoundEffect(2);
+                
+                g_Menu->pSelectionMenu->unk1192 = TRUE;
+                
+                func_801C665C();
+                func_801CCEBC(4, g_Menu->pManager->unkC);
+                g_Menu->unk348->unk15B = 0x4C;
+                isRunning = func_801CDC68();
+                g_Menu->unk348->unk15B = 0x40;
+                break;
+                
+            case MENU_INPUT_BACK:
+                isRunning = FALSE;
+                break;
+                
+            case MENU_INPUT_DOWN:
+                if (g_Menu->menu1Choice) {
+                    g_Menu->menu1Choice--;
+                } else {
+                    g_Menu->menu1Choice = 3;
+                }
+                break;
+                
+            case MENU_INPUT_UP:
+                if (++g_Menu->menu1Choice >= 4) {
+                    g_Menu->menu1Choice = 0;
+                }
+                break;
+
+            // R1 (Next gear)
+            case 9:
+                func_801D0398(0);
+                break;
+                
+            // L1 (Prev gear)
+            case 10:
+                func_801D0398(1);
+                break;
+        }
+        
+        if (g_Menu->menu1Choice != g_Menu->unk337) {
+            func_801CD838(4, g_Menu->menu1Choice, &D_801D6980);
+            func_801CCEE8(4, g_Menu->unk6E0, &D_801D6A20, &D_801D6A30, g_Menu->pManager->unkC, g_Menu->menu1Choice, 0, 0);
+            g_Menu->unk337 = g_Menu->menu1Choice;
+        }
+    }
+    
+    D_801D697C = 0;
+    func_801D5EB8();
+    func_801CE2E8();
+}
 
 void GearShopMenuMain(void) {
     GearShopMenuMenuUnk2Manager(MENU_DATA_INITIALIZE);
@@ -2344,6 +2432,7 @@ void func_801D0348(void) {
     }
 }
 
+// Function handling changing current gear
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D0398);
 
 // GearShopMenuUpdate ??? MenuExplanationGraphics
@@ -2595,6 +2684,7 @@ void func_801D57A8(void) {
     }
 }
 
+// https://decomp.me/scratch/7SJpB
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D5828);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D5D38);
