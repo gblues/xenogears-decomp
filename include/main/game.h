@@ -16,7 +16,7 @@
 
 
 typedef struct {
-    /* 0x0  */ u8 unk00[0x2C];
+    /* 0x0  */ u8 unk0[0x2C];
     /* 0x2C */ u8 etherDefenseFromEquipment;
     /* 0x2D  */ undefined8 unk2D[0x1F];
     /* 0x4C */ u_short hp;
@@ -47,10 +47,16 @@ typedef struct {
 
 
 typedef struct {
-    /* 0x0  */ u8 unk0[0x9];
-    /* 0x09 */ u8 accessorySlot1;
-    /* 0x0A */ u8 accessorySlot2;
-    /* 0x0B */ u8 accessorySlot3;
+    /* 0x00 */ u8 unk0;
+    /* 0x01 */ u8 unk1;
+    /* 0x02 */ u8 frameId;
+    /* 0x03 */ u8 engineId;
+    /* 0x04 */ u8 unk4;
+    /* 0x05 */ u8 unk5;
+    /* 0x06 */ u8 unk6;
+    /* 0x07 */ u8 unk7;
+    /* 0x08 */ u8 armorId;
+    /* 0x09 */ u8 accessorySlots[3];
     /* 0x0C */ u8 unkC;
     /* 0x0D */ u8 unkD;
     /* 0x0E */ u16 unkE;
@@ -74,7 +80,7 @@ typedef struct {
     /* 0x26 */ u8 unk26[0x12];
     /* 0x38 */ u16 fuel;
     /* 0x3A */ u16 maxFuel;
-    /* 0x3C */ u8 unk3C;
+    /* 0x3C */ u8 engineOutput;
     /* 0x3D */ u8 unk3D;
     /* 0x3E */ u8 unk3E;
     /* 0x3F */ u8 unk3F;
@@ -104,7 +110,7 @@ typedef struct {
     /* 0x6A */ u16 unk6A;
     /* 0x6C */ u16 unk6C;
     /* 0x6E */ u16 unk6E;
-    /* 0x70 */ u16 baseDefense;
+    /* 0x70 */ u16 baseDefense; /* impacted by AR value of equipped armor */
     /* 0x72 */ u16 baseEtherDefense;
     /* 0x74 */ u8 unk74;
     /* 0x75 */ u8 unk75;
