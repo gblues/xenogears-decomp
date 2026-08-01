@@ -582,7 +582,7 @@ typedef struct {
     /* 0x337  */ u8 unk337; // Menu 1 prev choice?
     /* 0x338  */ u_char menu2Choice;
     /* 0x339  */ u8 unk339; // Menu 2 prev choice?
-    /* 0x33A  */ u8 unk33A;
+    /* 0x33A  */ u8 unk33A; // Menu 2 num choices
     /* 0x33B  */ u8 unk33B;
     /* 0x33C */ MenuManager* pManager;
     /* 0x340  */ u8 unk340[0x8];

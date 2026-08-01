@@ -18,8 +18,36 @@
 extern s32* D_8005917C; // TODO: should be in a header for main program stuff since this is not coming from an overlay
 
 extern s8  D_801D697C;
-extern int D_801D69A0;
-extern int D_801D69A4;
+
+
+extern int D_801D69A0[]; // MENU_TEX_BALL_CURSOR_8
+extern int D_801D69A4[];
+// = {
+//    Buy Submenu
+//    MENU_TEX_STRING_WEAPONS, 
+//    MENU_TEX_BALL_CURSOR_9, MENU_TEX_STRING_PARTS, 
+//    MENU_TEX_BALL_CURSOR_10, MENU_TEX_STRING_FUEL, 
+//    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_ENGINE, 
+//    MENU_TEX_BALL_CURSOR_8,  MENU_TEX_STRING_PARTS, 
+//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_WEAPONS, 
+//    0xFFFF, 0xFFFF
+//    0xFFFF, 0xFFFF,
+//    ------------------------------------------------
+//    Sell Submenu
+//    MENU_TEX_BALL_CURSOR_8, MENU_TEX_STRING_FUEL, 
+//    MENU_TEX_BALL_CURSOR_9, MENU_TEX_STRING_WEAPONS, 
+//    0xFFFF, 0xFFFF, 
+//    0xFFFF, 0xFFFF, 
+//    ------------------------------------------------
+//    Tune up Submenu
+//    MENU_TEX_BALL_CURSOR_8,  MENU_TEX_STRING_ARMOR, 
+//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_FRAME, 
+//    MENU_TEX_BALL_CURSOR_10, MENU_TEX_STRING_ENGINE, 
+//    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_FUEL
+//   }
+
+
+
 extern u8  D_801D6A20;
 extern u8  D_801D6A24;
 extern int D_801D6A60[4];
@@ -68,6 +96,8 @@ extern s32 D_801D6980[];
 //    MENU_TEX_BALL_CURSOR_4, MENU_TEX_STRING_TUNE_UP,
 //    }
 extern s32 D_801D6A30[];
+
+
 
 
 
@@ -2011,7 +2041,8 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CD564);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CD838);
 
-void func_801CDA0C(u8 arg0) {
+// Initialize submenu for the selected shop mode
+void func_801CDA0C(u8 offset) {
     int i;
     int index;
 
@@ -2019,25 +2050,29 @@ void func_801CDA0C(u8 arg0) {
     g_Menu->unk354->unk1404 = 0;
 
     for(i = 0; i < g_Menu->unk33A; i++) {
+        // The ball cursor for the menu option
         if(i == g_Menu->menu2Choice) {
-            index = *(&D_801D69A0 + (((arg0 + g_Menu->menu1Choice) * 8) + (i*2))) + 0xD;
+            // Active / selected variant
+            index = D_801D69A0[( (offset + g_Menu->menu1Choice) * 8) + (i * 2)] + 0xD;
         } else {
-            index = *(&D_801D69A0 + (((arg0 + g_Menu->menu1Choice) * 8) + (i*2)));
+            // Inactive / non-selected variant
+            index = D_801D69A0[((offset + g_Menu->menu1Choice) * 8) + (i * 2)];
         }
 
         g_Menu->unk354->unk1400 += func_8002675C(
             g_Menu->resources,
             index,
-            &g_Menu->unk354->polys0[g_Menu->unk354->unk1400*2],
+            &g_Menu->unk354->polys0[g_Menu->unk354->unk1400 * 2],
             g_Menu->renderContext,
             0xA0,
             0x96,
             0x1000
         );
 
+        // The string texture for the menu option
         g_Menu->unk354->unk1404 += func_8002675C(
             g_Menu->resources,
-            *(&D_801D69A4 + (((arg0 + g_Menu->menu1Choice) * 8) + (i*2))),
+            D_801D69A4[((offset + g_Menu->menu1Choice) * 8) + (i * 2)],
             &g_Menu->unk354->polys500[g_Menu->unk354->unk1404*2],
             g_Menu->renderContext,
             0xA0,
@@ -2045,6 +2080,7 @@ void func_801CDA0C(u8 arg0) {
             0x1000
         );
     }
+
     g_Menu->unk354->unk1408 = g_Menu->renderContext;
     g_Menu->unk354->unk1409 = g_Menu->renderContext;
     func_801C6278(g_Menu->menu2Choice + 4, 1);
