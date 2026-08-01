@@ -5,6 +5,8 @@
 #include "system/graphics.h"
 #include "system/debug.h"
 
+#define MAX_NUM_SUBMENU_OPTIONS 0x4
+
 // Confirmation window choices
 #define MENU_CHOICE_NO 0
 #define MENU_CHOICE_YES 1
@@ -25,6 +27,10 @@
 #define MENU_CHOICE_PARTS 0x4
 
 
+#define MENU_CYCLE_TO_NEXT 0x0
+#define MENU_CYCLE_TO_PREV 0x1
+
+
 // probably something like: DEBUGGER_ATTACHED, guards a breakpoint left in the code
 extern s32* D_8005917C; // TODO: should be in a header for main program stuff since this is not coming from an overlay
 
@@ -35,8 +41,8 @@ extern int D_801D69A0[]; // MENU_TEX_BALL_CURSOR_8
 extern int D_801D69A4[];
 // = {
 //    Buy Submenu
-//    MENU_TEX_STRING_WEAPONS, 
-//    MENU_TEX_BALL_CURSOR_9, MENU_TEX_STRING_PARTS, 
+//                             MENU_TEX_STRING_WEAPONS, 
+//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_PARTS, 
 //    MENU_TEX_BALL_CURSOR_10, MENU_TEX_STRING_FUEL, 
 //    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_ENGINE, 
 //    MENU_TEX_BALL_CURSOR_8,  MENU_TEX_STRING_PARTS, 
@@ -56,8 +62,6 @@ extern int D_801D69A4[];
 //    MENU_TEX_BALL_CURSOR_10, MENU_TEX_STRING_ENGINE, 
 //    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_FUEL
 //   }
-
-
 
 extern u8  D_801D6A20;
 extern u8  D_801D6A24;
@@ -95,8 +99,10 @@ extern s32 D_801D905C;
 extern s32 D_801D9060;
 extern s32 D_801D9064;
 extern s8  D_801D9083;
-extern u8  D_801D9084;
-extern s32 g_gearShopAvailableCharacterCount;
+extern int g_gearShopAvailableCharacterCount;
+extern int g_gearShopCurCharacterIndex;
+
+extern u_char  g_gearShopCurrentGearId;
 extern u8* D_801D9088;
 
 extern s32 D_801D6980[];
@@ -1673,11 +1679,11 @@ void GearShopMenuPollInput(void) {
                 break;
             }
             if (g_C1ButtonStatePressedOnce & CTRL_BTN_L1) {
-                input = 10;
+                input = MENU_INPUT_PREV;
                 break;
             }
             if (g_C1ButtonStatePressedOnce & CTRL_BTN_R1) {
-                input = 9;
+                input = MENU_INPUT_NEXT;
                 break;
             }
         }
@@ -2048,12 +2054,75 @@ void GearShopMenuInitializeShopModeSelectionMenu(int count, int* pResourceIDs) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CD564);
+void GearShopMenuInitializeSubmenu(u_char offset) {
+    int i;
+    int j;
+    int resourceID; 
+    int shouldUpdateAndRender;
+    
+    shouldUpdateAndRender = TRUE;
+    
+    g_Menu->pSelectionMenu->unk1192 = FALSE;
+    g_Menu->pSelectionMenu->unk1193 = FALSE;
+    
+    g_Menu->unk354->unk1400 = 0;
+    g_Menu->unk354->unk1404 = 0;
+    
+    g_Menu->pManager->unkA = TRUE;
+    
+    for (i = 1; i < MAX_NUM_SUBMENU_OPTIONS + 1; i++) {
+        g_Menu->unk354->unk1400 = 0;
+        g_Menu->subMenuNumChoices = 0;
+        
+        for (j = 0; j < i; j++) {
+            if (D_801D69A0[((offset + g_Menu->mainMenuChoice) * 8) + (j * 2)] != MENU_RESOURCE_NONE) {
+                g_Menu->unk354->unk1400 += func_8002675C(
+                    g_Menu->resources, 
+                    D_801D69A0[((offset + g_Menu->mainMenuChoice) * 8) + (j * 2)],
+                    &g_Menu->unk354->polys0[g_Menu->unk354->unk1400 * 2], 
+                    g_Menu->renderContext,
+                    0xA0, 0x96,
+                    0x1000
+                );
+                g_Menu->subMenuNumChoices++;
+            } else {
+                shouldUpdateAndRender = FALSE;
+            }
+        }
+        
+        g_Menu->unk354->unk1408 = g_Menu->renderContext;
+        if (shouldUpdateAndRender) {
+            for (j = 0; j < 2; j++) {
+                GearShopMenuUpdateAndRender();
+            }
+        }
+        
+        g_Menu->unk354->unk1404 = 0;
+        for (j = 0; j < i; j++) {
+            if (D_801D69A0[((offset + g_Menu->mainMenuChoice) * 8) + j * 2] != MENU_RESOURCE_NONE) {
+                g_Menu->unk354->unk1404 += func_8002675C(
+                    g_Menu->resources, 
+                    D_801D69A0[((offset + g_Menu->mainMenuChoice) * 8) + j * 2 + 1],
+                    &g_Menu->unk354->polys500[g_Menu->unk354->unk1404 * 2],
+                    g_Menu->renderContext,
+                    0xA0, 0x96, 
+                    0x1000
+                );
+            }
+        }
+        
+        g_Menu->unk354->unk1409 = g_Menu->renderContext;
+        if (shouldUpdateAndRender) {
+            for (j = 0; j < 2; j++) {
+                GearShopMenuUpdateAndRender();
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CD838);
 
-// Initialize submenu for the selected shop mode
-void func_801CDA0C(u_char offset) {
+void GearShopMenuUpdateSubmenuTextures(u_char offset) {
     int i;
     int index;
 
@@ -2134,7 +2203,7 @@ void GearShopMenuShopModeMain(void) {
     u_char isRunning;
 
     isRunning = TRUE;
-    func_801CFAB8(1, D_801D9084);
+    func_801CFAB8(1, g_gearShopCurrentGearId);
     g_Menu->pManager->unk5C[7] = 1;
 
     // Options here are "Tune up", "Buy", "Sell", "Exit"
@@ -2179,14 +2248,12 @@ void GearShopMenuShopModeMain(void) {
                 }
                 break;
 
-            // R1 (Next gear)
-            case 9:
-                func_801D0398(0);
+            case MENU_INPUT_NEXT:
+                GearShopMenuChangeCurrentGear(MENU_CYCLE_TO_NEXT);
                 break;
                 
-            // L1 (Prev gear)
-            case 10:
-                func_801D0398(1);
+            case MENU_INPUT_PREV:
+                GearShopMenuChangeCurrentGear(MENU_CYCLE_TO_PREV);
                 break;
         }
         
@@ -2476,8 +2543,45 @@ void GearShopMenuSetAvailableCharacterCount(void) {
     }
 }
 
-// Function handling changing current gear
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D0398);
+void GearShopMenuChangeCurrentGear(u_char mode) {
+    int characterIndex;
+    int index;
+    int tmp;
+
+    if ((g_Menu->transitionEffectState == 0) && (g_gearShopAvailableCharacterCount >= 2)) {
+        // Cycle to next or previous character
+        index = g_gearShopCurCharacterIndex;
+        if (mode == MENU_CYCLE_TO_NEXT) {
+            index++;
+            if (index >= g_gearShopAvailableCharacterCount) {
+                index = 0;
+            }
+        } else {
+            index--;
+            if (index < 0) {
+                index = g_gearShopAvailableCharacterCount - 1;
+            }
+        }
+        g_gearShopCurCharacterIndex = index;
+
+        index++;
+        for (characterIndex = -1; index != 0; characterIndex++) {
+            if (g_Menu->availableCharacters[++characterIndex]) {
+                index--; 
+            }
+            characterIndex--;
+        }
+        
+        GearShopMenuUpdateAndRender();
+        g_Menu->unk458[1]->unk12 = 0;
+        func_801E8030(1);
+        GearShopMenuUpdateAndRender();
+        func_801CF9BC(g_GameState.characters[characterIndex].gearId, 1);
+        g_gearShopCurrentGearId = g_GameState.characters[characterIndex].gearId;
+        func_801CFAB8(1, g_GameState.characters[characterIndex].gearId);
+        GearShopMenuUpdateAndRender();
+    }
+}
 
 // GearShopMenuUpdate ??? MenuExplanationGraphics
 void func_801D04E8(u8 renderContext) {
@@ -2683,19 +2787,19 @@ s32 func_801D4888(s32 itemId) {
 
     switch(itemType) {
         case 0:
-            equipped = g_GameState.gears[D_801D9084].unk0[8];
+            equipped = g_GameState.gears[g_gearShopCurrentGearId].unk0[8];
             if(equipped >= g_Menu->shopItemIDs[itemId]) {
                 result = FALSE;
             }
             break;
         case 1:
-            equipped = g_GameState.gears[D_801D9084].unk0[2];
+            equipped = g_GameState.gears[g_gearShopCurrentGearId].unk0[2];
             if(equipped >= g_Menu->shopItemIDs[itemId]) {
                 result = FALSE;
             }
             break;
         case 2:
-            equipped = g_GameState.gears[D_801D9084].unk0[3];
+            equipped = g_GameState.gears[g_gearShopCurrentGearId].unk0[3];
             if(equipped >= g_Menu->shopItemIDs[itemId]) {
                 result = FALSE;
             }
@@ -2710,7 +2814,7 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D498C);
 // Handles the logic for the "Fuel" option under "Tune up"
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D5398);
 
-s32 func_801D573C(void) {
+u_char func_801D573C(void) {
     g_Menu->pManager->unk4 = 0;
     g_Menu->pManager->unk3 = 0;
     func_801CCEBC(4, g_Menu->pManager->unkC);
@@ -2726,7 +2830,7 @@ void func_801D57A8(void) {
         case MENU_CHOICE_FRAME:
         case MENU_CHOICE_ENGINE:
             func_801D498C(0, 1);
-            func_801D6150(g_Menu->unk330, D_801D9084);
+            func_801D6150(g_Menu->unk330, g_gearShopCurrentGearId);
             break;
         case MENU_CHOICE_FUEL:
             func_801D5398();

@@ -14,6 +14,8 @@
 #define MENU_INPUT_CONFIRM 0x4
 #define MENU_INPUT_BACK 0x5
 #define MENU_INPUT_IDLE 0x8
+#define MENU_INPUT_NEXT 0x9
+#define MENU_INPUT_PREV 0xA
 
 // Transition animation states
 #define MENU_ANIMATION_DONE 0x0
