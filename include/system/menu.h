@@ -447,14 +447,20 @@ typedef struct {
     /* 0x3890 */ LINE_F3 linesPortraitHighlight1[9 * 2]; // Red highlight line around portraits, 1st half
     /* 0x3A40 */ LINE_F3 linesPortraitHighlight2[9 * 2]; // Red highlight line around portraits, 2nd half
     /* 0x3BF0 */ LINE_F2 lines3BF0[2]; // White line between gold amounts?
-    /* 0x3C10 */ u8 unk3C10[0x820];
+    /* 0x3C10 */ u8 unk3C10[0x9E];
+    /* 0x3CAE */ u8 unk3CAE[0x782];
     /* 0x4430 */ MenuString strItemDesc;
     /* 0x44B0 */ MenuString str44B0;
     /* 0x4530 */ u8 unk4530[0x100];
     /* 0x4630 */ void* pItemDescriptions;
     /* 0x4634 */ void* pWeaponDescriptions;
     /* 0x4638 */ void* pAccessoryDescriptions;
-    /* 0x463C */ u8 unk643C[0x18];
+    /* 0x463C */ void *unk463C;
+    /* 0x4640 */ void *unk4640;
+    /* 0x4644 */ void *unk4644;
+    /* 0x4648 */ void *unk4648;
+    /* 0x464C */ void *unk464C;
+    /* 0x4650 */ void *unk4650;
     /* 0x4654 */ u_char curItemQuantities[MAX_SHOP_ITEMS];
     /* 0x4684 */ u8 unk4684[0x8];
     /* 0x468C */ u8 unk468C[0x8];

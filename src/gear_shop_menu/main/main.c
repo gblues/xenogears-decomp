@@ -2787,19 +2787,19 @@ s32 func_801D4888(s32 itemId) {
 
     switch(itemType) {
         case 0:
-            equipped = g_GameState.gears[g_gearShopCurrentGearId].unk0[8];
+            equipped = g_GameState.gears[g_gearShopCurrentGearId].armorId;
             if(equipped >= g_Menu->shopItemIDs[itemId]) {
                 result = FALSE;
             }
             break;
         case 1:
-            equipped = g_GameState.gears[g_gearShopCurrentGearId].unk0[2];
+            equipped = g_GameState.gears[g_gearShopCurrentGearId].frameId;
             if(equipped >= g_Menu->shopItemIDs[itemId]) {
                 result = FALSE;
             }
             break;
         case 2:
-            equipped = g_GameState.gears[g_gearShopCurrentGearId].unk0[3];
+            equipped = g_GameState.gears[g_gearShopCurrentGearId].engineId;
             if(equipped >= g_Menu->shopItemIDs[itemId]) {
                 result = FALSE;
             }
@@ -2880,7 +2880,7 @@ void func_801D5F94(MenuUnk6* pView, u_char gearId) {
     pView->fuel = pGear->fuel;
     pView->maxFuel = pGear->maxFuel;
 
-    ether = pGear->unk3C * (pGear->unk74 + pGear->unk56);
+    ether = pGear->engineOutput * (pGear->unk74 + pGear->unk56);
 
     if(gearId == 0x5 || gearId == 0xD) {
         etherModifier = ((pGear->maxEther + pGear->unk22) * 6) / 10;
@@ -2911,7 +2911,7 @@ void func_801D61B8(MenuUnk6* arg0, u_char gearIndex) {
 
     pGear = &g_GameState.gears[gearIndex];
     pPreview = arg0->pGearStatsPreview;
-    previewId = pGear->unk0[2];
+    previewId = pGear->frameId;
     pPreview = &pPreview[previewId];
 
     pGear->maxHp = pPreview->hp;
@@ -2933,7 +2933,7 @@ void func_801D6250(MenuUnk6* menu, u_char gearIndex) {
 
     pGear = &g_GameState.gears[gearIndex];
     itemList = menu->unk10;
-    pItem = &itemList[pGear->unk0[8]];
+    pItem = &itemList[pGear->armorId];
 
     pGear->baseDefense = pItem->unk8;
     pGear->baseEtherDefense = pItem->unkA;
@@ -2946,13 +2946,13 @@ void func_801D62A4(MenuUnk6* shopInfo, u8 gearId) {
     u8 itemId;
 
     pGear = &g_GameState.gears[gearId];
-    itemId = pGear->unk0[3];
+    itemId = pGear->engineId;
     item = shopInfo->unkC;
     fuel = pGear->fuel;
     item = &item[itemId];
 
     pGear->maxFuel = item->maxFuel;
-    pGear->unk3C = item->unkC;
+    pGear->engineOutput = item->unkC;
     pGear->unk3D = item->unkD;
     pGear->unk3E = item->unkE;
     pGear->unk3F = item->unkE;
