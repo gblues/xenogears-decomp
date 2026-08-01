@@ -199,8 +199,8 @@ void MemberChangeMenuInitialize(void) {
     int i;
     int partyMemberID;
 
-    g_Menu->menu1Choice = 4;
-    g_Menu->unk337 = 0xFF;
+    g_Menu->mainMenuChoice = 4;
+    g_Menu->mainMenuPrevChoice = 0xFF;
     g_Menu->unk326 = 0x3C;
     g_Menu->unk334 = 0;
     g_Menu->unk335 = 0;

@@ -231,8 +231,8 @@ void ShopMenuInitialize(void) {
     int characterID;
     int i;
 
-    g_Menu->menu1Choice = 4;
-    g_Menu->unk337 = 0xFF;
+    g_Menu->mainMenuChoice = 4;
+    g_Menu->mainMenuPrevChoice = 0xFF;
     g_Menu->unk326 = 0x3C;
     g_Menu->unk334 = 0;
     g_Menu->unk335 = 0;
@@ -2198,7 +2198,7 @@ u_char ShopMenuShopModeMenuHandleSelectedOption() {
     u_char result;
 
     isRunning = TRUE;
-    switch (g_Menu->menu1Choice) {
+    switch (g_Menu->mainMenuChoice) {
         case MENU_CHOICE_EXIT:
             isRunning = FALSE;
             break;
@@ -2225,7 +2225,7 @@ u_char ShopMenuShopModeMenuHandleSelectedOption() {
 
     g_Menu->pManager->unk4 = TRUE;
     g_Menu->pManager->unk3 = TRUE;
-    g_Menu->unk337 = 0xFF;
+    g_Menu->mainMenuPrevChoice = 0xFF;
     g_Menu->pManager->unkA = FALSE;
 
     return isRunning;
@@ -2236,7 +2236,7 @@ void ShopMenuShopModeMenuMain(void) {
     u_char isRunning;
 
     isRunning = TRUE;
-    g_Menu->menu1Choice = 2;
+    g_Menu->mainMenuChoice = 2;
 
     ShopMenuInitializeShopModeSelectionMenu(4, &D_801D1F54);
 
@@ -2264,27 +2264,27 @@ void ShopMenuShopModeMenuMain(void) {
                 break;
 
             case MENU_INPUT_DOWN:
-                if (g_Menu->menu1Choice) {
-                    g_Menu->menu1Choice--;
+                if (g_Menu->mainMenuChoice) {
+                    g_Menu->mainMenuChoice--;
                 } else {
-                    g_Menu->menu1Choice = 2;
+                    g_Menu->mainMenuChoice = 2;
                 }
                 break;
 
             case MENU_INPUT_UP:
-                if (++g_Menu->menu1Choice >= 3) {
-                    g_Menu->menu1Choice = 0;
+                if (++g_Menu->mainMenuChoice >= 3) {
+                    g_Menu->mainMenuChoice = 0;
                 }
                 break;
         }
 
         // Update the selected option to the active one if we need to
-        if (g_Menu->menu1Choice != g_Menu->unk337) {
-            ShopMenuUpdateShopModeSelectionMenu(3, g_Menu->menu1Choice, &D_801D1F54);
+        if (g_Menu->mainMenuChoice != g_Menu->mainMenuPrevChoice) {
+            ShopMenuUpdateShopModeSelectionMenu(3, g_Menu->mainMenuChoice, &D_801D1F54);
             func_801CBCF0(4, g_Menu->unk6E0, &D_801D1FCC, &D_801D1FD8,
-                g_Menu->pManager->unkC, g_Menu->menu1Choice, 0, 0
+                g_Menu->pManager->unkC, g_Menu->mainMenuChoice, 0, 0
             );
-            g_Menu->unk337 = g_Menu->menu1Choice;
+            g_Menu->mainMenuPrevChoice = g_Menu->mainMenuChoice;
         }
     }
 }
@@ -2925,7 +2925,7 @@ void ShopMenuSellModeMenuHandleSelectedOption(void) {
     func_801CBC88(0, 4, g_Menu->unk6E0, &D_801D1FD0, g_Menu->pManager->unkC);
 
     var_a0 = 1;
-    switch (g_Menu->menu2Choice) {
+    switch (g_Menu->subMenuChoice) {
         case MENU_CHOCIE_EQUIPMENT:
             var_a0 = ShopMenuSellEquipmentMenu();
             break;
@@ -2957,8 +2957,8 @@ int ShopMenuSellModeMenu() {
 
     isRunning = TRUE;
     shouldInitialize = TRUE;
-    g_Menu->menu2Choice = MENU_CHOICE_ITEMS;
-    g_Menu->unk339 = 0xFF;
+    g_Menu->subMenuChoice = MENU_CHOICE_ITEMS;
+    g_Menu->subMenuPrevChoice = 0xFF;
 
     while (isRunning) {
         ShopMenuUpdateAndRender();
@@ -2970,17 +2970,17 @@ int ShopMenuSellModeMenu() {
             shouldInitialize = FALSE;
         }
 
-        if (g_Menu->menu2Choice != g_Menu->unk339) {
-            func_801CBCF0(4, g_Menu->unk6E0, &D_801D1FD0, &D_801D1FE8, g_Menu->pManager->unkC, g_Menu->menu2Choice, 3, 0);
+        if (g_Menu->subMenuChoice != g_Menu->subMenuPrevChoice) {
+            func_801CBCF0(4, g_Menu->unk6E0, &D_801D1FD0, &D_801D1FE8, g_Menu->pManager->unkC, g_Menu->subMenuChoice, 3, 0);
             func_801CC720(0);
-            g_Menu->unk339 = g_Menu->menu2Choice;
+            g_Menu->subMenuPrevChoice = g_Menu->subMenuChoice;
         }
 
         switch (g_Menu->input) {
             case MENU_INPUT_CONFIRM:
                 ShopMenuPlaySoundEffect(2);
                 ShopMenuSellModeMenuHandleSelectedOption();
-                g_Menu->unk339 = 0xFF;
+                g_Menu->subMenuPrevChoice = 0xFF;
                 break;
 
             case MENU_INPUT_BACK:
@@ -2988,16 +2988,16 @@ int ShopMenuSellModeMenu() {
                 break;
 
             case MENU_INPUT_DOWN:
-                if (g_Menu->menu2Choice != 0) {
-                    g_Menu->menu2Choice--;
+                if (g_Menu->subMenuChoice != 0) {
+                    g_Menu->subMenuChoice--;
                 } else {
-                    g_Menu->menu2Choice = g_Menu->unk33A - 1;
+                    g_Menu->subMenuChoice = g_Menu->subMenuNumChoices - 1;
                 }
                 break;
 
             case MENU_INPUT_UP:
-                if (++g_Menu->menu2Choice >= g_Menu->unk33A) {
-                    g_Menu->menu2Choice = 0;
+                if (++g_Menu->subMenuChoice >= g_Menu->subMenuNumChoices) {
+                    g_Menu->subMenuChoice = 0;
                 }
                 break;
         }

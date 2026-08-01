@@ -228,8 +228,8 @@ typedef struct {
 } MenuSelectionMenu; // Size: 0x1194
 
 typedef struct {
-    /* 0x0    */ POLY_FT4 polys0[16 * 2]; // Unknown size
-    /* 0x500  */ POLY_FT4 polys500[16 * 2]; // Unknown size
+    /* 0x0    */ POLY_FT4 polys0[16 * 2]; // Submenu options ball cursor?
+    /* 0x500  */ POLY_FT4 polys500[16 * 2]; // Submenu options text?
     /* 0xA00  */ u8 unkA00[0xA00];
     /* 0x1400 */ int unk1400; // polys0 count
     /* 0x1404 */ int unk1404; // polys500 count
@@ -578,11 +578,11 @@ typedef struct {
     /* 0x330  */ MenuUnk6* unk330;
     /* 0x334  */ u8 unk334;
     /* 0x335  */ u8 unk335;
-    /* 0x336  */ u_char menu1Choice;
-    /* 0x337  */ u8 unk337; // Menu 1 prev choice?
-    /* 0x338  */ u_char menu2Choice;
-    /* 0x339  */ u8 unk339; // Menu 2 prev choice?
-    /* 0x33A  */ u8 unk33A; // Menu 2 num choices
+    /* 0x336  */ u_char mainMenuChoice;
+    /* 0x337  */ u_char mainMenuPrevChoice;
+    /* 0x338  */ u_char subMenuChoice;
+    /* 0x339  */ u_char subMenuPrevChoice;
+    /* 0x33A  */ u_char subMenuNumChoices;
     /* 0x33B  */ u8 unk33B;
     /* 0x33C */ MenuManager* pManager;
     /* 0x340  */ u8 unk340[0x8];

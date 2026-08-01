@@ -14,6 +14,17 @@
 #define MENU_MANUAL_CHOICE 0xFF
 
 
+// Submenu choices for "Tune up"
+#define MENU_CHOICE_ARMOR 0x0
+#define MENU_CHOICE_FRAME 0x1
+#define MENU_CHOICE_ENGINE 0x2
+#define MENU_CHOICE_FUEL 0x3
+
+// Submenu choices for "Sell"
+#define MENU_CHOICE_WEAPONS 0x3
+#define MENU_CHOICE_PARTS 0x4
+
+
 // probably something like: DEBUGGER_ATTACHED, guards a breakpoint left in the code
 extern s32* D_8005917C; // TODO: should be in a header for main program stuff since this is not coming from an overlay
 
@@ -34,7 +45,7 @@ extern int D_801D69A4[];
 //    0xFFFF, 0xFFFF,
 //    ------------------------------------------------
 //    Sell Submenu
-//    MENU_TEX_BALL_CURSOR_8, MENU_TEX_STRING_FUEL, 
+//    MENU_TEX_BALL_CURSOR_8, MENU_TEX_STRING_PARTS, 
 //    MENU_TEX_BALL_CURSOR_9, MENU_TEX_STRING_WEAPONS, 
 //    0xFFFF, 0xFFFF, 
 //    0xFFFF, 0xFFFF, 
@@ -256,8 +267,8 @@ void GearShopMenuFilterPartyMembers(void) {
     int i;
     int flags;
 
-    g_Menu->menu1Choice = 4;
-    g_Menu->unk337 = 0xFF;
+    g_Menu->mainMenuChoice = 4;
+    g_Menu->mainMenuPrevChoice = 0xFF;
     g_Menu->unk326 = 0x3C;
     g_Menu->unk334 = 0;
     g_Menu->unk335 = 0;
@@ -2042,21 +2053,21 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CD564);
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CD838);
 
 // Initialize submenu for the selected shop mode
-void func_801CDA0C(u8 offset) {
+void func_801CDA0C(u_char offset) {
     int i;
     int index;
 
     g_Menu->unk354->unk1400 = 0;
     g_Menu->unk354->unk1404 = 0;
 
-    for(i = 0; i < g_Menu->unk33A; i++) {
+    for(i = 0; i < g_Menu->subMenuNumChoices; i++) {
         // The ball cursor for the menu option
-        if(i == g_Menu->menu2Choice) {
+        if(i == g_Menu->subMenuChoice) {
             // Active / selected variant
-            index = D_801D69A0[( (offset + g_Menu->menu1Choice) * 8) + (i * 2)] + 0xD;
+            index = D_801D69A0[((offset + g_Menu->mainMenuChoice) * 8) + (i * 2)] + 0xD;
         } else {
             // Inactive / non-selected variant
-            index = D_801D69A0[((offset + g_Menu->menu1Choice) * 8) + (i * 2)];
+            index = D_801D69A0[((offset + g_Menu->mainMenuChoice) * 8) + (i * 2)];
         }
 
         g_Menu->unk354->unk1400 += func_8002675C(
@@ -2072,7 +2083,7 @@ void func_801CDA0C(u8 offset) {
         // The string texture for the menu option
         g_Menu->unk354->unk1404 += func_8002675C(
             g_Menu->resources,
-            D_801D69A4[((offset + g_Menu->menu1Choice) * 8) + (i * 2)],
+            D_801D69A4[((offset + g_Menu->mainMenuChoice) * 8) + (i * 2)],
             &g_Menu->unk354->polys500[g_Menu->unk354->unk1404*2],
             g_Menu->renderContext,
             0xA0,
@@ -2083,17 +2094,16 @@ void func_801CDA0C(u8 offset) {
 
     g_Menu->unk354->unk1408 = g_Menu->renderContext;
     g_Menu->unk354->unk1409 = g_Menu->renderContext;
-    func_801C6278(g_Menu->menu2Choice + 4, 1);
+    func_801C6278(g_Menu->subMenuChoice + 4, 1);
     g_Menu->pManager->unk4 = TRUE;
 }
 
-// GearShopMenuShopModeMenuHandleSelectedOption
-u_char func_801CDC68(void) {
+u_char GearShopMenuShopModeMenuHandleSelectedOption(void) {
     u_char isRunning;
     u_char selection;
 
     isRunning = TRUE;
-    if (g_Menu->menu1Choice) {
+    if (g_Menu->mainMenuChoice) {
         // Always returns true?
         selection = func_801D5828();
     } else {
@@ -2113,14 +2123,14 @@ u_char func_801CDC68(void) {
 
     g_Menu->pManager->unk4 = TRUE;
     g_Menu->pManager->unk3 = TRUE;
-    g_Menu->unk337 = 0xFF;
+    g_Menu->mainMenuPrevChoice = 0xFF;
     g_Menu->pManager->unkA = FALSE;
     
     return isRunning;
 }
 
 // Tune up / Buy / Sell / Exit menu
-void func_801CDD74(void) {
+void GearShopMenuShopModeMain(void) {
     u_char isRunning;
 
     isRunning = TRUE;
@@ -2128,7 +2138,7 @@ void func_801CDD74(void) {
     g_Menu->pManager->unk5C[7] = 1;
 
     // Options here are "Tune up", "Buy", "Sell", "Exit"
-    g_Menu->menu1Choice = 2; // Start cursor at "Buy" option
+    g_Menu->mainMenuChoice = 2; // Start cursor at "Buy" option
     GearShopMenuInitializeShopModeSelectionMenu(5, &D_801D6980);
 
     func_801CCE90(4, g_Menu->unk6E0, &D_801D6A20, g_Menu->pManager->unkC);
@@ -2147,7 +2157,7 @@ void func_801CDD74(void) {
                 func_801C665C();
                 func_801CCEBC(4, g_Menu->pManager->unkC);
                 g_Menu->unk348->unk15B = 0x4C;
-                isRunning = func_801CDC68();
+                isRunning = GearShopMenuShopModeMenuHandleSelectedOption();
                 g_Menu->unk348->unk15B = 0x40;
                 break;
                 
@@ -2156,16 +2166,16 @@ void func_801CDD74(void) {
                 break;
                 
             case MENU_INPUT_DOWN:
-                if (g_Menu->menu1Choice) {
-                    g_Menu->menu1Choice--;
+                if (g_Menu->mainMenuChoice) {
+                    g_Menu->mainMenuChoice--;
                 } else {
-                    g_Menu->menu1Choice = 3;
+                    g_Menu->mainMenuChoice = 3;
                 }
                 break;
                 
             case MENU_INPUT_UP:
-                if (++g_Menu->menu1Choice >= 4) {
-                    g_Menu->menu1Choice = 0;
+                if (++g_Menu->mainMenuChoice >= 4) {
+                    g_Menu->mainMenuChoice = 0;
                 }
                 break;
 
@@ -2180,10 +2190,10 @@ void func_801CDD74(void) {
                 break;
         }
         
-        if (g_Menu->menu1Choice != g_Menu->unk337) {
-            func_801CD838(4, g_Menu->menu1Choice, &D_801D6980);
-            func_801CCEE8(4, g_Menu->unk6E0, &D_801D6A20, &D_801D6A30, g_Menu->pManager->unkC, g_Menu->menu1Choice, 0, 0);
-            g_Menu->unk337 = g_Menu->menu1Choice;
+        if (g_Menu->mainMenuChoice != g_Menu->mainMenuPrevChoice) {
+            func_801CD838(4, g_Menu->mainMenuChoice, &D_801D6980);
+            func_801CCEE8(4, g_Menu->unk6E0, &D_801D6A20, &D_801D6A30, g_Menu->pManager->unkC, g_Menu->mainMenuChoice, 0, 0);
+            g_Menu->mainMenuPrevChoice = g_Menu->mainMenuChoice;
         }
     }
     
@@ -2235,7 +2245,7 @@ void GearShopMenuMain(void) {
     func_801CE1D0();
     g_Menu->shouldDrawMenu = TRUE;
     g_Menu->unk32A = TRUE;
-    func_801CDD74();
+    GearShopMenuShopModeMain();
     GearShopMenuFree();
 }
 
@@ -2456,9 +2466,7 @@ void GearShopMenuUpdateCharacterPortraits(void) {
     }
 }
 
-
-// GearShopMenuSetAvailableCharacterCount
-void func_801D0348(void) {
+void GearShopMenuSetAvailableCharacterCount(void) {
     int i;
 
     for(i = 0; i < MAX_GAME_CHARACTERS; i++) {
@@ -2588,10 +2596,11 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D18F8);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D1F20);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D2054);
+// Spawn and run the logic for a sell menu
+INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", GearShopMenuSellMenu);
 
-void func_801D2784(void) {
-    func_801D2054(
+void GearShopMenuSellWeaponsMenu(void) {
+    GearShopMenuSellMenu(
         0x96,
         g_GameState.unk221A,
         g_GameState.unk2184,
@@ -2601,8 +2610,8 @@ void func_801D2784(void) {
     );
 }
 
-void func_801D27C4(void) {
-    func_801D2054(
+void GearShopMenuSellPartsMenu(void) {
+    GearShopMenuSellMenu(
         0x64,
         g_GameState.unk2120,
         g_GameState.unk20BC,
@@ -2612,26 +2621,28 @@ void func_801D27C4(void) {
     );
 }
 
-// the code is very similar to ShopMenuSellModeMenuHandleSelectedOption but idk what the actual context
-// for this is.
-void func_801D2804(u8 arg0) {
+void GearShopMenuSellModeMenuHandleSelectedOption(u_char offset) {
     int choice;
     u8 unkBool = 1;
     g_Menu->pManager->unk4 = 0;
     g_Menu->pManager->unk3 = 0;
     g_Menu->pManager->unkA = 0;
     func_801CCEBC(4, g_Menu->pManager->unkC);
-    choice = g_Menu->menu2Choice + (arg0 * 3);
 
+    // Here, subMenuChoice 0 and 1 correspond to Weapons and Parts
+    choice = g_Menu->subMenuChoice + (offset * 3);
+
+    // The functions here goes into and will run the actual sell menus
     switch (choice) {
-        case 3:
-            func_801D2784();
+        case MENU_CHOICE_WEAPONS:
+            GearShopMenuSellWeaponsMenu();
             break;
 
-        case 4:
-            func_801D27C4();
+        case MENU_CHOICE_PARTS:
+            GearShopMenuSellPartsMenu();
             break;
     }
+
     func_801D0EC8(unkBool);
     g_Menu->pManager->unkA = 1;
     g_Menu->pManager->unk4 = 1;
@@ -2696,6 +2707,7 @@ s32 func_801D4888(s32 itemId) {
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D498C);
 
+// Handles the logic for the "Fuel" option under "Tune up"
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D5398);
 
 s32 func_801D573C(void) {
@@ -2706,21 +2718,22 @@ s32 func_801D573C(void) {
     return 2;
 }
 
+// Called if we chose "Tune up", dispatches into the correct menu based on
+// the submenu choice
 void func_801D57A8(void) {
-
-    switch(g_Menu->menu2Choice) {
-        case 0:
-        case 1:
-        case 2:
+    switch(g_Menu->subMenuChoice) {
+        case MENU_CHOICE_ARMOR:
+        case MENU_CHOICE_FRAME:
+        case MENU_CHOICE_ENGINE:
             func_801D498C(0, 1);
             func_801D6150(g_Menu->unk330, D_801D9084);
             break;
-        case 3:
+        case MENU_CHOICE_FUEL:
             func_801D5398();
     }
 }
 
-// https://decomp.me/scratch/7SJpB
+// https://decomp.me/scratch/7SJpB - Main logic for submenus
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D5828);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801D5D38);
