@@ -44,7 +44,8 @@ paths = [
     "member_change_menu/main/misc.",
     "shop_menu/main/misc.",
     "gear_shop_helper/main/main.",
-    "gear_shop_menu/main/main."
+    "gear_shop_menu/main/main.",
+    "gear_shop_menu/main/render."
 ]
 
 [[build_preset]]
