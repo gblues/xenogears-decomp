@@ -114,15 +114,15 @@ extern s32 D_801D6980[];
 //    }
 extern s32 D_801D6A30[];
 
-void func_801CE1D0(void) {
+void GearShopMenuShoulderButtonUiInitialize(void) {
     int i;
-    int temp;
+    int polyIndex;
 
     for(i = 0; i < 2; i++) {
         func_8002675C(
             g_Menu->resources,
             MENU_TEX_L1_RED_ARROW + i,
-            &g_Menu->unk440->polys[i*4],
+            &g_Menu->pShoulderButtonUi->polys[i * 4],
             g_Menu->renderContext,
             D_801D6FD0[i],
             0x64,
@@ -131,25 +131,23 @@ void func_801CE1D0(void) {
     }
 
     for(i = 0; i < 4; i++) {
-        temp = (i * 2 + g_Menu->renderContext);
-
-        // !!! DOES NOT MATCH DUE TO FUNCTION SIGNATURE !!!
+        polyIndex = (i * 2 + g_Menu->renderContext);
         GearShopMenuSetVertices(
-            &g_Menu->unk440->unk140[i*4],
-            g_Menu->unk440->polys[temp].x0,
-            g_Menu->unk440->polys[temp].y0,
-            (g_Menu->unk440->polys[temp].x1 - g_Menu->unk440->polys[temp].x0),
-            (g_Menu->unk440->polys[temp].y3 - g_Menu->unk440->polys[temp].y0)
+            &g_Menu->pShoulderButtonUi->vertices[i * 4],
+            g_Menu->pShoulderButtonUi->polys[polyIndex].x0,
+            g_Menu->pShoulderButtonUi->polys[polyIndex].y0,
+            g_Menu->pShoulderButtonUi->polys[polyIndex].x1 - g_Menu->pShoulderButtonUi->polys[polyIndex].x0,
+            g_Menu->pShoulderButtonUi->polys[polyIndex].y3 - g_Menu->pShoulderButtonUi->polys[polyIndex].y0
         );
     }
 
-    g_Menu->unk440->unk1C0 = (u8) g_Menu->renderContext;
+    g_Menu->pShoulderButtonUi->renderContext = g_Menu->renderContext;
 }
 
-void func_801CE2E8(void) {
-    g_Menu->pManager->unk52[1] = 0;
+void GearShopMenuShoulderButtonUiFree(void) {
+    g_Menu->pManager->shoulderButtonUiActive = FALSE;
     GearShopMenuUpdateAndRender();
-    HeapFree(g_Menu->unk440);
+    HeapFree(g_Menu->pShoulderButtonUi);
 }
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CE32C);
@@ -217,29 +215,35 @@ void func_801CF33C(void) {
     }
 }
 
-void func_801CF38C(u8 arg0) {
+// Render gear name
+void func_801CF38C(u_char stringIndex) {
     RECT rect;
 
     D_801D9088 = HeapAlloc(0x3F6, 0x0);
     bzero(D_801D9088, 0x3F6);
-    SystemRenderStringEntry(&g_GameState.strings[arg0], D_801D9088, 0x24, 0);
+    SystemRenderStringEntry(&g_GameState.strings[stringIndex], D_801D9088, 0x24, 0);
     setRECT(&rect, 0x180, 0x48, 0x28, 0xD);
     LoadImage(&rect, (u32* ) D_801D9088);
     DrawSync(0);
     HeapFree(D_801D9088);
 }
 
+// Render gear stats (Fuel, HP, Weight) - https://decomp.me/scratch/SfkHu
+// Resource IDs for text:
+// 0x11, 0x19 = HP
+// 0xF, 0x1E, 0xE, 0x15 = FUEL
+// 0x20, 0xE, 0x12, 0x10, 0x11, 0x1D = WEIGHT
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CF448);
 
-void func_801CF9BC(u8 arg0, u8 arg1) {
+void func_801CF9BC(u_char gearId, u8 arg1) {
     ArchiveSetIndex(ARCHIVE_DIR_FIELD, 0);
 
-    g_Menu->unk458[arg1]->unk0 = HeapAlloc(ArchiveDecodeAlignedSize(D_801D6D7C[arg0]), 0);
-    ArchiveReadFileToBuffer(D_801D6D7C[arg0], g_Menu->unk458[arg1]->unk0, 0, 0x80);
+    g_Menu->unk458[arg1]->unk0 = HeapAlloc(ArchiveDecodeAlignedSize(D_801D6D7C[gearId]), 0);
+    ArchiveReadFileToBuffer(D_801D6D7C[gearId], g_Menu->unk458[arg1]->unk0, 0, 0x80);
     ArchiveCdDataSync(0);
 
-    g_Menu->unk458[arg1]->unk4 = HeapAlloc(ArchiveDecodeAlignedSize(D_801D6D7C[arg0] + 1), 0);
-    ArchiveReadFileToBuffer(D_801D6D7C[arg0]+1, g_Menu->unk458[arg1]->unk4, 0, 0x80);
+    g_Menu->unk458[arg1]->unk4 = HeapAlloc(ArchiveDecodeAlignedSize(D_801D6D7C[gearId] + 1), 0);
+    ArchiveReadFileToBuffer(D_801D6D7C[gearId] + 1, g_Menu->unk458[arg1]->unk4, 0, 0x80);
     ArchiveCdDataSync(0);
 
     ArchiveSetIndex(ARCHIVE_DIR_MENUS, 0);

@@ -210,7 +210,9 @@ typedef struct {
     /* 0x49 */ u_char scrollHandleActive;
     /* 0x4A */ u8 unk4A[0x6];
     /* 0x50 */ u8 shouldRenderArrowCursor[MENU_MAX_NUM_ARROW_CURSORS]; // Should render arrow cursor (array, size 3?)
-    /* 0x52 */ u8 unk52[0x8];
+    /* 0x52 */ u8 unk52;
+    /* 0x53 */ u_char shoulderButtonUiActive;
+    /* 0x54 */ u8 unk54[0x6];
     /* 0x5A */ u8 unk5A;
     /* 0x5B */ u8 unk5B;
     /* 0x5C */ u8 unk5C[0x10];
@@ -306,7 +308,13 @@ typedef struct {
     /* 0x0000 */ MenuString unk0;
     /* 0x0080 */ u8 unk80[0x50];
     /* 0x00D0 */ POLY_FT4 polys[12];
-    /* 0x0120 */ u8 unk2B0[0x1C20];
+    /* 0x0120 */ u8 unk2B0[0xFF0];
+    /* 0x12A0 */ POLY_FT4 polys12A0[0xE * 2]; // Gear HP, FUEL, WEIGHT text
+    /* 0x1700 */ POLY_FT4 polys1700[5 * 2]; // Gear HP digits
+    /* 0x1890 */ POLY_FT4 polys1890[5 * 2]; // Gear Max HP digits
+    /* 0x1A20 */ POLY_FT4 polys1A20[5 * 2]; // Gear fuel digits
+    /* 0x1BB0 */ POLY_FT4 polys1BB0[5 * 2]; // Gear Max fuel digits
+    /* 0x1D40 */ POLY_FT4 polys1D40[5 * 2]; // Gear weight digits
     /* 0x1ED0 */ u8 unk1ED0;
     /* 0x1ED0 */ u8 unk1ED1;
     /* 0x1ED0 */ u8 unk1ED2;
@@ -331,12 +339,12 @@ typedef struct {
     /* 0x1EE1 */ u8 unk1EE5;
     /* 0x1EE1 */ u8 unk1EE6;
     /* 0x1EE1 */ u8 unk1EE7;
-    /* 0x1EE1 */ u8 unk1EE8;
-    /* 0x1EE1 */ u8 unk1EE9;
-    /* 0x1EE1 */ u8 unk1EEA;
-    /* 0x1EE1 */ u8 unk1EEB;
-    /* 0x1EE1 */ u8 unk1EEC;
-    /* 0x1EE1 */ u8 unk1EED;
+    /* 0x1EE1 */ u8 unk1EE8; // Gear HP digits string length
+    /* 0x1EE1 */ u8 unk1EE9; // Gear Max HP digits string length
+    /* 0x1EE1 */ u8 unk1EEA; // Gear Fuel digits string length
+    /* 0x1EE1 */ u8 unk1EEB; // Gear Max fuel digits string length
+    /* 0x1EE1 */ u8 unk1EEC; // Gear Weight digits string length
+    /* 0x1EE1 */ u8 unk1EED; // Render context for the gear stat strings
     /* 0x1EE1 */ u8 unk1EEE;
     /* 0x1EE1 */ u8 unk1EEF;
     /* 0x1EF0 */ u16 unk1EF0;
@@ -504,11 +512,11 @@ typedef struct {
 } MenuScrollBarHandle; // Size: 0x74
 
 typedef struct {
-    /* 0x000 */ POLY_FT4 polys[8];
-    /* 0x140 */ SVECTOR unk140[16];
-    /* 0x1C0 */ u8 unk1C0;
+    /* 0x000 */ POLY_FT4 polys[8]; // L1 / R1 Red Arrow polys
+    /* 0x140 */ SVECTOR vertices[16]; // Vertices for ^
+    /* 0x1C0 */ u_char renderContext;
     /* 0x1C1 */ u8 unk1C1[3];
-} MenuUnknownComponent; /* size: 0x1C4 */
+} MenuShoulderButtonUi; /* size: 0x1C4 */
 
 typedef struct {
     /* 0x0  */ POLY_FT4 polys[2];
@@ -605,7 +613,7 @@ typedef struct {
     /* 0x428  */ MenuPointerCursors* pCursors;
     /* 0x42C  */ u8 unk42C[0x10];
     /* 0x43C  */ MenuScrollBarHandle* pScrollHandle;
-    /* 0x440  */ MenuUnknownComponent* unk440;
+    /* 0x440  */ MenuShoulderButtonUi* pShoulderButtonUi;
     /* 0x444  */ MenuArrowCursor* arrowCursors[MENU_MAX_NUM_ARROW_CURSORS];
     /* 0x44C  */ u8 unk44C[0x4];
     /* 0x450  */ MenuShop* pShop;

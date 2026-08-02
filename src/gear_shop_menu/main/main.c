@@ -421,8 +421,7 @@ void func_801C665C(void) {
     g_Menu->pManager->unk3 = 0;
 }
 
-// GearShopMenuSetPolyGradientColor
-void func_801C668C(POLY_G4* pPoly, u_char red, u_char green, u_char blue) {
+void GearShopMenuSetPolyGradientColor(POLY_G4* pPoly, u_char red, u_char green, u_char blue) {
     SetPolyG4(pPoly);
     setRGB0(pPoly, red, green, blue);
     setRGB1(pPoly, red, green, blue);
@@ -430,7 +429,42 @@ void func_801C668C(POLY_G4* pPoly, u_char red, u_char green, u_char blue) {
     setRGB3(pPoly, 0, 0, 0);
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6708);
+void GearShopMenuInitializeBackgrounds(void) {
+    int i;
+    RECT rect;
+
+    rect.y = 0;
+    rect.x = 0;
+    rect.h = 0x100;
+    rect.w = 0x100;
+    
+    func_801C665C();
+
+    for(i = 0; i < 2; i++) {
+        GearShopMenuSetPolyGradientColor(&g_Menu->unk348->polyG4s[i], 0x80, 0x80, 0);
+        SetSemiTrans(&g_Menu->unk348->polyG4s[i], 1);
+        
+        SetLineF3(&g_Menu->unk348->lines1[i]);
+        setRGB0(&g_Menu->unk348->lines1[i], 0, 64, 0);
+
+        SetLineF3(&g_Menu->unk348->lines2[i]);
+        setRGB0(&g_Menu->unk348->lines2[i], 0, 64, 0);
+
+        SetPolyF4(&g_Menu->unk348->polysDimEffect[i]);
+        setXY4(&g_Menu->unk348->polysDimEffect[i],
+            0,   0,
+            320, 0,
+            0,   224,
+            320, 224
+        );
+        setRGB0(&g_Menu->unk348->polysDimEffect[i], 128, 128, 128);
+
+        SetSemiTrans(&g_Menu->unk348->polysDimEffect[i], 1);
+        
+        SetDrawMode(&g_Menu->unk348->drModes1[i], 0, 0, GetTPage(0, 0, 0x140, 0x80), &rect);
+        SetDrawMode(&g_Menu->unk348->drawModeDimEffect[i], 0, 0, GetTPage(0, 2, 0x180, 0), &rect);
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6A54);
 
@@ -1054,9 +1088,14 @@ void func_801C959C(void) {
     }
 }
 
-void func_801C962C(void) {
-    if ((g_Menu->pManager->unk52[1]) && (g_gearShopAvailableCharacterCount >= 2)) {
-        GearShopMenuRenderPolygons(4, g_Menu->unk440->unk140, g_Menu->unk440, g_Menu->unk440->unk1C0);
+void GearShopMenuRenderShoulderButtonUi(void) {
+    if (g_Menu->pManager->shoulderButtonUiActive && (g_gearShopAvailableCharacterCount >= 2)) {
+        GearShopMenuRenderPolygons(
+            4, 
+            g_Menu->pShoulderButtonUi->vertices, 
+            g_Menu->pShoulderButtonUi, 
+            g_Menu->pShoulderButtonUi->renderContext
+        );
     }
 }
 
@@ -1143,7 +1182,6 @@ void GearShopMenuRenderBottomWindowBorder(int windowId) {
         &window->polysWindowBorderBottom[2 + window->renderContext]
     );
 }
-
 
 void GearShopMenuRenderLeftWindowBorder(int windowId) {
     long interpolated;
@@ -1592,7 +1630,7 @@ void GearShopMenuRender(void) {
         func_801C959C();
         GearShopMenuRenderArrowCursors();
         func_801CE32C();
-        func_801C962C();
+        GearShopMenuRenderShoulderButtonUi();
         GearShopMenuRenderScrollBarHandle();
         GearShopMenuRenderSelectionMenu();
         func_801CB2E8();
@@ -1709,6 +1747,7 @@ void func_801CBDA0(void) {
     SetTransMatrix(&g_Menu->matTransform);
 }
 
+// Debug function drawing X, Y, Z, A, G, S values - https://decomp.me/scratch/Ygk4d
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CBE60);
 
 void GearShopMenuUpdateAndRender(void) {
@@ -1877,8 +1916,7 @@ void GearShopMenuConfirmationWindowFree(void) {
     GearShopMenuUpdateAndRender();
 }
 
-// GearShopMenuConfirmationWindowGetChoice
-u_char func_801CCA40(u_char mode, u8 arg1) {
+u_char GearShopMenuConfirmationWindowGetChoice(u_char mode, u8 arg1) {
     u_char choice;
     u_char isRunning;
     u_char curTimer;
@@ -1948,14 +1986,14 @@ s32 func_801CCC18(u8 arg0, s32 arg1, s32 arg2) {
         g_Menu->pCursors->shouldRender[3] = FALSE;
     }
 
-    result = func_801CCA40(arg2, unkBool);
+    result = GearShopMenuConfirmationWindowGetChoice(arg2, unkBool);
     GearShopMenuConfirmationWindowFree();
 
     if ((u8)arg1 != 0xFF) {
         g_Menu->pCursors->shouldRender[3] = TRUE;
         GearShopMenuConfirmationWindowInitialize(arg1);
         g_Menu->pCursors->shouldRender[3] = TRUE;
-        result = func_801CCA40(arg2, 1);
+        result = GearShopMenuConfirmationWindowGetChoice(arg2, 1);
         GearShopMenuConfirmationWindowFree();
     }
     return result;
@@ -1964,20 +2002,20 @@ s32 func_801CCC18(u8 arg0, s32 arg1, s32 arg2) {
 void GearShopMenuFree(void) {
     GearShopMenuUpdateAndRender();
     GearShopMenuUpdateAndRender();
-    g_Menu->shouldDrawMenu = 0;
+    g_Menu->shouldDrawMenu = FALSE;
     GearShopMenuUpdateAndRender();
     do {
         GearShopMenuUpdateAndRender();
     } while (g_Menu->renderContext);
-    GearShopMenuMenuUnk2Manager(0);
-    GearShopMenuMenuManagerManager(0);
-    GearShopMenuSelectionMenuManager(0);
-    GearShopMenuMenuUnk5Manager(0);
-    GearShopMenuMenuUnk6Manager(0);
-    GearShopMenuMenuUnk1Manager(0);
+    GearShopMenuMenuUnk2Manager(MENU_DATA_FREE);
+    GearShopMenuMenuManagerManager(MENU_DATA_FREE);
+    GearShopMenuSelectionMenuManager(MENU_DATA_FREE);
+    GearShopMenuMenuUnk5Manager(MENU_DATA_FREE);
+    GearShopMenuMenuUnk6Manager(MENU_DATA_FREE);
+    GearShopMenuMenuUnk1Manager(MENU_DATA_FREE);
     func_801C6A54(0x10);
-    GearShopMenuMenuShopManager(0);
-    GearShopMenuMenuUnk8Manager(0);
+    GearShopMenuMenuShopManager(MENU_DATA_FREE);
+    GearShopMenuMenuUnk8Manager(MENU_DATA_FREE);
     HeapFree(g_Menu->resources);
     HeapFree(g_Menu->unk2E0);
     HeapFree(g_Menu->unk4E0[0].pVramBuffer);
@@ -1988,7 +2026,7 @@ void GearShopMenuFree(void) {
         GearShopMenuUpdateAndRender();
         HeapFree(g_Menu->unk2E4);
     }
-    GearShopMenuMenuUnk7Manager(0);
+    GearShopMenuMenuUnk7Manager(MENU_DATA_FREE);
     HeapFree(g_Menu);
 }
 
@@ -2211,8 +2249,9 @@ void GearShopMenuShopModeMain(void) {
     GearShopMenuInitializeShopModeSelectionMenu(5, &D_801D6980);
 
     func_801CCE90(4, g_Menu->unk6E0, &D_801D6A20, g_Menu->pManager->unkC);
+
     if (g_gearShopAvailableCharacterCount >= 2) {
-        g_Menu->pManager->unk52[1] = 1;
+        g_Menu->pManager->shoulderButtonUiActive = TRUE;
     }
     
     while (isRunning) {
@@ -2266,7 +2305,7 @@ void GearShopMenuShopModeMain(void) {
     
     D_801D697C = 0;
     func_801D5EB8();
-    func_801CE2E8();
+    GearShopMenuShoulderButtonUiFree();
 }
 
 void GearShopMenuMain(void) {
@@ -2292,7 +2331,7 @@ void GearShopMenuMain(void) {
     g_Menu->unk218.vz = 0;
     g_Menu->unk218.vx = 0;
     g_Menu->unk218.vy = 0x400;
-    g_Menu->transitionEffectState = 0;
+    g_Menu->transitionEffectState = MENU_ANIMATION_DONE;
     D_801D9058 = -0x400;
     D_801D9064 = -0x400;
     D_801D9050 = 0x400;
@@ -2303,13 +2342,13 @@ void GearShopMenuMain(void) {
     GearShopMenuFilterPartyMembers();
     GearShopMenuResetRenderContext();
     func_801C6114(); // initMenuGeometry()?
-    func_801C6708(); // GearShopMenuInitializeBackgrounds
+    GearShopMenuInitializeBackgrounds();
     GearShopMenuInitializeWindowBorders();
     func_801C6E74();
     func_801D5D38();
-    g_Menu->unk440 = HeapAlloc(sizeof(MenuUnknownComponent), 0);
-    bzero(g_Menu->unk440, sizeof(MenuUnknownComponent));
-    func_801CE1D0();
+    g_Menu->pShoulderButtonUi = HeapAlloc(sizeof(MenuShoulderButtonUi), 0);
+    bzero(g_Menu->pShoulderButtonUi, sizeof(MenuShoulderButtonUi));
+    GearShopMenuShoulderButtonUiInitialize();
     g_Menu->shouldDrawMenu = TRUE;
     g_Menu->unk32A = TRUE;
     GearShopMenuShopModeMain();
