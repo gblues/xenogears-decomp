@@ -188,13 +188,13 @@ void ShopMenuUnk354Manager(u_char isInitialization) {
     HeapFree(g_Menu->unk354);
 }
 
-void ShopMenuUnk330Manager(u_char isInitialization) {
+void ShopMenuDressingRoomManager(u_char isInitialization) {
     if (isInitialization) {
-        g_Menu->unk330 = HeapAlloc(sizeof(MenuUnk6), 0);
-        bzero(g_Menu->unk330, sizeof(MenuUnk6));
+        g_Menu->dressingRoom = HeapAlloc(sizeof(MenuDressingRoom), 0);
+        bzero(g_Menu->dressingRoom, sizeof(MenuDressingRoom));
         return;
     }
-    HeapFree(g_Menu->unk330);
+    HeapFree(g_Menu->dressingRoom);
 }
 
 void ShopMenuUnk348Manager(u_char isInitialization) {
@@ -409,9 +409,9 @@ void ShopMenuLoadShopItemsData(u_char mode) {
     switch (mode) {
         case SHOP_DATA_INITIALIZE:
             // Shop item definitions
-            g_Menu->unk330->pWeaponsData = LZSSHeapDecompress(pArchive[2], 0);
-            g_Menu->unk330->pAccessoriesData = LZSSHeapDecompress(pArchive[3], 0);
-            g_Menu->unk330->pItemsData = LZSSHeapDecompress(pArchive[1], 0);
+            g_Menu->dressingRoom->pWeaponsData = LZSSHeapDecompress(pArchive[2], 0);
+            g_Menu->dressingRoom->pAccessoriesData = LZSSHeapDecompress(pArchive[3], 0);
+            g_Menu->dressingRoom->pItemsData = LZSSHeapDecompress(pArchive[1], 0);
 
             // Shop item descriptions
             g_Menu->pShop->pWeaponDescriptions = LZSSHeapDecompress(pArchive[40], 0);
@@ -419,9 +419,9 @@ void ShopMenuLoadShopItemsData(u_char mode) {
             g_Menu->pShop->pItemDescriptions = LZSSHeapDecompress(pArchive[42], 0);
             break;
         case SHOP_DATA_FREE:
-            HeapFree(g_Menu->unk330->pWeaponsData);
-            HeapFree(g_Menu->unk330->pAccessoriesData);
-            HeapFree(g_Menu->unk330->pItemsData);
+            HeapFree(g_Menu->dressingRoom->pWeaponsData);
+            HeapFree(g_Menu->dressingRoom->pAccessoriesData);
+            HeapFree(g_Menu->dressingRoom->pItemsData);
 
             HeapFree(g_Menu->pShop->pWeaponDescriptions);
             HeapFree(g_Menu->pShop->pAccessoryDescriptions);
@@ -2074,7 +2074,7 @@ void ShopMenuFree(void) {
     ShopMenuSetManager(MENU_DATA_FREE);
     ShopMenuSelectionMenuManager(MENU_DATA_FREE);
     ShopMenuUnk354Manager(MENU_DATA_FREE);
-    ShopMenuUnk330Manager(MENU_DATA_FREE);
+    ShopMenuDressingRoomManager(MENU_DATA_FREE);
     ShopMenuUnk348Manager(MENU_DATA_FREE);
     ShopMenuLoadShopItemsData(0x10);
     ShopMenuShopManager(MENU_DATA_FREE);
@@ -2294,7 +2294,7 @@ void ShopMenuMain(void) {
     ShopMenuSetManager(MENU_DATA_INITIALIZE);
     ShopMenuSelectionMenuManager(MENU_DATA_INITIALIZE);
     ShopMenuUnk354Manager(MENU_DATA_INITIALIZE);
-    ShopMenuUnk330Manager(MENU_DATA_INITIALIZE);
+    ShopMenuDressingRoomManager(MENU_DATA_INITIALIZE);
     ShopMenuUnk348Manager(MENU_DATA_INITIALIZE);
     ShopMenuUnk1E20Manager(MENU_DATA_INITIALIZE);
     ShopMenuShopManager(MENU_DATA_INITIALIZE);
@@ -2672,9 +2672,9 @@ u_char ShopMenuBuyMenu(void) {
     newGoldAmount = g_GameState.gold;
 
     for (i = 0; i < MAX_GAME_CHARACTERS; i++) {
-        func_801CCE1C(g_Menu->unk330, i);
-        g_Menu->pShop->unk46E0[i] = g_Menu->unk330->unkB8;
-        g_Menu->pShop->unk4700[i] = g_Menu->unk330->unkBC;
+        func_801CCE1C(g_Menu->dressingRoom, i);
+        g_Menu->pShop->unk46E0[i] = g_Menu->dressingRoom->unkB8;
+        g_Menu->pShop->unk4700[i] = g_Menu->dressingRoom->unkBC;
     }
 
     bzero(g_Menu->pShop->curItemQuantities, MAX_SHOP_ITEMS);

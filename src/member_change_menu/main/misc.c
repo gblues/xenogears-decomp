@@ -108,11 +108,11 @@ void func_801C5160(u_char isInitialization) {
 
 void func_801C51C4(u_char isInitialization) {
     if (isInitialization) {
-        g_Menu->unk330 = HeapAlloc(sizeof(MenuUnk6), 0);
-        bzero(g_Menu->unk330, sizeof(MenuUnk6));
+        g_Menu->dressingRoom = HeapAlloc(sizeof(MenuDressingRoom), 0);
+        bzero(g_Menu->dressingRoom, sizeof(MenuDressingRoom));
         return;
     }
-    HeapFree(g_Menu->unk330);
+    HeapFree(g_Menu->dressingRoom);
 }
 
 void func_801C5228(u_char isInitialization) {

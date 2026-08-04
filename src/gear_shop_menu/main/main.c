@@ -222,13 +222,13 @@ void GearShopMenuMenuUnk5Manager(u_char isInitialization) {
     HeapFree(g_Menu->unk354);
 }
 
-void GearShopMenuMenuUnk6Manager(u_char isInitialization) {
+void GearShopMenuDressingRoomManager(u_char isInitialization) {
     if (isInitialization) {
-        g_Menu->unk330 = HeapAlloc(sizeof(MenuUnk6), 0);
-        bzero(g_Menu->unk330, sizeof(MenuUnk6));
+        g_Menu->dressingRoom = HeapAlloc(sizeof(MenuDressingRoom), 0);
+        bzero(g_Menu->dressingRoom, sizeof(MenuDressingRoom));
         return;
     }
-    HeapFree(g_Menu->unk330);
+    HeapFree(g_Menu->dressingRoom);
 }
 
 void GearShopMenuMenuUnk1Manager(u_char isInitialization) {
@@ -545,10 +545,10 @@ void GearShopMenuInitializeArrowCursor(u_char index) {
     g_Menu->arrowCursors[index]->animFrameDuration = 0;
 }
 
-void GearShopMenuUpdateArrowCursor(s32 arg0, s32 arg1, u8 arg2, u_char cursorIndex) {
+void GearShopMenuUpdateArrowCursor(s32 rowIndex, s32 _unused, u8 disableCursor, u_char cursorIndex) {
     POLY_FT4* pPoly;
     MenuArrowCursor* pCursor = g_Menu->arrowCursors[cursorIndex];
-    int lineHeight;
+    int yPos;
     u8 shouldRenderCursor;
 
     if( ++pCursor->animFrameDuration >= 6) {
@@ -558,8 +558,8 @@ void GearShopMenuUpdateArrowCursor(s32 arg0, s32 arg1, u8 arg2, u_char cursorInd
         pCursor->animFrameDuration = 0;
     }
 
-    if( arg2 == 0) {
-        lineHeight = (FONT_LETTER_HEIGHT * arg0) + 50;
+    if(disableCursor == FALSE) {
+        yPos = (FONT_LETTER_HEIGHT * rowIndex) + 50;
         shouldRenderCursor = TRUE;
     }
 
@@ -577,7 +577,7 @@ void GearShopMenuUpdateArrowCursor(s32 arg0, s32 arg1, u8 arg2, u_char cursorInd
         GearShopMenuSetVertices(
             pCursor->vertices,
             pPoly->x0 + 0x1c,
-            pPoly->y0 + lineHeight,
+            pPoly->y0 + yPos,
             pPoly->x1 - pPoly->x0,
             pPoly->y3 - pPoly->y0
         );
@@ -2011,7 +2011,7 @@ void GearShopMenuFree(void) {
     GearShopMenuMenuManagerManager(MENU_DATA_FREE);
     GearShopMenuSelectionMenuManager(MENU_DATA_FREE);
     GearShopMenuMenuUnk5Manager(MENU_DATA_FREE);
-    GearShopMenuMenuUnk6Manager(MENU_DATA_FREE);
+    GearShopMenuDressingRoomManager(MENU_DATA_FREE);
     GearShopMenuMenuUnk1Manager(MENU_DATA_FREE);
     func_801C6A54(0x10);
     GearShopMenuMenuShopManager(MENU_DATA_FREE);
@@ -2313,7 +2313,7 @@ void GearShopMenuMain(void) {
     GearShopMenuMenuManagerManager(MENU_DATA_INITIALIZE);
     GearShopMenuSelectionMenuManager(MENU_DATA_INITIALIZE);
     GearShopMenuMenuUnk5Manager(MENU_DATA_INITIALIZE);
-    GearShopMenuMenuUnk6Manager(MENU_DATA_INITIALIZE);
+    GearShopMenuDressingRoomManager(MENU_DATA_INITIALIZE);
     GearShopMenuMenuUnk1Manager(MENU_DATA_INITIALIZE);
     GearShopMenuMenuUnk7Manager(MENU_DATA_INITIALIZE);
     GearShopMenuMenuShopManager(MENU_DATA_INITIALIZE);
