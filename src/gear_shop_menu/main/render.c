@@ -624,7 +624,7 @@ void func_801D57A8(void) {
         case MENU_CHOICE_FRAME:
         case MENU_CHOICE_ENGINE:
             func_801D498C(0, 1);
-            func_801D6150(g_Menu->dressingRoom, g_gearShopCurrentGearId);
+            func_801D6150(g_Menu->pDressingRoom, g_gearShopCurrentGearId);
             break;
         case MENU_CHOICE_FUEL:
             func_801D5398();

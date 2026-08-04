@@ -224,11 +224,11 @@ void GearShopMenuMenuUnk5Manager(u_char isInitialization) {
 
 void GearShopMenuDressingRoomManager(u_char isInitialization) {
     if (isInitialization) {
-        g_Menu->dressingRoom = HeapAlloc(sizeof(MenuDressingRoom), 0);
-        bzero(g_Menu->dressingRoom, sizeof(MenuDressingRoom));
+        g_Menu->pDressingRoom = HeapAlloc(sizeof(MenuDressingRoom), 0);
+        bzero(g_Menu->pDressingRoom, sizeof(MenuDressingRoom));
         return;
     }
-    HeapFree(g_Menu->dressingRoom);
+    HeapFree(g_Menu->pDressingRoom);
 }
 
 void GearShopMenuMenuUnk1Manager(u_char isInitialization) {

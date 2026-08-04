@@ -102,16 +102,16 @@ typedef struct {
 } MenuShopItem; // Size: 0x10
 
 typedef struct {
-    u16 unk0;
-    u16 unk2;
-    u16 unk4;
-    u16 unk6;
-    u16 unk8;
-    u16 unkA;
-    u16 unkC;
-    u16 unkE;
-    u16 unk10;
-    u16 unk12;
+    /* 0x00 */ u16 unk0;
+    /* 0x02 */ u16 unk2;
+    /* 0x04 */ u16 unk4;
+    /* 0x06 */ u16 unk6;
+    /* 0x08 */ u16 unk8;
+    /* 0x0A */ u16 unkA;
+    /* 0x0C */ u16 unkC;
+    /* 0x0E */ u16 unkE;
+    /* 0x10 */ u16 unk10;
+    /* 0x12 */ u16 unk12;
 } GearArmor; /* size: 0x14 */
 
 typedef struct {
@@ -257,15 +257,15 @@ typedef struct {
 
 /* most of these are placeholder */
 typedef struct {
-    int unused0; // all engines have this set to -1
-    u16 unused4; // matches maxFuel
-    u16 maxFuel;
-    u16 pad8; // always 00 00
-    u16 price;
-    u8 powerOutput;
-    u8 unkD; // always 0xA
-    u8 unkE; // always 0xA
-    u8 unkF; // always 0
+    /* 0x00 */ int unused0; // all engines have this set to -1
+    /* 0x04 */ u16 unused4; // matches maxFuel
+    /* 0x06 */ u16 maxFuel;
+    /* 0x08 */ u16 pad8; // always 00 00
+    /* 0x0A */ u16 price;
+    /* 0x0C */ u8 powerOutput;
+    /* 0x0D */ u8 unkD; // always 0xA
+    /* 0x0E */ u8 unkE; // always 0xA
+    /* 0x0F */ u8 unkF; // always 0
 } GearEngine; /* size: 0x10 */
 
 typedef struct {
@@ -309,8 +309,8 @@ typedef struct {
     /* 0x8  */ GearFrame* pGearFrames;
     /* 0xC  */ GearEngine *pGearEngines;
     /* 0x10 */ GearArmor *pGearArmor;
-    /* 0x14 */ GearAccessory *gearAccessories;
-    /* 0x18 */ GearWeapon *gearWeapons;
+    /* 0x14 */ GearAccessory *pGearAccessories;
+    /* 0x18 */ GearWeapon *pGearWeapons;
     /* 0x1C */ MenuShopItem* pItemsData;
     /* 0x20 */ u8 unk20[0x7C];
     /* 0x9C */ int hp; // hp
@@ -474,7 +474,7 @@ typedef struct {
 // Shop data
 typedef struct {
     /* 0x0    */ POLY_FT4 polysCharacterPortraits[9*2];
-    /* 0x2D0  */ POLY_FT4 polys2D0[9*2]; // offsets: 0x2D0, 0x2F8, 0x320, 0x348, 0x370, 0x398, 0x3C0, 0x3E8, 0x410, 0x438, 0x460, 0x488, 0x4B0, 0x4D8, 0x500, 0x528, 0x550, 0x578 Letter 'E' (for Equip) on character portraits if item is equipped
+    /* 0x2D0  */ POLY_FT4 polys2D0[9*2]; // Letter 'E' (for Equip) on character portraits if item is equipped
     /* 0x5A0  */ POLY_FT4 polysExplanations[4 * 2]; // offsets: 0x5A0, 0x5C8, 0x5F0, 0x618, 0x640, 0x668, 0x690, 0x6B8
     /* 0x6E0  */ u8 unk6E0[0x5A0];
     /* 0xC80  */ POLY_FT4 polysGoldBefore[9 * 2];
@@ -624,7 +624,7 @@ typedef struct {
     /* 0x32A  */ u8 unk32A; // Sound effects enabled?
     /* 0x32B  */ u8 unk32B;
     /* 0x32C  */ MenuUnk2* menuUnk2;
-    /* 0x330  */ MenuDressingRoom* dressingRoom;
+    /* 0x330  */ MenuDressingRoom* pDressingRoom;
     /* 0x334  */ u8 unk334;
     /* 0x335  */ u8 unk335;
     /* 0x336  */ u_char mainMenuChoice;
