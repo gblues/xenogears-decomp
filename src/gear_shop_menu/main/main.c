@@ -482,11 +482,11 @@ void func_801C6A54(u_char mode) {
 
     switch (mode) {
         case SHOP_DATA_INITIALIZE:
-            g_Menu->unk330->pGearStatsPreview = LZSSHeapDecompress(pArchive[17], 0);
-            g_Menu->unk330->unkC = LZSSHeapDecompress(pArchive[19], 0);
-            g_Menu->unk330->unk10 = LZSSHeapDecompress(pArchive[18], 0);
-            g_Menu->unk330->unk14 = LZSSHeapDecompress(pArchive[20], 0);
-            g_Menu->unk330->unkItemData = LZSSHeapDecompress(pArchive[43], 0);
+            g_Menu->pDressingRoom->pGearFrames = LZSSHeapDecompress(pArchive[17], 0);
+            g_Menu->pDressingRoom->pGearEngines = LZSSHeapDecompress(pArchive[19], 0);
+            g_Menu->pDressingRoom->pGearArmor = LZSSHeapDecompress(pArchive[18], 0);
+            g_Menu->pDressingRoom->pGearAccessories = LZSSHeapDecompress(pArchive[20], 0);
+            g_Menu->pDressingRoom->pGearWeapons = LZSSHeapDecompress(pArchive[43], 0);
             g_Menu->pShop->pWeaponDescriptions = LZSSHeapDecompress(pArchive[51], 0);
             g_Menu->pShop->pAccessoryDescriptions = LZSSHeapDecompress(pArchive[52], 0);
             g_Menu->pShop->unk463C = LZSSHeapDecompress(pArchive[48], 0);
@@ -497,11 +497,11 @@ void func_801C6A54(u_char mode) {
             g_Menu->pShop->unk4650 = LZSSHeapDecompress(pArchive[47], 0);
             break;
         case SHOP_DATA_FREE:
-            HeapFree(g_Menu->unk330->pGearStatsPreview);
-            HeapFree(g_Menu->unk330->unkC);
-            HeapFree(g_Menu->unk330->unk10);
-            HeapFree(g_Menu->unk330->unk14);
-            HeapFree(g_Menu->unk330->unkItemData);
+            HeapFree(g_Menu->pDressingRoom->pGearFrames);
+            HeapFree(g_Menu->pDressingRoom->pGearEngines);
+            HeapFree(g_Menu->pDressingRoom->pGearArmor);
+            HeapFree(g_Menu->pDressingRoom->pGearAccessories);
+            HeapFree(g_Menu->pDressingRoom->pGearWeapons);
             HeapFree(g_Menu->pShop->pWeaponDescriptions);
             HeapFree(g_Menu->pShop->pAccessoryDescriptions);
             HeapFree(g_Menu->pShop->unk463C);
