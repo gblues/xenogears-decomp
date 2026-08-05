@@ -574,7 +574,7 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D3C78);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D44FC);
 
-s32 func_801D4888(s32 itemId) {
+u8 func_801D4888(s32 itemId) {
     u8 equipped;
     u8 itemType = g_Menu->shopItemTypes[itemId];
     u8 result = TRUE;
@@ -624,7 +624,7 @@ void func_801D57A8(void) {
         case MENU_CHOICE_FRAME:
         case MENU_CHOICE_ENGINE:
             func_801D498C(0, 1);
-            func_801D6150(g_Menu->unk330, g_gearShopCurrentGearId);
+            func_801D6150(g_Menu->pDressingRoom, g_gearShopCurrentGearId);
             break;
         case MENU_CHOICE_FUEL:
             func_801D5398();
@@ -651,7 +651,7 @@ void func_801D5EB8(void) {
     HeapFree(g_Menu->unk458[1]);
 }
 
-void func_801D5F94(MenuUnk6* pView, u_char gearId) {
+void func_801D5F94(MenuDressingRoom* pView, u_char gearId) {
     GameGear* pGear;
     GameCharacter* pPilot;
     u_short ether;
@@ -690,7 +690,7 @@ void func_801D5F94(MenuUnk6* pView, u_char gearId) {
     pView->unkB6 = pGear->unk9C;
 }
 
-void func_801D6150(MenuUnk6* arg0, u8 arg1) {
+void func_801D6150(MenuDressingRoom* arg0, u8 arg1) {
     func_801D61B8(arg0, arg1);
     func_801D62A4(arg0, arg1);
     func_801D6250(arg0, arg1);
@@ -698,13 +698,13 @@ void func_801D6150(MenuUnk6* arg0, u8 arg1) {
     func_801D6738(arg0, arg1);
 }
 
-void func_801D61B8(MenuUnk6* arg0, u_char gearIndex) {
+void func_801D61B8(MenuDressingRoom* arg0, u_char gearIndex) {
     GameGear* pGear;
-    GearStatsPreview* pPreview;
+    GearFrame* pPreview;
     u_char previewId;
 
     pGear = &g_GameState.gears[gearIndex];
-    pPreview = arg0->pGearStatsPreview;
+    pPreview = arg0->pGearFrames;
     previewId = pGear->frameId;
     pPreview = &pPreview[previewId];
 
@@ -720,33 +720,34 @@ void func_801D61B8(MenuUnk6* arg0, u_char gearIndex) {
     }
 }
 
-void func_801D6250(MenuUnk6* menu, u_char gearIndex) {
+void func_801D6250(MenuDressingRoom* menu, u_char gearIndex) {
     GameGear* pGear;
-    MenuUnkItem* itemList;
-    MenuUnkItem* pItem;
+    GearArmor* itemList;
+    GearArmor* pItem;
 
     pGear = &g_GameState.gears[gearIndex];
-    itemList = menu->unk10;
+    itemList = menu->pGearArmor
+;
     pItem = &itemList[pGear->armorId];
 
     pGear->baseDefense = pItem->unk8;
     pGear->baseEtherDefense = pItem->unkA;
 }
 
-void func_801D62A4(MenuUnk6* shopInfo, u8 gearId) {
+void func_801D62A4(MenuDressingRoom* shopInfo, u8 gearId) {
     GameGear* pGear;
-    MenuUnk6UnkCItem *item;
+    GearEngine *item;
     u16 fuel;
     u8 itemId;
 
     pGear = &g_GameState.gears[gearId];
     itemId = pGear->engineId;
-    item = shopInfo->unkC;
+    item = shopInfo->pGearEngines;
     fuel = pGear->fuel;
     item = &item[itemId];
 
     pGear->maxFuel = item->maxFuel;
-    pGear->engineOutput = item->unkC;
+    pGear->engineOutput = item->powerOutput;
     pGear->unk3D = item->unkD;
     pGear->unk3E = item->unkE;
     pGear->unk3F = item->unkE;
