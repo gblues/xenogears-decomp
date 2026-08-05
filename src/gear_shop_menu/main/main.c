@@ -5,6 +5,10 @@
 #include "system/graphics.h"
 #include "system/debug.h"
 
+
+#define SHOP_DATA_INITIALIZE 0x0
+#define SHOP_DATA_FREE 0x10
+
 #define MAX_NUM_SUBMENU_OPTIONS 0x4
 
 // Confirmation window choices
@@ -466,8 +470,55 @@ void GearShopMenuInitializeBackgrounds(void) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6A54);
+void func_801C6A54(u_char mode) {
+    u_int* pArchive;
+    
+    if (mode < SHOP_DATA_FREE) {
+        pArchive = HeapAlloc(ArchiveDecodeAlignedSize(2), 1);
+        ArchiveReadFileToBuffer(2, pArchive, 0, 0x80);
+        ArchiveCdDataSync(0);
+        ResolveArchiveEntryPointers(pArchive);
+    }
 
+    switch (mode) {
+        case SHOP_DATA_INITIALIZE:
+            g_Menu->unk330->pGearStatsPreview = LZSSHeapDecompress(pArchive[17], 0);
+            g_Menu->unk330->unkC = LZSSHeapDecompress(pArchive[19], 0);
+            g_Menu->unk330->unk10 = LZSSHeapDecompress(pArchive[18], 0);
+            g_Menu->unk330->unk14 = LZSSHeapDecompress(pArchive[20], 0);
+            g_Menu->unk330->unkItemData = LZSSHeapDecompress(pArchive[43], 0);
+            g_Menu->pShop->pWeaponDescriptions = LZSSHeapDecompress(pArchive[51], 0);
+            g_Menu->pShop->pAccessoryDescriptions = LZSSHeapDecompress(pArchive[52], 0);
+            g_Menu->pShop->unk463C = LZSSHeapDecompress(pArchive[48], 0);
+            g_Menu->pShop->unk4640 = LZSSHeapDecompress(pArchive[49], 0);
+            g_Menu->pShop->unk4644 = LZSSHeapDecompress(pArchive[50], 0);
+            g_Menu->pShop->unk4648 = LZSSHeapDecompress(pArchive[45], 0);
+            g_Menu->pShop->unk464C = LZSSHeapDecompress(pArchive[46], 0);
+            g_Menu->pShop->unk4650 = LZSSHeapDecompress(pArchive[47], 0);
+            break;
+        case SHOP_DATA_FREE:
+            HeapFree(g_Menu->unk330->pGearStatsPreview);
+            HeapFree(g_Menu->unk330->unkC);
+            HeapFree(g_Menu->unk330->unk10);
+            HeapFree(g_Menu->unk330->unk14);
+            HeapFree(g_Menu->unk330->unkItemData);
+            HeapFree(g_Menu->pShop->pWeaponDescriptions);
+            HeapFree(g_Menu->pShop->pAccessoryDescriptions);
+            HeapFree(g_Menu->pShop->unk463C);
+            HeapFree(g_Menu->pShop->unk4640);
+            HeapFree(g_Menu->pShop->unk4644);
+            HeapFree(g_Menu->pShop->unk4648);
+            HeapFree(g_Menu->pShop->unk464C);
+            HeapFree(g_Menu->pShop->unk4650);
+            break;   
+    }
+    
+    if (mode < SHOP_DATA_FREE) {
+        HeapFree(pArchive);
+    }
+}
+
+// https://decomp.me/scratch/j5f3F
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6E74);
 
 // TODO: counterpart in ShopMenu uses u_short, but a number of matches break if we define this using u_short here

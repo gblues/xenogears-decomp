@@ -41,6 +41,7 @@
 #define FONT_LETTER_HEIGHT 0xD
 
 #define MAX_SHOP_ITEMS 0x30
+#define MAX_GEAR_SHOP_ITEMS 0x14
 
 #define ITEM_TYPE_WEAPON 0x0
 #define ITEM_TYPE_ACCESSORY 0x1
@@ -435,8 +436,18 @@ typedef struct {
 } MenuWindowParameters; // Size: 0x18
 
 typedef struct {
-    u8 itemIds[0x14];
-} ShopItemTableEntry;
+    u_char itemIds[MAX_GEAR_SHOP_ITEMS];
+} GearShopItemTableEntry;
+
+// Engines, frames, armors, weapons, parts.
+// Not necessarily in that order.
+typedef struct {
+    /* 0x0  */ u_char unk0[MAX_GEAR_SHOP_ITEMS];
+    /* 0x14 */ u_char unk14[MAX_GEAR_SHOP_ITEMS];
+    /* 0x28 */ u_char unk28[MAX_GEAR_SHOP_ITEMS];
+    /* 0x3C */ u_char unk3C[MAX_GEAR_SHOP_ITEMS];
+    /* 0x50 */ u_char unk50[MAX_GEAR_SHOP_ITEMS];
+} GearShopDefinition; // Size: 0x64
 
 // Shop data
 typedef struct {
@@ -498,7 +509,7 @@ typedef struct {
     /* 0x46D7 */ u8 unk46D7[0x9]; // Render contexts
     /* 0x46E0 */ u16 unk46E0[0x10];
     /* 0x4700 */ u16 unk4700[0x10];
-    /* 0x4720 */ ShopItemTableEntry itemTables[5];
+    /* 0x4720 */ GearShopItemTableEntry gearShopItemTables[5]; // Frames, armor, engines, weapons, parts. Not necessarily in that order.
     /* 0x4784 */ u8 unk4784;
     /* 0x4785 */ u8 unk4785;
     /* 0x4786 */ u8 unk4786[0x2];
@@ -667,7 +678,7 @@ typedef struct {
     /* 0x1E2C */ void* pShopEntries;
     /* 0x1E30 */ u_char shopItemIDs[MAX_SHOP_ITEMS];
     /* 0x1E60 */ u_char shopItemTypes[MAX_SHOP_ITEMS];
-    /* 0x1E90 */ u8 unk1E90[0x4];
+    /* 0x1E90 */ void* pGearShopEntries; // Array of GearShopDefinition
     /* 0x1E94 */ u8 unk1E94;
     // Decompiling `MenuProcessControllerInput` worked better if this field is
     // volatile.  If you need to remove `volatile`, you can insert a temporary
