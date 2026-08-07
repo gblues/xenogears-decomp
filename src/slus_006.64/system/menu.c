@@ -29,7 +29,7 @@ void MenuInitializeGfxEnvironments(void) {
 
 void func_8001BEEC(void) {
     g_Menu->translation.vz = 0x800;
-    g_Menu->unk220.vz = 0x800;
+    g_Menu->cameraPosition.vz = 0x800;
     g_Menu->rotation.vz = 0;
     g_Menu->rotation.vy = 0;
     g_Menu->rotation.vx = 0;
@@ -38,8 +38,8 @@ void func_8001BEEC(void) {
     g_Menu->unk218.vz = 0;
     g_Menu->unk218.vy = 0;
     g_Menu->unk218.vx = 0;
-    g_Menu->unk220.vy = 0;
-    g_Menu->unk220.vx = 0;
+    g_Menu->cameraPosition.vy = 0;
+    g_Menu->cameraPosition.vx = 0;
     g_Menu->unk2E8 = 1;
     g_Menu->transitionEffectState = 0;
 }

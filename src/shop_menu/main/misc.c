@@ -409,11 +409,15 @@ void ShopMenuLoadShopItemsData(u_char mode) {
     switch (mode) {
         case SHOP_DATA_INITIALIZE:
             // Shop item definitions
-            g_Menu->pDressingRoom->pWeaponsData = LZSSHeapDecompress(pArchive[2], 0);
-            g_Menu->pDressingRoom->pAccessoriesData = LZSSHeapDecompress(pArchive[3], 0);
-            g_Menu->pDressingRoom->pItemsData = LZSSHeapDecompress(pArchive[1], 0);
+            g_Menu->pDressingRoom->pWeaponsData = LZSSHeapDecompress(pArchive[SHOP_RES_WEAPON_DATA], 0);
+            g_Menu->pDressingRoom->pAccessoriesData = LZSSHeapDecompress(pArchive[SHOP_RES_ACCESSORY_DATA], 0);
+            g_Menu->pDressingRoom->pItemsData = LZSSHeapDecompress(pArchive[SHOP_RES_ITEM_DATA], 0);
 
             // Shop item descriptions
+            // NOTE: There's something weird going on here, because if we extract and parse the shop resource archive,
+            // entry 39 = weapon descriptions, entry 40 = accessory desc and entry 41 = item descriptions
+            // Off by one? However, this alone would not explain the weird situation with the indices in the
+            // gear shop menu...
             g_Menu->pShop->pWeaponDescriptions = LZSSHeapDecompress(pArchive[40], 0);
             g_Menu->pShop->pAccessoryDescriptions = LZSSHeapDecompress(pArchive[41], 0);
             g_Menu->pShop->pItemDescriptions = LZSSHeapDecompress(pArchive[42], 0);

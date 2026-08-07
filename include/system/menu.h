@@ -6,6 +6,28 @@
 #include "system/sound.h"
 #include "main/game.h"
 
+
+// Shop resources archive indices
+#define SHOP_RES_ITEM_DATA 1
+#define SHOP_RES_WEAPON_DATA 2
+#define SHOP_RES_ACCESSORY_DATA 3
+#define SHOP_RES_GEAR_FRAME_DATA 17
+#define SHOP_RES_GEAR_ARMOR_DATA 18
+#define SHOP_RES_GEAR_ENGINE_DATA 19
+#define SHOP_RES_GEAR_ACCESORY_DATA 20
+#define SHOP_RES_WEAPON_DESC 39
+#define SHOP_RES_ACCESORY_DESC 40
+#define SHOP_RES_ITEM_DESC 41
+#define SHOP_RES_GEAR_WEAPON_DATA 43
+#define SHOP_RES_GEAR_FRAME_NAMES 45
+#define SHOP_RES_GEAR_ENGINE_NAMES 46
+#define SHOP_RES_GEAR_ARMOR_DESC 47
+#define SHOP_RES_GEAR_FRAME_DESC 48
+#define SHOP_RES_GEAR_ENGINE_DESC 49
+#define SHOP_RES_AMMO_DESC 50
+#define SHOP_RES_GEAR_ACCESSORY_DESC 51
+#define SHOP_RES_GEAR_WEAPON_DESC 52
+
 // Mapped inputs
 #define MENU_INPUT_RIGHT 0x0
 #define MENU_INPUT_DOWN 0x1
@@ -507,12 +529,12 @@ typedef struct {
     /* 0x4630 */ void* pItemDescriptions;
     /* 0x4634 */ void* pWeaponDescriptions;
     /* 0x4638 */ void* pAccessoryDescriptions;
-    /* 0x463C */ void *unk463C;
-    /* 0x4640 */ void *unk4640;
-    /* 0x4644 */ void *unk4644;
-    /* 0x4648 */ void *unk4648;
-    /* 0x464C */ void *unk464C;
-    /* 0x4650 */ void *unk4650;
+    /* 0x463C */ void* pGearFrameDescriptions;
+    /* 0x4640 */ void* pGearEngineDescriptions;
+    /* 0x4644 */ void* pAmmoDescriptions;
+    /* 0x4648 */ void* pGearFrameNames;
+    /* 0x464C */ void* pGearEngineNames;
+    /* 0x4650 */ void* pGearArmorDescriptions;
     /* 0x4654 */ u_char curItemQuantities[MAX_SHOP_ITEMS];
     /* 0x4684 */ u8 unk4684[0x8];
     /* 0x468C */ u8 unk468C[0x8];
@@ -591,8 +613,9 @@ typedef struct {
     /* 0x1F0  */ MATRIX matTransform;
     /* 0x210  */ u8 unk1D8[0x8];
     /* 0x218  */ SVECTOR unk218;
-    /* 0x220  */ VECTOR unk220;
-    /* 0x230  */ u8 unk230[0x68];
+    /* 0x220  */ VECTOR cameraPosition;
+    /* 0x230  */ MATRIX unk230;
+    /* 0x250  */ u8 unk250[0x48];
     /* 0x298  */ s16 unk298;
     /* 0x29A  */ s16 unk29A;
     /* 0x29C  */ s16 unk29C;

@@ -482,19 +482,26 @@ void func_801C6A54(u_char mode) {
 
     switch (mode) {
         case SHOP_DATA_INITIALIZE:
-            g_Menu->pDressingRoom->pGearFrames = LZSSHeapDecompress(pArchive[17], 0);
-            g_Menu->pDressingRoom->pGearEngines = LZSSHeapDecompress(pArchive[19], 0);
-            g_Menu->pDressingRoom->pGearArmor = LZSSHeapDecompress(pArchive[18], 0);
-            g_Menu->pDressingRoom->pGearAccessories = LZSSHeapDecompress(pArchive[20], 0);
-            g_Menu->pDressingRoom->pGearWeapons = LZSSHeapDecompress(pArchive[43], 0);
-            g_Menu->pShop->pWeaponDescriptions = LZSSHeapDecompress(pArchive[51], 0);
-            g_Menu->pShop->pAccessoryDescriptions = LZSSHeapDecompress(pArchive[52], 0);
-            g_Menu->pShop->unk463C = LZSSHeapDecompress(pArchive[48], 0);
-            g_Menu->pShop->unk4640 = LZSSHeapDecompress(pArchive[49], 0);
-            g_Menu->pShop->unk4644 = LZSSHeapDecompress(pArchive[50], 0);
-            g_Menu->pShop->unk4648 = LZSSHeapDecompress(pArchive[45], 0);
-            g_Menu->pShop->unk464C = LZSSHeapDecompress(pArchive[46], 0);
-            g_Menu->pShop->unk4650 = LZSSHeapDecompress(pArchive[47], 0);
+            g_Menu->pDressingRoom->pGearFrames = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_FRAME_DATA], 0);
+            g_Menu->pDressingRoom->pGearEngines = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ENGINE_DATA], 0);
+            g_Menu->pDressingRoom->pGearArmor = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ARMOR_DATA], 0);
+            g_Menu->pDressingRoom->pGearAccessories = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ACCESORY_DATA], 0);
+            g_Menu->pDressingRoom->pGearWeapons = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_WEAPON_DATA], 0);
+
+            // NOTE: Name of struct field is misleading here!
+            // In the non-gear shop menu, this points to weapon descriptions.
+            // In the gear shop menu, this points to gear accesory descriptions.
+            g_Menu->pShop->pWeaponDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ACCESSORY_DESC], 0);
+
+            // ^ same situation as above
+            g_Menu->pShop->pAccessoryDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_WEAPON_DESC], 0);
+
+            g_Menu->pShop->pGearFrameDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_FRAME_DESC], 0);
+            g_Menu->pShop->pGearEngineDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ENGINE_DESC], 0);
+            g_Menu->pShop->pAmmoDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_AMMO_DESC], 0);
+            g_Menu->pShop->pGearFrameNames = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_FRAME_NAMES], 0);
+            g_Menu->pShop->pGearEngineNames = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ENGINE_NAMES], 0);
+            g_Menu->pShop->pGearArmorDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ARMOR_DESC], 0);
             break;
         case SHOP_DATA_FREE:
             HeapFree(g_Menu->pDressingRoom->pGearFrames);
@@ -504,12 +511,12 @@ void func_801C6A54(u_char mode) {
             HeapFree(g_Menu->pDressingRoom->pGearWeapons);
             HeapFree(g_Menu->pShop->pWeaponDescriptions);
             HeapFree(g_Menu->pShop->pAccessoryDescriptions);
-            HeapFree(g_Menu->pShop->unk463C);
-            HeapFree(g_Menu->pShop->unk4640);
-            HeapFree(g_Menu->pShop->unk4644);
-            HeapFree(g_Menu->pShop->unk4648);
-            HeapFree(g_Menu->pShop->unk464C);
-            HeapFree(g_Menu->pShop->unk4650);
+            HeapFree(g_Menu->pShop->pGearFrameDescriptions);
+            HeapFree(g_Menu->pShop->pGearEngineDescriptions);
+            HeapFree(g_Menu->pShop->pAmmoDescriptions);
+            HeapFree(g_Menu->pShop->pGearFrameNames);
+            HeapFree(g_Menu->pShop->pGearEngineNames);
+            HeapFree(g_Menu->pShop->pGearArmorDescriptions);
             break;   
     }
     
@@ -1788,10 +1795,10 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CBA2C);
 
 void func_801CBDA0(void) {
     func_801CBA2C();
-    RotMatrix(&g_Menu->unk218, (MATRIX* ) g_Menu->unk230);
-    TransMatrix((MATRIX* ) g_Menu->unk230, &g_Menu->unk220);
-    SetRotMatrix((MATRIX* ) g_Menu->unk230);
-    SetTransMatrix((MATRIX* ) g_Menu->unk230);
+    RotMatrix(&g_Menu->unk218, &g_Menu->unk230);
+    TransMatrix(&g_Menu->unk230, &g_Menu->cameraPosition);
+    SetRotMatrix(& g_Menu->unk230);
+    SetTransMatrix(&g_Menu->unk230);
     RotMatrix(&g_Menu->rotation, &g_Menu->matTransform);
     TransMatrix(&g_Menu->matTransform, &g_Menu->translation);
     SetRotMatrix(&g_Menu->matTransform);
@@ -2378,7 +2385,7 @@ void GearShopMenuMain(void) {
     g_Menu->rotation.vz = 0;
     g_Menu->rotation.vx = 0;
     g_Menu->rotation.vy = 0;
-    g_Menu->unk220.vz = 0x400;
+    g_Menu->cameraPosition.vz = 0x400;
     g_Menu->unk218.vz = 0;
     g_Menu->unk218.vx = 0;
     g_Menu->unk218.vy = 0x400;
