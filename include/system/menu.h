@@ -59,6 +59,9 @@
 #define MENU_DATA_INITIALIZE 0x1
 #define MENU_DATA_FREE 0x0
 
+#define SHOP_DATA_INITIALIZE 0x0
+#define SHOP_DATA_FREE 0x10
+
 // TODO: Move to more fitting file
 #define FONT_LETTER_HEIGHT 0xD
 
@@ -69,6 +72,11 @@
 #define ITEM_TYPE_ACCESSORY 0x1
 #define ITEM_TYPE_ITEM 0x2
 
+#define ITEM_TYPE_GEAR_ARMOR     0x0
+#define ITEM_TYPE_GEAR_FRAME     0x1
+#define ITEM_TYPE_GEAR_ENGINE    0x2
+#define ITEM_TYPE_GEAR_ACCESSORY 0x3
+#define ITEM_TYPE_GEAR_WEAPON    0x4
 
 /*
  * Menu Resource type definitions
@@ -278,9 +286,8 @@ typedef struct {
     /* 0x17 */ u8 unk17; // 0
 } GearFrame; /* size: 0x18 */
 
-/* most of these are placeholder */
 typedef struct {
-    /* 0x00 */ int unused0; // all engines have this set to -1
+    /* 0x00 */ int unk0; // all engines have this set to -1
     /* 0x04 */ u16 unused4; // matches maxFuel
     /* 0x06 */ u16 maxFuel;
     /* 0x08 */ u16 pad8; // always 00 00
@@ -294,9 +301,10 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u16 unk0;
     /* 0x02 */ u16 unk2;
-    /* 0x04 */ u16 unk4;
+    /* 0x04 */ u16 price;
     /* 0x06 */ u16 weight;
-    /* 0x08 */ int unk8;
+    /* 0x08 */ u16 unk8;
+    /* 0x0A */ u16 unkA;
     /* 0x0C */ u8 unkC;
     /* 0x0D */ u8 defense;
     /* 0x0E */ u8 etherDefense;
@@ -318,10 +326,11 @@ typedef struct {
     /* 0x02 */ u16 unk2;
     /* 0x04 */ u16 unk4;
     /* 0x06 */ u16 unk6;
-    /* 0x08 */ u16 unk8;
+    /* 0x08 */ u16 price;
     /* 0x0A */ u16 unkA;
     /* 0x0C */ u16 unkC;
-    /* 0x0E */ u16 unkE;
+    /* 0x0E */ u8 unkE;
+    /* 0x0F */ u8 unkF;
     /* 0x10 */ u16 unk10;
     /* 0x12 */ u16 unk12;
 } GearWeapon; /* size: 0x14 */

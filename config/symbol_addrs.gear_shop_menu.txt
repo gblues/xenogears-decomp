@@ -16,6 +16,7 @@ GearShopMenuResetRenderContext             =  0x801C5C98;
 GearShopMenuInitializeWindowBorders        =  0x801C6170;
 GearShopMenuSetPolyGradientColor           = 0x801C668C;
 GearShopMenuInitializeBackgrounds          = 0x801C6708;
+GearShopMenuShopDataManager                = 0x801C6A54;
 GearShopMenuSetVertices                    =  0x801C7604;
 GearShopMenuSetWindowBorderPrimitive       =  0x801C765C;
 GearShopMenuUpdateScrollBarHandle          =  0x801C76A4;

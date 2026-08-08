@@ -470,9 +470,10 @@ void GearShopMenuInitializeBackgrounds(void) {
     }
 }
 
-void func_801C6A54(u_char mode) {
-    u_int* pArchive;
-    
+
+void GearShopMenuShopDataManager(u8 mode) {
+    u32* pArchive;
+
     if (mode < SHOP_DATA_FREE) {
         pArchive = HeapAlloc(ArchiveDecodeAlignedSize(2), 1);
         ArchiveReadFileToBuffer(2, pArchive, 0, 0x80);
@@ -528,7 +529,6 @@ void func_801C6A54(u_char mode) {
 // https://decomp.me/scratch/j5f3F
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6E74);
 
-// TODO: counterpart in ShopMenu uses u_short, but a number of matches break if we define this using u_short here
 void GearShopMenuSetVertices(SVECTOR* pVertices, u_short x, u_short y, u_short width, u_short height) {
     pVertices[0].vx = x - 160;
     pVertices[0].vy = y - 112;
@@ -2071,7 +2071,7 @@ void GearShopMenuFree(void) {
     GearShopMenuMenuUnk5Manager(MENU_DATA_FREE);
     GearShopMenuDressingRoomManager(MENU_DATA_FREE);
     GearShopMenuMenuUnk1Manager(MENU_DATA_FREE);
-    func_801C6A54(0x10);
+    GearShopMenuShopDataManager(SHOP_DATA_FREE);
     GearShopMenuMenuShopManager(MENU_DATA_FREE);
     GearShopMenuMenuUnk8Manager(MENU_DATA_FREE);
     HeapFree(g_Menu->resources);

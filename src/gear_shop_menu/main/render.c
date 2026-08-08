@@ -552,7 +552,108 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D2950);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D2B74);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D3558);
+void func_801D3558(s32* delta, s8* isImprovement, u8 itemId, u8 itemType, u8 characterId) {
+    s16 oldValue[2];
+    s16 newValue[2];
+    u8 itemSlots[8];
+
+    u8 gearId;
+    u8 changeDetected;
+    int i;
+    u32 smallest;
+    u8 leastDefense = 0xFF;
+    GearAccessory* pAccessory;
+    GearWeapon* pWeaponList;
+    GearAccessory* pCurAccesory;
+
+
+    gearId = g_GameState.characters[characterId].gearId;
+
+    itemSlots[0] = g_GameState.gears[gearId].weaponId;
+
+    itemSlots[1] = g_GameState.gears[gearId].unk4[0];
+    itemSlots[2] = g_GameState.gears[gearId].unk4[1];
+    itemSlots[3] = g_GameState.gears[gearId].unk4[2];
+    itemSlots[4] = g_GameState.gears[gearId].unk4[3];
+
+    itemSlots[5] = g_GameState.gears[gearId].accessorySlots[0];
+    itemSlots[6] = g_GameState.gears[gearId].accessorySlots[1];
+    itemSlots[7] = g_GameState.gears[gearId].accessorySlots[2];
+
+    switch(itemType) {
+        case ITEM_TYPE_GEAR_WEAPON:
+            // This **may** be a check to see if the weapon belongs to Billy or not,
+            // since Billy uses guns w/ ammo which needs special handling? This should be double checked though.
+            if (itemId < 0x32) {
+                g_GameState.gears[gearId].weaponId = itemId;
+            } else {
+                pWeaponList = g_Menu->pDressingRoom->pGearWeapons;
+
+                for(i = 0; i < 4; i++) {
+                    if(g_Menu->pDressingRoom->pGearWeapons[g_GameState.gears[gearId].unk4[i]].unkF == pWeaponList[itemId].unkF) {
+                        g_GameState.gears[gearId].unk4[i] = itemId;
+                    }
+                }
+            }
+            break;
+        case ITEM_TYPE_GEAR_ACCESSORY:
+            changeDetected = TRUE;
+            pAccessory = &g_Menu->pDressingRoom->pGearAccessories[itemId];
+
+            for (i = 0; i < 3; i++) {
+                int index = itemSlots[5+i];
+                pCurAccesory = &g_Menu->pDressingRoom->pGearAccessories[index];
+
+                if (pCurAccesory->unk8 && pCurAccesory->unk8 == pAccessory->unk8) {
+                    changeDetected = FALSE;
+                    g_GameState.gears[gearId].accessorySlots[i] = itemId;
+                }
+            }
+
+            leastDefense = 0xFF;
+            if (changeDetected) {
+                for (i = 0; i < 3; i++) {
+                    int index = itemSlots[5+i];
+                    pCurAccesory = &g_Menu->pDressingRoom->pGearAccessories[index];
+                    if (leastDefense >= pCurAccesory->defense) {
+                        leastDefense = pCurAccesory->defense;
+                        smallest = i;
+                    }
+                }
+                g_GameState.gears[gearId].accessorySlots[smallest] = itemId;
+            }
+            break;
+    }
+
+    func_801D6150(g_Menu->pDressingRoom, g_GameState.characters[characterId].gearId);
+    func_801D5F94(g_Menu->pDressingRoom, g_GameState.characters[characterId].gearId);
+
+    oldValue[0] = g_Menu->pDressingRoom->unkB0;
+    oldValue[1] = g_Menu->pDressingRoom->totalDefense;
+    newValue[0] = g_Menu->pShop->unk46E0[characterId];
+    newValue[1] = g_Menu->pShop->unk4700[characterId];
+
+    for(i = 0; i < 2; i++) {
+        if(oldValue[i] >= newValue[i]) {
+            delta[i] = oldValue[i] - newValue[i];
+            isImprovement[i] = FALSE;
+        } else {
+            delta[i] = newValue[i] - oldValue[i];
+            isImprovement[i] = TRUE;
+        }
+    }
+
+    g_GameState.gears[gearId].weaponId = itemSlots[0];
+    g_GameState.gears[gearId].unk4[0] = itemSlots[1];
+    g_GameState.gears[gearId].unk4[1] = itemSlots[2];
+    g_GameState.gears[gearId].unk4[2] = itemSlots[3];
+    g_GameState.gears[gearId].unk4[3] = itemSlots[4];
+    g_GameState.gears[gearId].accessorySlots[0] = itemSlots[5];
+    g_GameState.gears[gearId].accessorySlots[1] = itemSlots[6];
+    g_GameState.gears[gearId].accessorySlots[2] = itemSlots[7];
+
+    func_801D6150(g_Menu->pDressingRoom, g_GameState.characters[characterId].gearId);
+}
 
 u8 func_801D3A3C(u8* index, u8* haystack, s32 size, u8 needle) {
     int i;
@@ -674,7 +775,7 @@ void func_801D5F94(MenuDressingRoom* pView, u_char gearId) {
     pView->fuel = pGear->fuel;
     pView->maxFuel = pGear->maxFuel;
 
-    ether = pGear->engineOutput * (pGear->unk74 + pGear->unk56);
+    ether = pGear->engineOutput * (pGear->attackPower + pGear->unk56);
 
     if(gearId == 0x5 || gearId == 0xD) {
         etherModifier = ((pGear->maxEther + pGear->unk22) * 6) / 10;
@@ -684,8 +785,8 @@ void func_801D5F94(MenuDressingRoom* pView, u_char gearId) {
     }
 
     pView->totalResponsiveness = pGear->unk9F + pGear->responsiveness;
-    pView->unkB3 = pGear->unk98 - pGear->unk4A;
-    pView->unkB4 = pGear->unk9E;
+    pView->unkB3 = pGear->agility - pGear->unk4A;
+    pView->unkB4 = pGear->etherAmplification;
     pView->unkB5 = pGear->unk9D;
     pView->unkB6 = pGear->unk9C;
 }
@@ -711,8 +812,8 @@ void func_801D61B8(MenuDressingRoom* arg0, u_char gearIndex) {
     pGear->maxHp = pPreview->hp;
 
     pGear->weight = pPreview->weight;
-    pGear->unk98 = pPreview->unk14;
-    pGear->unk9E = pPreview->unk15;
+    pGear->agility = pPreview->unk14;
+    pGear->etherAmplification = pPreview->unk15;
     pGear->unk9D = pPreview->unk16;
     pGear->unk9F = pPreview->unk17;
     if (pGear->maxHp < pGear->hp) {
