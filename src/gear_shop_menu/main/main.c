@@ -472,7 +472,7 @@ void GearShopMenuInitializeBackgrounds(void) {
 
 
 void GearShopMenuShopDataManager(u8 mode) {
-    u32* pArchive;
+    u_int* pArchive;
 
     if (mode < SHOP_DATA_FREE) {
         pArchive = HeapAlloc(ArchiveDecodeAlignedSize(2), 1);

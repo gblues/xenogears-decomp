@@ -552,7 +552,7 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D2950);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D2B74);
 
-void func_801D3558(s32* delta, s8* isImprovement, u8 itemId, u8 itemType, u8 characterId) {
+void func_801D3558(s32* pDelta, s8* pIsImprovement, u8 itemId, u8 itemType, u8 characterId) {
     s16 oldValue[2];
     s16 newValue[2];
     u8 itemSlots[8];
@@ -635,11 +635,11 @@ void func_801D3558(s32* delta, s8* isImprovement, u8 itemId, u8 itemType, u8 cha
 
     for(i = 0; i < 2; i++) {
         if(oldValue[i] >= newValue[i]) {
-            delta[i] = oldValue[i] - newValue[i];
-            isImprovement[i] = FALSE;
+            pDelta[i] = oldValue[i] - newValue[i];
+            pIsImprovement[i] = FALSE;
         } else {
-            delta[i] = newValue[i] - oldValue[i];
-            isImprovement[i] = TRUE;
+            pDelta[i] = newValue[i] - oldValue[i];
+            pIsImprovement[i] = TRUE;
         }
     }
 
