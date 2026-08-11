@@ -481,15 +481,15 @@
  * Type 2 functions
  */
 
-#define gte_rtps() __asm__ volatile (				\
+ #define gte_rtps() __asm__ volatile (				\
 	"nop;"							\
 	"nop;"							\
-	".word 0x0000007f" )
+	"c2      0x180001;" )
 
 #define gte_rtpt() __asm__ volatile (				\
 	"nop;"							\
 	"nop;"							\
-	".word 0x000000bf" )
+	"c2      0x280030;" )
 
 #define gte_rt() __asm__ volatile (				\
 	"nop;"							\

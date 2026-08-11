@@ -1,1 +1,9 @@
 MenuHelperFreeMenuScene = 0x801DCD8C;
+
+MenuHelperInitializeVertexBuffer = 0x801E0064;
+MenuHelperFreeVertexBuffer = 0x801E00DC;
+MenuHelperInitializeVertices = 0x801E011C;
+
+D_801E8648 = 0x801E8648; // type:Temp6[] size:0x28
+D_801E8670 = 0x801E8670; // type:Unk*[] size:0x28
+g_MenuHelperVertexBuffer = 0x801E86A0;

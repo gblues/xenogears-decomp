@@ -1,6 +1,17 @@
 #include "common.h"
+#include "psyq/libgpu.h"
+#include "psyq/libgte.h"
+#include "psyq/gtemac.h"
+#include "psyq/inline_c.h"
+#include "system/memory.h"
 #include "menuhelper/main.h"
 
+extern s32 D_80050100;
+
+extern s32 D_801E8640;
+extern s16 D_801E869C;
+extern VertexBuffer g_MenuHelperVertexBuffer;
+extern Temp4 D_801E86A8;
 
 unsigned func_801DC5C0(MenuScene* menu, s32 degrees) {
     MATRIX* matrix1;
@@ -39,11 +50,11 @@ unsigned func_801DC5C0(MenuScene* menu, s32 degrees) {
     menu->matrix1.t[1] = menu->matrix2.t[1];
     menu->matrix1.t[2] = menu->matrix2.t[2];
 
-    for(i = 1; i < length; i++) {
+    for (i = 1; i < length; i++) {
         menu++;
 
-        if(menu->doRotate != 0) {
-            if(menu->rotDirection != 0) {
+        if (menu->doRotate != 0) {
+            if (menu->rotDirection != 0) {
                 RotMatrixYXZ(&menu->vec2, &menu->matrix1);
                 menu->doRotate = 0;
             } else {
@@ -88,9 +99,9 @@ void MenuHelperFreeMenuScene(MenuScene* menu) {
     int i;
     MenuScene *scene = menu;
 
-    if(menu != NULL) {
-        for(i = 0; i < menu->length; i++) {
-            if(scene->unk68 != NULL) {
+    if (menu != NULL) {
+        for (i = 0; i < menu->length; i++) {
+            if (scene->unk68 != NULL) {
                 HeapFree(scene->unk68);
                 scene->unk68 = NULL;
                 scene->unk6C = 0;
@@ -114,15 +125,63 @@ INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF0B4);
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF52C);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF5F4);
+void* func_801DF5F4(Temp4* pUnk, int numObjects) {
+    if (numObjects <= 0) {
+        return NULL;
+    }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF668);
+    pUnk->numObjects = numObjects;
+    HeapChangeCurrentUser(HEAP_USER_MASA, HEAP_CONTENT_NULL);
+    pUnk->pObjects = HeapAlloc(numObjects * sizeof(Temp3), 0x0);
+    if (pUnk->pObjects) {
+        func_801DF6A8(pUnk);
+        return pUnk;
+    }
+    
+    return NULL;
+}
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF6A8);
+void func_801DF668(Temp4* pUnk) {
+    pUnk->unk4 = 0;
+    if (pUnk->pObjects != NULL) {
+        HeapFree(pUnk->pObjects);
+    }
+    pUnk->pObjects = NULL;
+}
+
+void func_801DF6A8(Temp4* pUnk) {
+    int i;
+    Temp3* pCurObject;
+
+    if (pUnk->pObjects == NULL) {
+        return;
+    }
+
+    pCurObject = pUnk->pObjects;
+    pUnk->unk4 = 0;
+
+    for (i = 0; i < pUnk->numObjects; i++) {
+        pCurObject->unk0 = 0;
+        pCurObject++;
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF6F0);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF7A8);
+int func_801DF7A8(Temp4* pUnk, s8* arg1) {
+    int index;
+
+    if (arg1 == NULL) {
+        return -1;
+    }
+    
+    index = ((mem_addr)arg1 - (mem_addr)pUnk->pObjects) / sizeof(Temp3);
+    if (index < pUnk->unk4) {
+        pUnk->unk4 = index;
+    }
+    *arg1 = 0;
+    return index;
+}
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF7F4);
 
@@ -132,17 +191,159 @@ INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DFE8C);
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DFF78);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0064);
+void* MenuHelperInitializeVertexBuffer(VertexBuffer* pVertexBuffer, u32 capacity) {
+    HeapChangeCurrentUser(HEAP_USER_MASA, HEAP_CONTENT_NULL);
+    pVertexBuffer->capacity = capacity;
+    pVertexBuffer->curIndex = 0;
+    pVertexBuffer->pVertices = HeapAlloc((capacity + 1) * sizeof(Vertex), 0x0);
+    
+    if (pVertexBuffer->pVertices) {
+        MenuHelperInitializeVertices(pVertexBuffer);
+        return pVertexBuffer;
+    }
+    
+    return NULL;
+}
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E00DC);
+void MenuHelperFreeVertexBuffer(VertexBuffer* pVertexBuffer) {
+    pVertexBuffer->capacity = 0;
+    pVertexBuffer->curIndex = 0;
+    if (pVertexBuffer->pVertices != NULL) {
+        HeapFree(pVertexBuffer->pVertices);
+    }
+    pVertexBuffer->pVertices = NULL;
+}
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E011C);
+void MenuHelperInitializeVertices(VertexBuffer* pVertexBuffer) {
+    int i;
+    int j;
+    Vertex* pVertex;
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0248);
+    pVertex = pVertexBuffer->pVertices;
+    for (i = 0; i < pVertexBuffer->capacity + 1; i++) {
+        pVertex->unk16 = -1;
+        pVertex->unk1E = 0;
+        
+        for (j = 0; j < 2; j++) {
+            SetPolyFT4(&pVertex->polys[j]);
+            SetSemiTrans(&pVertex->polys[j], 1);
+            
+            pVertex->polys[j].clut = GetClut(0, 0x1CD);
+            pVertex->polys[j].tpage = GetTPage(0, 1, 0x340, 0x100);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0354);
+            setUV4(
+                &pVertex->polys[j],
+                0x0, 0xBD,
+                0x0, 0xBD,
+                0xF, 0xBD,
+                0xF, 0xBD
+            );
+        }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0398);
+        pVertex++;
+    }
+}
+
+void* func_801E0248(VertexBuffer* pVertexBuffer, short isSemiTrans) {
+    Vertex* pVertex;
+    
+    if (pVertexBuffer->curIndex < pVertexBuffer->capacity) {
+        pVertex = &pVertexBuffer->pVertices[pVertexBuffer->curIndex];
+        if (pVertex->unk16 == -1) {
+            for (
+                pVertexBuffer->curIndex++; 
+                pVertexBuffer->curIndex < pVertexBuffer->capacity; 
+                pVertexBuffer->curIndex++
+            ) {
+                if (pVertexBuffer->pVertices[pVertexBuffer->curIndex].unk16 == -1) {
+                    break;
+                }
+            }
+            
+            SetSemiTrans(&pVertex->polys[0], isSemiTrans);
+            SetSemiTrans(&pVertex->polys[1], isSemiTrans);
+            return pVertex;
+        }
+    }
+    
+    return &pVertexBuffer->pVertices[pVertexBuffer->capacity];
+}
+
+int func_801E0354(VertexBuffer* pVertexBuffer, Vertex* pObject) {
+    int index;
+
+    index = ((mem_addr)pObject - (mem_addr)pVertexBuffer->pVertices) / sizeof(Vertex);
+    if (pVertexBuffer->curIndex >= index) {
+        pVertexBuffer->curIndex = index;
+    }
+    
+    pObject->unk16 = -1;
+    return index;
+}
+
+void func_801E0398(VertexBuffer* pVertexBuffer, MATRIX* pMatrix, s32 arg2, s32* pOT, s32 renderCtx) {
+    long otz;
+    int i;
+    Vertex* pVertex;
+
+    SetRotMatrix(pMatrix);
+    SetTransMatrix(pMatrix);
+    
+    pVertex = pVertexBuffer->pVertices;
+    for (i = 0; i < pVertexBuffer->capacity; i++, pVertex++) {
+        if (pVertex->unk16 == -1) {
+            continue;
+        }
+        
+        if (pVertex->unk16 >= pVertex->unk1E) {
+            func_801E0354(pVertexBuffer, pVertex);
+            continue;
+        }
+
+        // Does not match w/ setRGB0 macro
+        pVertex->polys[renderCtx].r0 = pVertex->red >> 6;
+        pVertex->polys[renderCtx].g0 = pVertex->green >> 6;
+        pVertex->polys[renderCtx].b0 = pVertex->blue >> 6;
+        
+        if (pVertex->unkE == 0) {
+            setXY4(
+                &pVertex->polys[renderCtx],
+                pVertex->x0, pVertex->y0,
+                pVertex->x1, pVertex->y1,
+                pVertex->x2, pVertex->y2,
+                pVertex->x3, pVertex->y3
+            );
+            addPrim(pOT, &pVertex->polys[renderCtx]);
+        } else {
+            // RotTransPers3
+            gte_ldv3(
+                (SVECTOR*) &pVertex->x0,
+                (SVECTOR*) &pVertex->x1,
+                (SVECTOR*) &pVertex->x2
+            );
+            gte_rtpt();
+            gte_stsxy3(
+                (long*) &pVertex->polys[renderCtx].x0,
+                (long*) &pVertex->polys[renderCtx].x1,
+                (long*) &pVertex->polys[renderCtx].x2
+            );
+            gte_stszotz(&otz);
+            otz >>= D_80050100;
+
+            // RotTransPers
+            gte_ldv0((SVECTOR*) &pVertex->x3);
+            gte_rtps();
+            gte_stsxy((long*) &pVertex->polys[renderCtx].x3);
+
+            addPrim(&pOT[otz], &pVertex->polys[renderCtx]);
+        }
+        
+        pVertex->unk16 += arg2;
+        pVertex->red -= pVertex->redDelta * arg2;
+        pVertex->green -= pVertex->greenDelta * arg2;
+        pVertex->blue -= pVertex->blueDelta * arg2;
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0698);
 
@@ -226,11 +427,50 @@ INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7094);
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7298);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E72CC);
+void func_801E72CC(MATRIX* pMatrix, void* _unk, int index, int sceneIndex) {
+    MATRIX _mat;
+    Unk* pEntry;
+
+    pEntry = D_801E8670[index];
+    if (pEntry == NULL) {
+        return;
+    }
+    
+    if (sceneIndex != 0) {
+        CompMatrix(
+            &pEntry->pScenes[0].matrix1, 
+            &pEntry->pScenes[sceneIndex].matrix2, 
+            pMatrix
+        );
+        return;
+    }
+    
+    *pMatrix = pEntry->pScenes[0].matrix1;
+}
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7378);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E738C);
+void func_801E738C(int capacity) {
+    int i;
+
+    D_801E8640 = 0;
+    D_801E869C = 0;
+    
+    func_801DF5F4(&D_801E86A8, capacity);
+    MenuHelperInitializeVertexBuffer(&g_MenuHelperVertexBuffer, 0x10);
+
+    for (i = 0; i < 10; i++) {
+        D_801E8670[i] = NULL;
+    }
+
+    for (i = 0; i < 8; i++) {
+        D_801E85F4[i].unk0 = 0;
+    }
+
+    for (i = 0; i < 2; i++) {
+        D_801E8648[i].unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E742C);
 
@@ -248,4 +488,16 @@ INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8430);
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8480);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8510);
+void func_801E8510(Unk* pUnk) {
+    int i;
+    UnkInner1* pObjects;
+
+    if (pUnk->unk10C) {
+        pObjects = HeapAlloc(pUnk->unk10C * sizeof(UnkInner1), 0x0);
+        for (i = 0; i < pUnk->unk10C; i++) {
+            pObjects[i].unk0 = -1;
+            pObjects[i].unk8 = 0;
+        }
+        pUnk->unk110 = pObjects;
+    }
+}
