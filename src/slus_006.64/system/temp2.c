@@ -1,4 +1,6 @@
 #include "common.h"
+#include "system/memory.h"
+#include "system/model.h"
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002AC24);
 
@@ -22,7 +24,42 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C310);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C3D8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C3E8);
+// When a model file has been loaded somewhere in memory, the relative pointers
+// in the file needs to be resolved to their concrete address.
+int ModelResolvePointers(ModelFileHeader* pModelFile) {
+    int numParts;
+    int i;
+    int j;
+    ModelPart* pCurPart;
+    ModelPacketInfo* pPacketInfo;
+
+    i = pModelFile->flags;
+    numParts = pModelFile->numModelParts;
+    if ((i & 1) == 0) {
+        pModelFile->flags = i | 1;
+    
+        pCurPart = pModelFile->modelParts;
+        for (i = 0; i < numParts; i++) {
+            pCurPart->pVertices = (mem_addr)pCurPart->pVertices + (mem_addr)pModelFile;
+            pCurPart->unkC = (mem_addr)pCurPart->unkC + (mem_addr)pModelFile;
+            pCurPart->unk10 = (mem_addr)pCurPart->unk10 + (mem_addr)pModelFile;
+            pCurPart->pColors = (mem_addr)pCurPart->pColors + (mem_addr)pModelFile;
+            
+            if (pCurPart->unk1C != NULL) {
+                pCurPart->unk1C = (mem_addr)pCurPart->unk1C + (mem_addr)pModelFile;
+                pPacketInfo = pCurPart->unk1C + 1;
+                for (j = *pCurPart->unk1C; j != -1; j--) {
+                    pPacketInfo[j].lightDataSize += (mem_addr)pModelFile;
+                    pPacketInfo[j].modelPacketSize += (mem_addr)pModelFile;
+                }
+            }
+            
+            pCurPart++;
+        }
+    }
+
+    return numParts;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C4BC);
 
@@ -38,9 +75,21 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C700);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C8CC);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CB54);
+void ModelAllocatePackets(ModelPart* pModelPart, void** pPacket1, void** pPacket2) {
+    void* pPacketBuffer;
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CBBC);
+    HeapSetCurrentContentType(HEAP_CONTENT_MODEL_PACKET);
+    pPacketBuffer = HeapAlloc(pModelPart->unk20[1].modelPacketSize * 2, 0x0);
+    *pPacket1 = pPacketBuffer;
+    *pPacket2 = pPacketBuffer + pModelPart->unk20[1].modelPacketSize;
+}
+
+void ModelPartFreeLightData(ModelPart* pModelPart) {
+    if (pModelPart->flags & MODEL_FLAG_HAS_LIGHT_DATA) {
+        HeapFree(pModelPart->pLightData);
+        pModelPart->flags &= ~MODEL_FLAG_HAS_LIGHT_DATA;
+    }
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CC10);
 
@@ -90,7 +139,39 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DAFC);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DB84);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DC9C);
+// Get largest absolute value
+long func_8002DC9C(long x, long y, long z) {
+    long absX;
+    long absY;
+    long absZ;
+    long result;
+
+    absX = x;
+    absY = y;
+    absZ = z;
+    
+    if (x < 0) absX = -x;
+    if (y < 0) absY = -y;
+    if (z < 0) absZ = -z;
+    
+    if (absX >= absY && absX >= absZ) {
+        return x;
+    }
+    
+    if (absY >= absX && absY >= absZ) {
+        return y;
+    }
+
+    result = absZ < absX;
+    if (result == 0) {
+        result = absZ < absY;
+        if (result == 0) {
+            return z;
+        }
+    }
+    
+    return result;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DD20);
 

@@ -1,9 +1,16 @@
-MenuHelperFreeMenuScene = 0x801DCD8C;
+MenuHelperInitializeMesh = 0x801DC22C;
+MenuHelperInitializeSkeleton = 0x801DC2D0;
+
+MenuHelperFreeModelSkeleton = 0x801DCD8C;
+MenuHelperFreeModelMesh = 0x801DCE18;
 
 MenuHelperInitializeVertexBuffer = 0x801E0064;
 MenuHelperFreeVertexBuffer = 0x801E00DC;
 MenuHelperInitializeVertices = 0x801E011C;
 
+MenuHelperInitialize = 0x801E738C;
+
+g_MenuHelperMeshes = 0x801E85F4;
 D_801E8648 = 0x801E8648; // type:Temp6[] size:0x28
-D_801E8670 = 0x801E8670; // type:Unk*[] size:0x28
+g_MenuHelperModels = 0x801E8670; // type:Model*[] size:0x28
 g_MenuHelperVertexBuffer = 0x801E86A0;

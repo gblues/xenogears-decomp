@@ -13,75 +13,211 @@ extern s16 D_801E869C;
 extern VertexBuffer g_MenuHelperVertexBuffer;
 extern Temp4 D_801E86A8;
 
-unsigned func_801DC5C0(MenuScene* menu, s32 degrees) {
+ModelMesh* MenuHelperInitializeMesh(ModelFileHeader* pModelFile, ModelMesh* pModel) {
+    u_int numParts;
+    int i;
+
+    HeapChangeCurrentUser(HEAP_USER_MASA, HEAP_CONTENT_NULL);
+    numParts = ModelResolvePointers(pModelFile);
+    pModel->pParts = HeapAlloc(numParts * sizeof(ModelPart*), 0x0);
+    pModel->numParts = numParts;
+    if (pModel->pParts != NULL) {
+        for (i = 0; i < numParts; i++) {
+            pModel->pParts[i] = &pModelFile->modelParts[i];
+        }
+    }
+    return pModel;
+}
+
+ModelJoint* MenuHelperInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJointEntries, s32 arg2, s32 hasTexture, s16 texX, s16 texY, s16 clutX, s16 clutY) {
+    int i;
+    int numJoints;
+    u_short jointIndex;
+    u_short parentIndex;
+    ModelJointEntry* pCurJointEntry;
+    ModelJoint* pSkeleton;
+    ModelJoint* pCurJoint;
+
+    HeapChangeCurrentUser(HEAP_USER_MASA, HEAP_CONTENT_NULL);
+    
+    pCurJointEntry = pJointEntries;
+    jointIndex = pCurJointEntry->jointIndex;
+    numJoints = 0;
+    while (jointIndex < pModel->numParts || jointIndex == 0xFFFF) {
+        pCurJointEntry++;
+        jointIndex = pCurJointEntry->jointIndex;
+        numJoints++;
+    }
+
+    if (numJoints == 0) {
+        return NULL;
+    }
+
+    // ALways account for root scene
+    numJoints++;
+    
+    pSkeleton = HeapAlloc(numJoints * sizeof(ModelJoint), 0x0);
+    if (pSkeleton == NULL) {
+        return NULL;
+    }
+    
+    pCurJointEntry = pJointEntries;
+    pCurJoint = pSkeleton + 1;
+    i = 1;
+    jointIndex = pCurJointEntry->jointIndex;
+    parentIndex = pCurJointEntry->parentIndex;
+
+    // Root scene
+    pSkeleton[0].doTransform = TRUE;
+    pSkeleton[0].doRotate = TRUE;
+    pSkeleton[0].rotDirection = 1;
+    pSkeleton[0].vec1.vx = 0x1000;
+    pSkeleton[0].vec1.vy = 0x1000;
+    pSkeleton[0].vec1.vz = 0x1000;
+    pSkeleton[0].pParent = NULL;
+    pSkeleton[0].unk7 = 0;
+    pSkeleton[0].jointIndex = 0xFFFF;
+    pSkeleton[0].length = numJoints;
+    pSkeleton[0].pModelPacketBuffer = NULL;
+    pSkeleton[0].pCurModelPacket = NULL;
+    pSkeleton[0].vec2.vx = 0;
+    pSkeleton[0].vec2.vy = 0;
+    pSkeleton[0].vec2.vz = 0;
+    pSkeleton[0].unk5C[0] = 0;
+    pSkeleton[0].unk5C[1] = 0;
+    pSkeleton[0].unk5C[2] = 0;
+    pSkeleton[0].unk70 = 0;
+    pSkeleton[0].unk74 = 0;
+    pSkeleton[0].unk78 = 0;
+  
+    while (jointIndex < pModel->numParts || jointIndex == 0xFFFF) {
+        if (parentIndex == 0xFFFF) {
+            pCurJoint->pParent = NULL;
+        } else {
+            pCurJoint->pParent = &pSkeleton[parentIndex] + 1;
+        }
+        
+        pCurJoint->length = i++;
+        pCurJoint->doTransform = TRUE;
+        pCurJoint->doRotate = TRUE;
+        pCurJoint->unk7 = 1;
+        pCurJoint->vec1.vx = 0x1000;
+        pCurJoint->vec1.vy = 0x1000;
+        pCurJoint->vec1.vz = 0x1000;
+        pCurJoint->rotDirection = 0;
+        pCurJoint->vec1.pad = 0;
+        pCurJoint->jointIndex = jointIndex;
+    
+        if (jointIndex != 0xFFFF) {
+            // Allocate model packets
+            ModelAllocatePackets(pModel->pParts[jointIndex], &pCurJoint->pModelPacketBuffer, &pCurJoint->pCurModelPacket);
+            if (pCurJoint->pModelPacketBuffer == NULL) {
+                MenuHelperFreeModelSkeleton(pSkeleton);
+                return NULL;
+            }
+    
+            if (hasTexture) {
+                func_8002CC10(texX, texY);
+                func_8002CC74(clutX, clutY);
+            }
+    
+            // Initialize model packets
+            func_8002C8CC(pModel->pParts[jointIndex], pCurJoint->pModelPacketBuffer, arg2);
+            memcpy(pCurJoint->pCurModelPacket, pCurJoint->pModelPacketBuffer, pModel->pParts[jointIndex]->unk20[1].modelPacketSize);
+        } else {
+            pCurJoint->pModelPacketBuffer = NULL;
+            pCurJoint->pCurModelPacket = NULL;
+        }
+    
+        pCurJoint->vec2.vx = 0;
+        pCurJoint->vec2.vy = 0;
+        pCurJoint->vec2.vz = 0;
+        pCurJoint->unk5C[0] = 0;
+        pCurJoint->unk5C[1] = 0;
+        pCurJoint->unk5C[2] = 0;
+        pCurJoint->unk70 = 0;
+        pCurJoint->unk74 = 0;
+        pCurJoint->unk78 = 0;
+        
+        pCurJoint++;
+        pCurJointEntry++;
+        
+        jointIndex = pCurJointEntry->jointIndex;
+        parentIndex = pCurJointEntry->parentIndex;
+    }
+    
+    return pSkeleton;
+}
+
+unsigned func_801DC5C0(ModelJoint* pJoint, s32 degrees) {
     MATRIX* matrix1;
     MATRIX* matrix2;
     MATRIX* nextMatrix2;
-    MenuScene* scene = menu;
+    ModelJoint* pSkeleton = pJoint;
     SVECTOR* vec;
     short *scratch = (short *)PSX_SCRATCH;
     unsigned i;
     unsigned length;
 
-    menu->matrix2.t[0] = menu->unk5C[0];
-    menu->matrix2.t[1] = menu->unk5C[1];
-    menu->matrix2.t[2] = menu->unk5C[2];
-    length = menu->length;
+    pJoint->matrix2.t[0] = pJoint->unk5C[0];
+    pJoint->matrix2.t[1] = pJoint->unk5C[1];
+    pJoint->matrix2.t[2] = pJoint->unk5C[2];
+    length = pJoint->length;
 
-    if (menu->rotDirection != 0) {
-        RotMatrixYXZ(&menu->vec2, &menu->matrix2);
+    if (pJoint->rotDirection != 0) {
+        RotMatrixYXZ(&pJoint->vec2, &pJoint->matrix2);
     } else {
-        RotMatrix(&menu->vec2, &menu->matrix2);
+        RotMatrix(&pJoint->vec2, &pJoint->matrix2);
     }
 
-    scratch[0] = (degrees * menu->vec1.vx) >> 0xC;
+    scratch[0] = (degrees * pJoint->vec1.vx) >> 0xC;
     scratch[1] = 0;
     scratch[2] = 0;
     scratch[3] = 0;
-    scratch[4] = (degrees * menu->vec1.vy) >> 0xC;
+    scratch[4] = (degrees * pJoint->vec1.vy) >> 0xC;
     scratch[5] = 0;
     scratch[6] = 0;
     scratch[7] = 0;
-    scratch[8] = (degrees * menu->vec1.vz) >> 0xC;
+    scratch[8] = (degrees * pJoint->vec1.vz) >> 0xC;
 
-    MulMatrix0(&menu->matrix2, (MATRIX* )scratch, &menu->matrix1);
+    MulMatrix0(&pJoint->matrix2, (MATRIX* )scratch, &pJoint->matrix1);
 
-    menu->matrix1.t[0] = menu->matrix2.t[0];
-    menu->matrix1.t[1] = menu->matrix2.t[1];
-    menu->matrix1.t[2] = menu->matrix2.t[2];
+    pJoint->matrix1.t[0] = pJoint->matrix2.t[0];
+    pJoint->matrix1.t[1] = pJoint->matrix2.t[1];
+    pJoint->matrix1.t[2] = pJoint->matrix2.t[2];
 
     for (i = 1; i < length; i++) {
-        menu++;
+        pJoint++;
 
-        if (menu->doRotate != 0) {
-            if (menu->rotDirection != 0) {
-                RotMatrixYXZ(&menu->vec2, &menu->matrix1);
-                menu->doRotate = 0;
+        if (pJoint->doRotate != 0) {
+            if (pJoint->rotDirection != 0) {
+                RotMatrixYXZ(&pJoint->vec2, &pJoint->matrix1);
+                pJoint->doRotate = 0;
             } else {
-                RotMatrix(&menu->vec2, &menu->matrix1);
-                menu->doRotate = 0;
+                RotMatrix(&pJoint->vec2, &pJoint->matrix1);
+                pJoint->doRotate = 0;
             }
         }
-        if ((menu->parent != NULL) && (menu->parent->doTransform == 1)) {
-            menu->doTransform = 1;
+        if ((pJoint->pParent != NULL) && (pJoint->pParent->doTransform == 1)) {
+            pJoint->doTransform = 1;
         }
 
-        if(menu->doTransform != 0) {
-            menu->matrix1.t[0] = menu->unk5C[0];
-            menu->matrix1.t[1] = menu->unk5C[1];
-            menu->matrix1.t[2] = menu->unk5C[2];
+        if(pJoint->doTransform != 0) {
+            pJoint->matrix1.t[0] = pJoint->unk5C[0];
+            pJoint->matrix1.t[1] = pJoint->unk5C[1];
+            pJoint->matrix1.t[2] = pJoint->unk5C[2];
 
-            if(menu->parent != NULL) {
-                CompMatrix(&menu->parent->matrix2, &menu->matrix1, &menu->matrix2);
+            if(pJoint->pParent != NULL) {
+                CompMatrix(&pJoint->pParent->matrix2, &pJoint->matrix1, &pJoint->matrix2);
             } else {
-                menu->matrix2 = menu->matrix1;
+                pJoint->matrix2 = pJoint->matrix1;
             }
         }
     }
 
     for(i = 1; i < length; i++) {
-        scene++;
-        scene->doTransform = 0;
+        pSkeleton++;
+        pSkeleton->doTransform = FALSE;
     }
 
     return length;
@@ -90,30 +226,46 @@ unsigned func_801DC5C0(MenuScene* menu, s32 degrees) {
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DC848);
 
-void func_801DCC34(void) {
-}
+void func_801DCC34(void) {}
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DCC3C);
 
-void MenuHelperFreeMenuScene(MenuScene* menu) {
+void MenuHelperFreeModelSkeleton(ModelJoint* pSkeleton) {
     int i;
-    MenuScene *scene = menu;
+    ModelJoint* pJoint = pSkeleton;
 
-    if (menu != NULL) {
-        for (i = 0; i < menu->length; i++) {
-            if (scene->unk68 != NULL) {
-                HeapFree(scene->unk68);
-                scene->unk68 = NULL;
-                scene->unk6C = 0;
+    if (pSkeleton != NULL) {
+        for (i = 0; i < pSkeleton->length; i++) {
+            if (pJoint->pModelPacketBuffer != NULL) {
+                HeapFree(pJoint->pModelPacketBuffer);
+                pJoint->pModelPacketBuffer = NULL;
+                pJoint->pCurModelPacket = NULL;
             }
-            scene++;
+            pJoint++;
         }
-        menu->length = 0;
-        HeapFree(menu);
+        pSkeleton->length = 0;
+        HeapFree(pSkeleton);
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DCE18);
+void MenuHelperFreeModelMesh(ModelMesh* pMesh, s32 shouldFreeLightData) {
+    int i;
+
+    if (pMesh != NULL) {
+        for (i = 0; i < pMesh->numParts; i++) {
+            if (pMesh->pParts != NULL) {
+                if (pMesh->pParts[i] && shouldFreeLightData) {
+                    ModelPartFreeLightData(pMesh->pParts[i]);
+                }
+            }
+        }
+        
+        if (pMesh->pParts != NULL) {
+            HeapFree(pMesh->pParts);
+            pMesh->pParts = NULL;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DCEC8);
 
@@ -427,30 +579,30 @@ INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7094);
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7298);
 
-void func_801E72CC(MATRIX* pMatrix, void* _unk, int index, int sceneIndex) {
+void func_801E72CC(MATRIX* pMatrix, void* _unk, int index, int jointIndex) {
     MATRIX _mat;
-    Unk* pEntry;
+    Model* pModel;
 
-    pEntry = D_801E8670[index];
-    if (pEntry == NULL) {
+    pModel = g_MenuHelperModels[index];
+    if (pModel == NULL) {
         return;
     }
     
-    if (sceneIndex != 0) {
+    if (jointIndex != 0) {
         CompMatrix(
-            &pEntry->pScenes[0].matrix1, 
-            &pEntry->pScenes[sceneIndex].matrix2, 
+            &pModel->pSkeleton[0].matrix1, 
+            &pModel->pSkeleton[jointIndex].matrix2, 
             pMatrix
         );
         return;
     }
     
-    *pMatrix = pEntry->pScenes[0].matrix1;
+    *pMatrix = pModel->pSkeleton[0].matrix1;
 }
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7378);
 
-void func_801E738C(int capacity) {
+void MenuHelperInitialize(int capacity) {
     int i;
 
     D_801E8640 = 0;
@@ -459,12 +611,12 @@ void func_801E738C(int capacity) {
     func_801DF5F4(&D_801E86A8, capacity);
     MenuHelperInitializeVertexBuffer(&g_MenuHelperVertexBuffer, 0x10);
 
-    for (i = 0; i < 10; i++) {
-        D_801E8670[i] = NULL;
+    for (i = 0; i < MAX_MODELS; i++) {
+        g_MenuHelperModels[i] = NULL;
     }
 
-    for (i = 0; i < 8; i++) {
-        D_801E85F4[i].unk0 = 0;
+    for (i = 0; i < MAX_MODEL_MESHES; i++) {
+        g_MenuHelperMeshes[i].pParts = NULL;
     }
 
     for (i = 0; i < 2; i++) {
@@ -488,16 +640,16 @@ INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8430);
 
 INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8480);
 
-void func_801E8510(Unk* pUnk) {
+void func_801E8510(Model* pModel) {
     int i;
     UnkInner1* pObjects;
 
-    if (pUnk->unk10C) {
-        pObjects = HeapAlloc(pUnk->unk10C * sizeof(UnkInner1), 0x0);
-        for (i = 0; i < pUnk->unk10C; i++) {
+    if (pModel->unk10C) {
+        pObjects = HeapAlloc(pModel->unk10C * sizeof(UnkInner1), 0x0);
+        for (i = 0; i < pModel->unk10C; i++) {
             pObjects[i].unk0 = -1;
             pObjects[i].unk8 = 0;
         }
-        pUnk->unk110 = pObjects;
+        pModel->unk110 = pObjects;
     }
 }

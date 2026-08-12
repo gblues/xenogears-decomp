@@ -3,28 +3,36 @@
 
 #include "psyq/libgpu.h"
 #include "psyq/libgte.h"
+#include "system/model.h"
 
-struct _menu_scene;
-typedef struct _menu_scene MenuScene;
 
-struct _menu_scene {
-    /* 0x00 */ MenuScene* parent;
+struct _ModelJoint;
+typedef struct _ModelJoint ModelJoint;
+struct _ModelJoint {
+    /* 0x00 */ ModelJoint* pParent;
     /* 0x04 */ u_char doTransform;
     /* 0x05 */ u_char doRotate;
     /* 0x06 */ u_char rotDirection;
     /* 0x07 */ u_char unk7;
-    /* 0x08 */ u_char unk8;
-    /* 0x09 */ u_char unk9;
+    /* 0x08 */ u_short jointIndex;
     /* 0x0A */ u_short length;
     /* 0x0c */ MATRIX matrix1;
     /* 0x2c */ MATRIX matrix2;
     /* 0x4c */ SVECTOR vec1;
     /* 0x54 */ SVECTOR vec2;
     /* 0x5c */ long unk5C[3];
-    /* 0x68 */ void *unk68;
-    /* 0x6c */ int unk6C;
-    /* 0x70 */ u_char unk70[12];
+    /* 0x68 */ void* pModelPacketBuffer;
+    /* 0x6c */ void* pCurModelPacket;
+    /* 0x70 */ u32 unk70;
+    /* 0x74 */ u32 unk74;
+    /* 0x78 */ u32 unk78;
 }; // Size: 0x7C
+
+// Joint entry
+typedef struct {
+    /* 0x0 */ u_short jointIndex;
+    /* 0x2 */ u_short parentIndex;
+} ModelJointEntry; // Size: 0x4
 
 typedef struct {
     // NOTE: These first four blocks are sometimes used as SVECTORs, but
@@ -80,11 +88,12 @@ typedef struct {
 } Temp4;
 /* -------------- */
 
-
 typedef struct {
-    /* 0x0 */ u32 unk0;
-    /* 0x4 */ u32 unk4;
-} Temp5; // Size: 0x8
+    /* 0x0 */ ModelPart** pParts;
+    /* 0x4 */ u_int numParts;
+} ModelMesh; // Size: 0x8
+
+
 
 typedef struct {
     /* 0x0 */ u8 unk0[0x6];
@@ -100,8 +109,8 @@ typedef struct {
 } UnkInner1; // Size: 0x70
 
 typedef struct {
-    /* 0x0   */ u8 unk0[0x4];
-    /* 0x4   */ MenuScene* pScenes;
+    /* 0x0   */ ModelMesh* pMesh;
+    /* 0x4   */ ModelJoint* pSkeleton; // Array of joints
     /* 0x8   */ u8 unk8[0xB0];
     /* 0xB8  */ POLY_FT4 polys[2];
     /* 0x108 */ u8 unk108[0x4];
@@ -113,11 +122,13 @@ typedef struct {
     /* 0x114 */ void* unk114; // 0x24 sized array, unk10D entries
     /* 0x118 */ void* unk118; // 0x30 sized array, unk10E entries
     /* 0x11C */ u8 unk11C[0x18];
-} Unk; // Size: 0x134
+} Model; // Size: 0x134
 
+#define MAX_MODEL_MESHES 8
+#define MAX_MODELS 10
 
-extern Temp5 D_801E85F4[8];
+extern ModelMesh g_MenuHelperMeshes[MAX_MODEL_MESHES];
 extern Temp6 D_801E8648[2];
-extern Unk* D_801E8670[10];
+extern Model* g_MenuHelperModels[MAX_MODELS];
 
 #endif

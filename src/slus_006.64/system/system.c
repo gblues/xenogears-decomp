@@ -144,7 +144,7 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033ABC);
 
 void func_80033B34(u16* pInput, u8* pOutput, int count) {
     int i;
-    u8 *pEntry = g_SystemDataEntries->pEntries[0x1B];
+    u8 *pEntry = g_SystemDataEntries->entries[0x1B];
     u8 *pPos;
 
     for(i = count-1; i != -1; i--) {

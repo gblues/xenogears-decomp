@@ -115,6 +115,11 @@ ArchiveCdSetMode = 0x8002A428;
 ArchiveStreamFreeQueueData = 0x8002A524;
 ArchiveCdDriveCommandHandler = 0x8002A68C;
 
+// 3D Models
+ModelResolvePointers = 0x8002C3E8;
+ModelAllocatePackets = 0x8002CB54;
+ModelPartFreeLightData = 0x8002CBBC;
+
 // Heap / Dynamic Memory
 HeapGetNextBlockHeader = 0x80031894;
 HeapGetBlockUser = 0x800318A8;
