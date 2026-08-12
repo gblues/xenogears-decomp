@@ -1,11 +1,11 @@
 #include "common.h"
 #include "psyq/libgpu.h"
 #include "system/memory.h"
-
+#include "system/archive.h"
 
 extern void* g_SystemDataFile;
 extern void* g_SystemFontFile;
-extern void* g_SystemDataEntries;
+extern SystemDataEntries* g_SystemDataEntries;
 
 extern u8 g_SystemPaletteData[];
 extern s16 g_SystemPalette1;
@@ -69,7 +69,7 @@ void SystemInitializeData(void* pSystemData) {
     g_SystemDataFile = pSystemData;
     g_SystemDataEntries = pSystemData;
     ResolveArchiveEntryPointers(pSystemData);
-    g_SystemDataEntries += 4;
+    g_SystemDataEntries++;
 }
 
 void SystemInitialize(void* pSystemFont, void* pSystemData) {
@@ -142,7 +142,27 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033A8C);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033ABC);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033B34);
+void func_80033B34(u16* pInput, u8* pOutput, int count) {
+    int i;
+    u8 *pEntry = g_SystemDataEntries->pEntries[0x1B];
+    u8 *pPos;
+
+    for(i = count-1; i != -1; i--) {
+        // I don't like this, but it solves a finnicky register swap
+        pPos = (u8 *) ((pInput[0] * 2) + (int)pEntry);
+        pInput++;
+
+        if(pPos[0]) {
+            *pOutput++ = pPos[0];
+            *pOutput++ = pPos[1];
+
+        } else {
+            *pOutput++ = pPos[1];
+        }
+    }
+
+    *pOutput = 0;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033BAC);
 

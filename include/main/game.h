@@ -51,13 +51,10 @@ typedef struct {
     /* 0x01 */ u8 unk1;
     /* 0x02 */ u8 frameId;
     /* 0x03 */ u8 engineId;
-    /* 0x04 */ u8 unk4;
-    /* 0x05 */ u8 unk5;
-    /* 0x06 */ u8 unk6;
-    /* 0x07 */ u8 unk7;
+    /* 0x04 */ u8 unk4[4];
     /* 0x08 */ u8 armorId;
     /* 0x09 */ u8 accessorySlots[3];
-    /* 0x0C */ u8 unkC;
+    /* 0x0C */ u8 weaponId;
     /* 0x0D */ u8 unkD;
     /* 0x0E */ u16 unkE;
     /* 0x10 */ s16 ether;
@@ -112,18 +109,18 @@ typedef struct {
     /* 0x6E */ u16 unk6E;
     /* 0x70 */ u16 baseDefense; /* impacted by AR value of equipped armor */
     /* 0x72 */ u16 baseEtherDefense;
-    /* 0x74 */ u8 unk74;
+    /* 0x74 */ u8 attackPower;
     /* 0x75 */ u8 unk75;
     /* 0x76 */ u8 unk76[0x10];
     /* 0x86 */ u16 unk86;
     /* 0x88 */ u8 unk88[0x10];
-    /* 0x98 */ u8 unk98;
+    /* 0x98 */ u8 agility;
     /* 0x99 */ u8 unk99;
     /* 0x9a */ u8 unk9A;
     /* 0x9b */ u8 unk9B;
     /* 0x9c */ u8 unk9C;
     /* 0x9d */ u8 unk9D;
-    /* 0x9e */ u8 unk9E;
+    /* 0x9e */ u8 etherAmplification;
     /* 0x9f */ u8 unk9F;
     /* 0xA0 */ int unkA0;
 } GameGear; // size: 0xA4

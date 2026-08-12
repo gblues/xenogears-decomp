@@ -77,7 +77,7 @@ extern int D_801D6AFC[];
 extern int D_801D6B7C[];
 extern int D_801D6C44[];
 extern u16 D_801D6C68[];
-extern int D_801D6C88[];
+extern int g_gearShopGearEquipFlags[];
 extern u8  D_801D6D08[8]; // indexed by (renderContext * 4)+i
 extern u8  D_801D6D10[2]; // indexed by renderContext
 extern int D_801D6D14[8]; // indexed by (renderContext * 4)+i
@@ -156,11 +156,11 @@ u_short GearShopMenuGetCharacterBitMask(int index) {
 }
 
 s32 func_801C5260(u8 count) {
-    return D_801D6C88[count];
+    return g_gearShopGearEquipFlags[count];
 }
 
-s32 func_801C527C(s32 arg0, u8 arg1) {
-    return arg0 & D_801D6C88[arg1];
+s32 GearShopMenuGearCanEquip(s32 equipFlags, u8 gearId) {
+    return equipFlags & g_gearShopGearEquipFlags[gearId];
 }
 
 void GearShopMenuParseNumberToString(u_int amount) {
@@ -470,9 +470,10 @@ void GearShopMenuInitializeBackgrounds(void) {
     }
 }
 
-void func_801C6A54(u_char mode) {
+
+void GearShopMenuShopDataManager(u8 mode) {
     u_int* pArchive;
-    
+
     if (mode < SHOP_DATA_FREE) {
         pArchive = HeapAlloc(ArchiveDecodeAlignedSize(2), 1);
         ArchiveReadFileToBuffer(2, pArchive, 0, 0x80);
@@ -528,7 +529,6 @@ void func_801C6A54(u_char mode) {
 // https://decomp.me/scratch/j5f3F
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6E74);
 
-// TODO: counterpart in ShopMenu uses u_short, but a number of matches break if we define this using u_short here
 void GearShopMenuSetVertices(SVECTOR* pVertices, u_short x, u_short y, u_short width, u_short height) {
     pVertices[0].vx = x - 160;
     pVertices[0].vy = y - 112;
@@ -2071,7 +2071,7 @@ void GearShopMenuFree(void) {
     GearShopMenuMenuUnk5Manager(MENU_DATA_FREE);
     GearShopMenuDressingRoomManager(MENU_DATA_FREE);
     GearShopMenuMenuUnk1Manager(MENU_DATA_FREE);
-    func_801C6A54(0x10);
+    GearShopMenuShopDataManager(SHOP_DATA_FREE);
     GearShopMenuMenuShopManager(MENU_DATA_FREE);
     GearShopMenuMenuUnk8Manager(MENU_DATA_FREE);
     HeapFree(g_Menu->resources);

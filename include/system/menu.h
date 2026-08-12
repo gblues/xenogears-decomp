@@ -59,6 +59,9 @@
 #define MENU_DATA_INITIALIZE 0x1
 #define MENU_DATA_FREE 0x0
 
+#define SHOP_DATA_INITIALIZE 0x0
+#define SHOP_DATA_FREE 0x10
+
 // TODO: Move to more fitting file
 #define FONT_LETTER_HEIGHT 0xD
 
@@ -69,6 +72,11 @@
 #define ITEM_TYPE_ACCESSORY 0x1
 #define ITEM_TYPE_ITEM 0x2
 
+#define ITEM_TYPE_GEAR_ARMOR     0x0
+#define ITEM_TYPE_GEAR_FRAME     0x1
+#define ITEM_TYPE_GEAR_ENGINE    0x2
+#define ITEM_TYPE_GEAR_ACCESSORY 0x3
+#define ITEM_TYPE_GEAR_WEAPON    0x4
 
 /*
  * Menu Resource type definitions
@@ -125,9 +133,8 @@ typedef struct {
 } MenuShopItem; // Size: 0x10
 
 typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u16 unk2;
-    /* 0x04 */ u16 unk4;
+    /* 0x00 */ u32 equipFlags;
+    /* 0x04 */ u16 price;
     /* 0x06 */ u16 unk6;
     /* 0x08 */ u16 unk8;
     /* 0x0A */ u16 unkA;
@@ -266,10 +273,10 @@ typedef struct {
 } MenuUnk5; // Size: 0x140C
 
 typedef struct {
-    /* 0x00 */ int unk0; // always 0x8003?
+    /* 0x00 */ int equipFlags;
     /* 0x04 */ int hp; // 0x9c4 or 2500
     /* 0x08 */ u16 weight; // 0xDAC or 3500
-    /* 0x0A */ u16 unkA; // 0x320 or 800
+    /* 0x0A */ u16 price; // 0x320 or 800
     /* 0x0C */ int unkC; // 0
     /* 0x10 */ int unk10; // 0
     /* 0x14 */ u8 unk14; // 10 -- agility?
@@ -278,9 +285,8 @@ typedef struct {
     /* 0x17 */ u8 unk17; // 0
 } GearFrame; /* size: 0x18 */
 
-/* most of these are placeholder */
 typedef struct {
-    /* 0x00 */ int unused0; // all engines have this set to -1
+    /* 0x00 */ int equipFlags;
     /* 0x04 */ u16 unused4; // matches maxFuel
     /* 0x06 */ u16 maxFuel;
     /* 0x08 */ u16 pad8; // always 00 00
@@ -292,11 +298,11 @@ typedef struct {
 } GearEngine; /* size: 0x10 */
 
 typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u16 unk2;
-    /* 0x04 */ u16 unk4;
+    /* 0x00 */ u32 equipFlags;
+    /* 0x04 */ u16 price;
     /* 0x06 */ u16 weight;
-    /* 0x08 */ int unk8;
+    /* 0x08 */ u16 unk8;
+    /* 0x0A */ u16 unkA;
     /* 0x0C */ u8 unkC;
     /* 0x0D */ u8 defense;
     /* 0x0E */ u8 etherDefense;
@@ -316,12 +322,12 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u16 unk0;
     /* 0x02 */ u16 unk2;
-    /* 0x04 */ u16 unk4;
-    /* 0x06 */ u16 unk6;
-    /* 0x08 */ u16 unk8;
+    /* 0x04 */ u32 equipFlags;
+    /* 0x08 */ u16 price;
     /* 0x0A */ u16 unkA;
     /* 0x0C */ u16 unkC;
-    /* 0x0E */ u16 unkE;
+    /* 0x0E */ u8 unkE;
+    /* 0x0F */ u8 unkF;
     /* 0x10 */ u16 unk10;
     /* 0x12 */ u16 unk12;
 } GearWeapon; /* size: 0x14 */
@@ -516,8 +522,8 @@ typedef struct {
     /* 0x14F0 */ u8 unk14F0[0x5F0];
     /* 0x1AE0 */ POLY_FT4 polysGoldAfter[9 * 2];
     /* 0x1DB0 */ u8 unk1DB0[0xA00];
-    /* 0x27B0 */ POLY_FT4 polys27B0[9 * 3*2];
-    /* 0x3020 */ POLY_FT4 polys3020[9 * 3*2];
+    /* 0x27B0 */ POLY_FT4 polys27B0[9][3*2];
+    /* 0x3020 */ POLY_FT4 polys3020[9][3*2];
     /* 0x3890 */ LINE_F3 linesPortraitHighlight1[9 * 2]; // Red highlight line around portraits, 1st half
     /* 0x3A40 */ LINE_F3 linesPortraitHighlight2[9 * 2]; // Red highlight line around portraits, 2nd half
     /* 0x3BF0 */ LINE_F2 lines3BF0[2]; // White line between gold amounts?

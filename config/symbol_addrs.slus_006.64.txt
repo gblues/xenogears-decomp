@@ -918,7 +918,7 @@ g_HeapDelayedFreeBlocksHead = 0x80059FCC;
 g_SystemPaletteData = 0x80050190;
 g_SystemPalette1 = 0x800595D4;
 g_SystemPalette2 = 0x80059414;
-g_SystemDataEntries = 0x80059360;
+g_SystemDataEntries = 0x80059360; // type:SystemDataEntries
 g_SystemDataFile = 0x80059368;
 g_SystemFontFile = 0x8005936C;
 
