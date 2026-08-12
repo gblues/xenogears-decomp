@@ -1,5 +1,6 @@
 GearShopMenuIsCharacterFlagSet             =  0x801C5228;
 GearShopMenuGetCharacterBitMask            =  0x801C5244;
+GearShopMenuGearCanEquip                   =  0x801C527C;
 GearShopMenuParseNumberToString            =  0x801C5298;
 GearShopMenuMenuUnk2Manager                =  0x801C5344;
 GearShopMenuMenuManagerManager             =  0x801C53A8;
@@ -77,6 +78,7 @@ GearShopMenuSellWeaponsMenu                = 0x801D2784;
 GearShopMenuSellPartsMenu                  = 0x801D27C4;
 GearShopMenuSellModeMenuHandleSelectedOption = 0x801D2804;
 
+g_gearShopGearEquipFlags                 =  0x801D6C88; // type:s32 size:20
 g_gearShopAvailableCharacterCount        =  0x801D6FD8; // type:s32
 g_gearShopCurCharacterIndex              =  0x801D6FDC;
 g_gearShopCurrentGearId = 0x801D9084;

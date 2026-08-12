@@ -133,9 +133,8 @@ typedef struct {
 } MenuShopItem; // Size: 0x10
 
 typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u16 unk2;
-    /* 0x04 */ u16 unk4;
+    /* 0x00 */ u32 equipFlags;
+    /* 0x04 */ u16 price;
     /* 0x06 */ u16 unk6;
     /* 0x08 */ u16 unk8;
     /* 0x0A */ u16 unkA;
@@ -274,10 +273,10 @@ typedef struct {
 } MenuUnk5; // Size: 0x140C
 
 typedef struct {
-    /* 0x00 */ int unk0; // always 0x8003?
+    /* 0x00 */ int equipFlags;
     /* 0x04 */ int hp; // 0x9c4 or 2500
     /* 0x08 */ u16 weight; // 0xDAC or 3500
-    /* 0x0A */ u16 unkA; // 0x320 or 800
+    /* 0x0A */ u16 price; // 0x320 or 800
     /* 0x0C */ int unkC; // 0
     /* 0x10 */ int unk10; // 0
     /* 0x14 */ u8 unk14; // 10 -- agility?
@@ -287,7 +286,7 @@ typedef struct {
 } GearFrame; /* size: 0x18 */
 
 typedef struct {
-    /* 0x00 */ int unk0; // all engines have this set to -1
+    /* 0x00 */ int equipFlags;
     /* 0x04 */ u16 unused4; // matches maxFuel
     /* 0x06 */ u16 maxFuel;
     /* 0x08 */ u16 pad8; // always 00 00
@@ -299,8 +298,7 @@ typedef struct {
 } GearEngine; /* size: 0x10 */
 
 typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u16 unk2;
+    /* 0x00 */ u32 equipFlags;
     /* 0x04 */ u16 price;
     /* 0x06 */ u16 weight;
     /* 0x08 */ u16 unk8;
@@ -324,8 +322,7 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u16 unk0;
     /* 0x02 */ u16 unk2;
-    /* 0x04 */ u16 unk4;
-    /* 0x06 */ u16 unk6;
+    /* 0x04 */ u32 equipFlags;
     /* 0x08 */ u16 price;
     /* 0x0A */ u16 unkA;
     /* 0x0C */ u16 unkC;
@@ -525,8 +522,8 @@ typedef struct {
     /* 0x14F0 */ u8 unk14F0[0x5F0];
     /* 0x1AE0 */ POLY_FT4 polysGoldAfter[9 * 2];
     /* 0x1DB0 */ u8 unk1DB0[0xA00];
-    /* 0x27B0 */ POLY_FT4 polys27B0[9 * 3*2];
-    /* 0x3020 */ POLY_FT4 polys3020[9 * 3*2];
+    /* 0x27B0 */ POLY_FT4 polys27B0[9][3*2];
+    /* 0x3020 */ POLY_FT4 polys3020[9][3*2];
     /* 0x3890 */ LINE_F3 linesPortraitHighlight1[9 * 2]; // Red highlight line around portraits, 1st half
     /* 0x3A40 */ LINE_F3 linesPortraitHighlight2[9 * 2]; // Red highlight line around portraits, 2nd half
     /* 0x3BF0 */ LINE_F2 lines3BF0[2]; // White line between gold amounts?

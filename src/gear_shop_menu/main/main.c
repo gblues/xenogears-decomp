@@ -77,7 +77,7 @@ extern int D_801D6AFC[];
 extern int D_801D6B7C[];
 extern int D_801D6C44[];
 extern u16 D_801D6C68[];
-extern int D_801D6C88[];
+extern int g_gearShopGearEquipFlags[];
 extern u8  D_801D6D08[8]; // indexed by (renderContext * 4)+i
 extern u8  D_801D6D10[2]; // indexed by renderContext
 extern int D_801D6D14[8]; // indexed by (renderContext * 4)+i
@@ -156,11 +156,11 @@ u_short GearShopMenuGetCharacterBitMask(int index) {
 }
 
 s32 func_801C5260(u8 count) {
-    return D_801D6C88[count];
+    return g_gearShopGearEquipFlags[count];
 }
 
-s32 func_801C527C(s32 arg0, u8 arg1) {
-    return arg0 & D_801D6C88[arg1];
+s32 GearShopMenuGearCanEquip(s32 equipFlags, u8 gearId) {
+    return equipFlags & g_gearShopGearEquipFlags[gearId];
 }
 
 void GearShopMenuParseNumberToString(u_int amount) {

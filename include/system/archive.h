@@ -55,7 +55,7 @@ typedef struct {
 
 typedef struct {
     // the length of this array is unknown because we've lost the context giving the number of entries
-    u8 *entries[1];
+    u8 *pEntries[1];
 } SystemDataEntries;
 
 extern ArchiveStreamFileSectionHeader* D_8004FE2C;
