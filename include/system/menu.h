@@ -19,9 +19,9 @@
 #define SHOP_RES_ACCESORY_DESC 40
 #define SHOP_RES_ITEM_DESC 41
 #define SHOP_RES_GEAR_WEAPON_DATA 43
-#define SHOP_RES_GEAR_FRAME_NAMES 45
-#define SHOP_RES_GEAR_ENGINE_NAMES 46
-#define SHOP_RES_GEAR_ARMOR_DESC 47
+#define SHOP_RES_GEAR_ARMOR_NAMES 45
+#define SHOP_RES_GEAR_FRAME_NAMES 46
+#define SHOP_RES_GEAR_ENGINE_NAMES 47
 #define SHOP_RES_GEAR_FRAME_DESC 48
 #define SHOP_RES_GEAR_ENGINE_DESC 49
 #define SHOP_RES_AMMO_DESC 50
@@ -514,21 +514,23 @@ typedef struct {
 typedef struct {
     /* 0x0    */ POLY_FT4 polysCharacterPortraits[9*2];
     /* 0x2D0  */ POLY_FT4 polys2D0[9*2]; // Letter 'E' (for Equip) on character portraits if item is equipped
-    /* 0x5A0  */ POLY_FT4 polysExplanations[4 * 2]; // offsets: 0x5A0, 0x5C8, 0x5F0, 0x618, 0x640, 0x668, 0x690, 0x6B8
-    /* 0x6E0  */ u8 unk6E0[0x5A0];
+    /* 0x5A0  */ POLY_FT4 polysExplanations[4 * 2];
+    /* 0x6E0  */ POLY_FT4 unk6E0[0x24];
     /* 0xC80  */ POLY_FT4 polysGoldBefore[9 * 2];
     /* 0xF50  */ POLY_FT4 polysTotalPrice[9 * 2];
     /* 0x1220 */ POLY_FT4 polysFinalPrice[9 * 2];
-    /* 0x14F0 */ u8 unk14F0[0x5F0];
+    /* 0x14F0 */ POLY_FT4 unk14F0[0x26];
     /* 0x1AE0 */ POLY_FT4 polysGoldAfter[9 * 2];
-    /* 0x1DB0 */ u8 unk1DB0[0xA00];
+    /* 0x1DB0 */ POLY_FT4 polysShopInventory[SHOP_MAX_ITEMS_IN_VIEW][2];
+    /* 0x2030 */ POLY_FT4 unk2030[0x30];
     /* 0x27B0 */ POLY_FT4 polys27B0[9][3*2];
     /* 0x3020 */ POLY_FT4 polys3020[9][3*2];
     /* 0x3890 */ LINE_F3 linesPortraitHighlight1[9 * 2]; // Red highlight line around portraits, 1st half
     /* 0x3A40 */ LINE_F3 linesPortraitHighlight2[9 * 2]; // Red highlight line around portraits, 2nd half
     /* 0x3BF0 */ LINE_F2 lines3BF0[2]; // White line between gold amounts?
-    /* 0x3C10 */ u8 unk3C10[0x9E];
-    /* 0x3CAE */ u8 unk3CAE[0x782];
+    /* 0x3C10 */ u8 unk3C10[0x20];
+    /* 0x3C30 */ MenuString unk3C30[8];
+    /* 0x4030 */ MenuString unk4030[8];
     /* 0x4430 */ MenuString strItemDesc;
     /* 0x44B0 */ MenuString str44B0;
     /* 0x4530 */ u8 unk4530[0x100];
@@ -538,9 +540,9 @@ typedef struct {
     /* 0x463C */ void* pGearFrameDescriptions;
     /* 0x4640 */ void* pGearEngineDescriptions;
     /* 0x4644 */ void* pAmmoDescriptions;
-    /* 0x4648 */ void* pGearFrameNames;
-    /* 0x464C */ void* pGearEngineNames;
-    /* 0x4650 */ void* pGearArmorDescriptions;
+    /* 0x4648 */ void* pGearArmorNames;
+    /* 0x464C */ void* pGearFrameNames;
+    /* 0x4650 */ void* pGearEngineNames;
     /* 0x4654 */ u_char curItemQuantities[MAX_SHOP_ITEMS];
     /* 0x4684 */ u8 unk4684[0x8];
     /* 0x468C */ u8 unk468C[0x8];

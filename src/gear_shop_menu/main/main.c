@@ -500,9 +500,9 @@ void GearShopMenuShopDataManager(u8 mode) {
             g_Menu->pShop->pGearFrameDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_FRAME_DESC], 0);
             g_Menu->pShop->pGearEngineDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ENGINE_DESC], 0);
             g_Menu->pShop->pAmmoDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_AMMO_DESC], 0);
+            g_Menu->pShop->pGearArmorNames = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ARMOR_NAMES], 0);
             g_Menu->pShop->pGearFrameNames = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_FRAME_NAMES], 0);
             g_Menu->pShop->pGearEngineNames = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ENGINE_NAMES], 0);
-            g_Menu->pShop->pGearArmorDescriptions = LZSSHeapDecompress(pArchive[SHOP_RES_GEAR_ARMOR_DESC], 0);
             break;
         case SHOP_DATA_FREE:
             HeapFree(g_Menu->pDressingRoom->pGearFrames);
@@ -515,9 +515,9 @@ void GearShopMenuShopDataManager(u8 mode) {
             HeapFree(g_Menu->pShop->pGearFrameDescriptions);
             HeapFree(g_Menu->pShop->pGearEngineDescriptions);
             HeapFree(g_Menu->pShop->pAmmoDescriptions);
+            HeapFree(g_Menu->pShop->pGearArmorNames);
             HeapFree(g_Menu->pShop->pGearFrameNames);
             HeapFree(g_Menu->pShop->pGearEngineNames);
-            HeapFree(g_Menu->pShop->pGearArmorDescriptions);
             break;   
     }
     
