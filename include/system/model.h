@@ -8,6 +8,48 @@
 #define MODEL_FLAG_HAS_LIGHT_DATA 0x1
 
 
+// All primitive data sent to renderer has a code
+typedef struct {
+    /* 0x0 */ u8 _data[0x3];
+    /* 0x3 */ u8 code;
+} PrimitiveHeader;
+
+typedef struct {
+    /* 0x0 */ u8 r;
+    /* 0x1 */ u8 g;
+    /* 0x2 */ u8 b;
+    /* 0x3 */ u8 code;
+} UntexturedPrimitive;
+
+typedef struct {
+    /* 0x0 */ u8 u2;
+    /* 0x1 */ u8 v2;
+    /* 0x2 */ u8 unk2;
+    /* 0x3 */ u8 code;
+    /* 0x4 */ u8 u0;
+    /* 0x5 */ u8 v0;
+    /* 0x6 */ u8 u1;
+    /* 0x7 */ u8 v1;
+} TexturedTrianglePrimitive;
+
+typedef struct {
+    /* 0x0 */ u8 r;
+    /* 0x1 */ u8 g;
+    /* 0x2 */ u8 b;
+    /* 0x3 */ u8 code;
+    /* 0x4 */ u8 u0;
+    /* 0x5 */ u8 v0;
+    /* 0x6 */ u8 u1;
+    /* 0x7 */ u8 v1;
+    /* 0x8 */ u8 u2;
+    /* 0x9 */ u8 v2;
+    /* 0xA */ u8 u3;
+    /* 0xB */ u8 v3;
+} TexturedQuadPrimitive;
+
+
+
+
 typedef struct {
     u32 unk0;
     u32 lightDataSize;

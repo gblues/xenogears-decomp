@@ -119,6 +119,15 @@ ArchiveCdDriveCommandHandler = 0x8002A68C;
 ModelResolvePointers = 0x8002C3E8;
 ModelAllocatePackets = 0x8002CB54;
 ModelPartFreeLightData = 0x8002CBBC;
+ModelPacketInitPolyFT4 = 0x8002D530;
+ModelPacketInitPolyG3 = 0x8002D6AC;
+ModelPacketInitPolyG3_2 = 0x8002D77C;
+ModelPacketInitPolyFT3 = 0x8002D814;
+ModelPacketInitPolyGT3 = 0x8002DA14;
+ModelPacketInitPolyFT3_2 = 0x8002DAFC;
+
+MathTriangleNormal = 0x8002DB84;
+MathGetLargestVectorComponent = 0x8002DC9C;
 
 // Heap / Dynamic Memory
 HeapGetNextBlockHeader = 0x80031894;
@@ -1025,6 +1034,12 @@ g_PartyStreamDataPointers = 0x80065AFC;
 
 g_GamePartyMemberSkins = 0x8006FABC; // size:0xC
 g_GamePartySkinsInitialized = 0x8004F30C;
+
+// 3D Models
+g_pCurModelPacket = 0x80059424;
+g_pCurModelLightData = 0x80059498;
+g_pCurModelNormals = 0x8005952C;
+g_pCurModelVertices = 0x8005953C;
 
 g_UnknownHandlerBlocks = 0x8004fe50; // type:UnknownHandlerBlock[] size:0x2A8
 

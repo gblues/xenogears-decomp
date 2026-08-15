@@ -2,6 +2,15 @@
 #include "system/memory.h"
 #include "system/model.h"
 
+extern u16 D_80059308;
+extern u16 D_8005930C;
+extern s32 D_80059310;
+extern s32 D_80059314;
+extern void* g_pCurModelLightData;
+extern void* g_pCurModelPacket;
+extern SVECTOR* g_pCurModelNormals;
+extern SVECTOR* g_pCurModelVertices;
+
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002AC24);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002B084);
@@ -103,11 +112,44 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CCC8);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CD24);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CD64);
+u32 func_8002CD64(PrimitiveHeader* pPrim) {
+    if ((pPrim->code & 0xF0) == 0xC0) {
+        switch (pPrim->code) {
+            case 0xC4: // Tex page
+                func_8002CCC8(pPrim);
+                return 0;
+            case 0xC8: // CLUT
+                func_8002CD24(pPrim);
+                return 0;
+            default:
+                return 1;
+        }
+    }
+    return 1;
+}
 
+
+// ---------------------------------------------
+// This block of functions are initializer handlers which initializes
+// primitives in model packets for rendering. The naming of the functions are
+// quite vague for now, and should be renamed to something better if it turns out
+// any of these handlers are used in specific ways.
+//
+// Initializing a primitive for the model packet typically involves setting the length,
+// primitive code, color (which can entail lighting computation) and UVs, tpage
+// and clut if the primitive is a textured one.
+// ---------------------------------------------
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CDCC);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CF34);
+// NOTE: Could possibly also be LineG2 or PolyF3 based on prim len
+s32 func_8002CF34(UntexturedPrimitive* pPrim, short* pIndices, int flags) {
+    SPRT* pSprt;
+
+    pSprt = (SPRT*)g_pCurModelPacket;
+    setlen(pSprt, 4);
+    *(u32*)&pSprt->r0 = *(u32*)pPrim;
+    return 1;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CF58);
 
@@ -123,24 +165,214 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D354);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D420);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D530);
+int ModelPacketInitPolyFT4(TexturedQuadPrimitive* pPrim, short* pVertexIndices, int flags) {
+    SVECTOR vecNormal;
+    POLY_FT4* pPoly;
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D6AC);
+    if (!func_8002CD64(pPrim)) {
+        return 0;
+    }
+    
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 9);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D77C);
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (D_8005930C << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (D_80059308 << 0x10);
+    *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
+    *(u16*)&pPoly->u3 = *(u16*)&pPrim->u3;
+    
+    if (flags & 1) {
+        if (flags & 2) {
+            MathTriangleNormal(
+                &g_pCurModelVertices[pVertexIndices[0]], 
+                &g_pCurModelVertices[pVertexIndices[1]], 
+                &g_pCurModelVertices[pVertexIndices[2]], 
+                (SVECTOR*)g_pCurModelLightData
+            );
+            NormalColor((SVECTOR*)g_pCurModelLightData, (CVECTOR*)&pPoly->r0);
+        } else {
+            MathTriangleNormal(
+                &g_pCurModelVertices[pVertexIndices[0]], 
+                &g_pCurModelVertices[pVertexIndices[1]], 
+                &g_pCurModelVertices[pVertexIndices[2]], 
+                &vecNormal
+            );
+            NormalColor(&vecNormal, (CVECTOR*)&pPoly->r0);
+        }
+    } else if (flags & 4) {
+        NormalColor((SVECTOR*)g_pCurModelLightData, (CVECTOR*)&pPoly->r0);
+    }
+    
+    g_pCurModelLightData += sizeof(SVECTOR);
+    pPoly->code = pPrim->code;
+    return 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D814);
+int ModelPacketInitPolyG3(UntexturedPrimitive* pPrim, short* pIndices, int flags) {
+    POLY_G3* pPoly;
+
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 6);
+    
+    if (flags & 2) {
+        *(u32*)g_pCurModelLightData = *(u32*)pPrim; // TODO: Clean up
+        g_pCurModelLightData += sizeof(P_CODE);
+    }
+
+    NormalColorCol3(
+        &g_pCurModelNormals[pIndices[0]], 
+        &g_pCurModelNormals[pIndices[1]],
+        &g_pCurModelNormals[pIndices[2]],
+        (CVECTOR*)&pPrim->r,
+        &pPoly->r0,
+        &pPoly->r1,
+        &pPoly->r2
+    );
+    
+    pPoly->code = pPrim->code;
+    return 1;
+}
+
+int ModelPacketInitPolyG3_2(UntexturedPrimitive* pPrim, short* pIndices, int flags) {
+    POLY_G3* pPoly;
+
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 6);
+    
+    NormalColorCol3(
+        &g_pCurModelNormals[pIndices[0]], 
+        &g_pCurModelNormals[pIndices[1]],
+        &g_pCurModelNormals[pIndices[2]],
+        (CVECTOR*)&pPrim->r,
+        &pPoly->r0,
+        &pPoly->r1,
+        &pPoly->r2
+    );
+    
+    pPoly->code = pPrim->code;
+    return 1;
+}
+
+s32 ModelPacketInitPolyFT3(TexturedTrianglePrimitive* pPrim, short* pIndices, int flags) {
+    SVECTOR vecNormal;
+    POLY_FT3* pPoly;
+
+    if (func_8002CD64(pPrim) == 0) {
+        return 0;
+    }
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 7);
+    
+    // Set UVs, clut and tpage
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (D_8005930C << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (D_80059308 << 0x10);
+    *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
+    
+    if (flags & 1) {
+        if (flags & 2) {
+            MathTriangleNormal(
+                &g_pCurModelVertices[pIndices[0]], 
+                &g_pCurModelVertices[pIndices[1]], 
+                &g_pCurModelVertices[pIndices[2]], 
+                (SVECTOR*)g_pCurModelLightData
+            );
+            NormalColor((SVECTOR*)g_pCurModelLightData, (CVECTOR*)&pPoly->r0);
+        } else {
+            MathTriangleNormal(
+                &g_pCurModelVertices[pIndices[0]], 
+                &g_pCurModelVertices[pIndices[1]], 
+                &g_pCurModelVertices[pIndices[2]], 
+                &vecNormal
+            );
+            NormalColor(&vecNormal, (CVECTOR*)&pPoly->r0);
+        }
+    } else if (flags & 4) {
+        NormalColor((SVECTOR*)g_pCurModelLightData, (CVECTOR*)&pPoly->r0);
+    }
+    
+    g_pCurModelLightData += sizeof(SVECTOR);
+    pPoly->code = pPrim->code;
+    return 1;
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D984);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DA14);
+s32 ModelPacketInitPolyGT3(TexturedTrianglePrimitive* pPrim, short* pIndices, int flags) {
+    POLY_GT3* pPoly;
+    
+    if (func_8002CD64(pPrim) == 0) {
+        return 0;
+    }
+    
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 9);
+    NormalColor3(
+        &g_pCurModelNormals[pIndices[0]], 
+        &g_pCurModelNormals[pIndices[1]],
+        &g_pCurModelNormals[pIndices[2]],
+        (CVECTOR*)&pPoly->r0,
+        (CVECTOR*)&pPoly->r1,
+        (CVECTOR*)&pPoly->r2
+    );
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DAFC);
+    // Set UVs, clut and tpage
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (D_8005930C << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (D_80059308 << 0x10);
+    *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
+    
+    pPoly->code = pPrim->code;
+    return 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DB84);
+s32 ModelPacketInitPolyFT3_2(void) {
+    POLY_FT3* pPoly;
+
+    pPoly = g_pCurModelPacket;
+    SetPolyFT3(pPoly);
+    SetShadeTex(pPoly, 1);
+    pPoly->tpage = (GetTPage(1, 0, 0x280, 0) & 0xFFE0) | D_80059310;
+    pPoly->clut = (GetClut(0, 0x1E0) & 0xF) | D_80059314;
+    return 1;
+}
+// -------------------------------------
+
+
+void MathTriangleNormal(SVECTOR* pVertex1, SVECTOR* pVertex2, SVECTOR* pVertex3, SVECTOR* pNormal) {
+    VECTOR edge1;
+    VECTOR edge2;
+    VECTOR normal;
+    int sqrt;
+    int largestComponent;
+
+    // Compute vertices from vertex 1 -> vertex 2, and
+    // from vertex 1 -> vertex 3
+    edge1.vx = pVertex2->vx - pVertex1->vx;
+    edge1.vy = pVertex2->vy - pVertex1->vy;
+    edge1.vz = pVertex2->vz - pVertex1->vz;
+    
+    edge2.vx = pVertex3->vx - pVertex1->vx;
+    edge2.vy = pVertex3->vy - pVertex1->vy;
+    edge2.vz = pVertex3->vz - pVertex1->vz;
+
+    // Taking the cross product of these two vectors gives us a vector
+    // perpendicular to the two edges, effectively pointing in the direction of the normal
+    OuterProduct0(&edge2, &edge1, &normal);
+
+    // Find the largest component and scale the vector by it
+    largestComponent = MathGetLargestVectorComponent(normal.vx, normal.vy, normal.vz);
+    if (largestComponent < 0) {
+        largestComponent = -largestComponent;
+    }
+    sqrt = SquareRoot0(largestComponent);
+    normal.vx = normal.vx / sqrt;
+    normal.vy = normal.vy / sqrt;
+    normal.vz = normal.vz / sqrt;
+    
+    VectorNormalS(&normal, pNormal);
+}
 
 // Get largest absolute value
-long func_8002DC9C(long x, long y, long z) {
+long MathGetLargestVectorComponent(long x, long y, long z) {
     long absX;
     long absY;
     long absZ;
