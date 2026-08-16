@@ -1,11 +1,15 @@
 #include "common.h"
 #include "system/memory.h"
 #include "system/model.h"
+#include "system/debug.h"
 
-extern u16 D_80059308;
-extern u16 D_8005930C;
-extern s32 D_80059310;
-extern s32 D_80059314;
+extern s32 g_ModelTextureMode;
+extern s32 g_ModelClutMode;
+extern u16 g_ModelTexPage;
+extern u16 g_ModelClut;
+extern s32 g_ModelBaseTexPage;
+extern s32 g_ModelBaseClut;
+
 extern void* g_pCurModelLightData;
 extern void* g_pCurModelPacket;
 extern SVECTOR* g_pCurModelNormals;
@@ -100,32 +104,58 @@ void ModelPartFreeLightData(ModelPart* pModelPart) {
     }
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CC10);
+void ModelPacketSetBaseTexPage(u_short x, u_short y) {
+    g_ModelBaseTexPage = GetTPage(0, 0, x, y) & 0x1F;
+    g_ModelTextureMode = 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CC54);
+void func_8002CC54(u_short arg0) {
+    g_ModelBaseTexPage = arg0;
+    g_ModelTextureMode = 2;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CC74);
+void ModelPacketSetBaseClut(u_short x, u_short y) {
+    g_ModelBaseClut = GetClut(x, y) & 0xFFF0;
+    g_ModelClutMode = 0;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CCAC);
+void func_8002CCAC(void) {
+    g_ModelTextureMode = 0;
+    g_ModelClutMode = 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CCC8);
+void ModelPacketSetTexPage(PrimitiveHeader* pPrim) {
+    g_ModelTexPage = pPrim->texpageAndClut;
+    if (g_ModelTextureMode == 1) {
+        g_ModelTexPage = g_ModelTexPage & 0xFFE0;
+        g_ModelTexPage = g_ModelTexPage | g_ModelBaseTexPage;
+    } else if (g_ModelTextureMode == 2) {
+        g_ModelTexPage = g_ModelBaseTexPage;
+    }
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CD24);
+void ModelPacketSetClut(PrimitiveHeader* pPrim) {
+    g_ModelClut = pPrim->texpageAndClut;
+    if (g_ModelClutMode == 0) {
+        g_ModelClut = g_ModelClut & 0xF;
+        g_ModelClut = g_ModelClut | g_ModelBaseClut;
+    }
+}
 
-u32 func_8002CD64(PrimitiveHeader* pPrim) {
+u_int ModelPacketSetTextureData(PrimitiveHeader* pPrim) {
     if ((pPrim->code & 0xF0) == 0xC0) {
         switch (pPrim->code) {
             case 0xC4: // Tex page
-                func_8002CCC8(pPrim);
-                return 0;
+                ModelPacketSetTexPage(pPrim);
+                return PRIM_HAS_TEX_DATA;
             case 0xC8: // CLUT
-                func_8002CD24(pPrim);
-                return 0;
+                ModelPacketSetClut(pPrim);
+                return PRIM_HAS_TEX_DATA;
             default:
-                return 1;
+                return PRIM_NO_TEX_DATA;
         }
     }
-    return 1;
+    return PRIM_NO_TEX_DATA;
 }
 
 
@@ -139,45 +169,266 @@ u32 func_8002CD64(PrimitiveHeader* pPrim) {
 // primitive code, color (which can entail lighting computation) and UVs, tpage
 // and clut if the primitive is a textured one.
 // ---------------------------------------------
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CDCC);
+u_int ModelPacketInitPolyF3(UntexturedPrimitive* pPrim, short* pIndices, u_int flags) {
+    SVECTOR vecNormal;
+    POLY_F3* pPoly;
 
-// NOTE: Could possibly also be LineG2 or PolyF3 based on prim len
-s32 func_8002CF34(UntexturedPrimitive* pPrim, short* pIndices, int flags) {
-    SPRT* pSprt;
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 4);
 
-    pSprt = (SPRT*)g_pCurModelPacket;
-    setlen(pSprt, 4);
-    *(u32*)&pSprt->r0 = *(u32*)pPrim;
+    // Compute color from triangle normal and color in pPrim
+    if (flags & 1) {
+        // Store prim code and normal in light data
+        if (flags & 2) {
+            *(u32*)g_pCurModelLightData = *(u32*)pPrim;
+
+            MathTriangleNormal(
+                &g_pCurModelVertices[pIndices[0]], 
+                &g_pCurModelVertices[pIndices[1]], 
+                &g_pCurModelVertices[pIndices[2]], 
+                (SVECTOR*)(g_pCurModelLightData += sizeof(P_CODE))
+            );
+            NormalLightCol((SVECTOR*)g_pCurModelLightData, 
+                           (CVECTOR*)pPrim, 
+                           (CVECTOR*)&pPoly->r0);
+            g_pCurModelLightData += sizeof(SVECTOR);
+            pPoly->code = pPrim->code;
+        } else {
+            // Don't store stuff in light data
+            MathTriangleNormal(
+                &g_pCurModelVertices[pIndices[0]],
+                &g_pCurModelVertices[pIndices[1]],
+                &g_pCurModelVertices[pIndices[2]],
+                &vecNormal
+            );
+            NormalLightCol(&vecNormal, (CVECTOR*)pPrim, (CVECTOR*)&pPoly->r0);
+            pPoly->code = pPrim->code;
+        }
+    } else if ((flags & 4)) {
+        // Here, the P_CODE is expected to be set beforehand?
+        g_pCurModelLightData += sizeof(P_CODE);
+        NormalLightCol((SVECTOR*)g_pCurModelLightData, (CVECTOR*)pPrim, (CVECTOR*)&pPoly->r0);
+        g_pCurModelLightData += sizeof(SVECTOR);
+        pPoly->code = pPrim->code;
+    } else {
+        // Use color of pPrim instead of computing it from normal
+        *(u32*)&pPoly->r0 = *(u32*)pPrim;
+    }
     return 1;
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002CF58);
+u_int ModelPacketInitUnlitPolyF3(UntexturedPrimitive* pPrim, short* pIndices, u_int flags) {
+    POLY_F3* pPoly;
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D0C0);
+    pPoly = (POLY_F3*)g_pCurModelPacket;
+    setlen(pPoly, 4);
+    *(u32*)&pPoly->r0 = *(u32*)pPrim;
+    return 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D0E4);
+// TODO: This one is a bit weird because the primitive stride is 0x18,
+// and POLY_F4 is the only poly primitive which fits this size. However,
+// in this case setlen(pPoly, 4) is wrong and should have been setlen(pPoly, 5)
+u_int ModelPacketInitPolyF4(UntexturedPrimitive* pPrim, short* pIndices, u_int flags) {
+    SVECTOR vecNormal;
+    POLY_F4* pPoly;
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D180);
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 4);
+    
+    if (flags & 1) {
+        if (flags & 2) {
+            *(u32*)g_pCurModelLightData = *(u32*)pPrim;
+            MathTriangleNormal(
+                &g_pCurModelVertices[pIndices[0]], 
+                &g_pCurModelVertices[pIndices[1]], 
+                &g_pCurModelVertices[pIndices[2]], 
+                (SVECTOR*)(g_pCurModelLightData += 4)
+            );
+            NormalLightCol(
+                (SVECTOR*)g_pCurModelLightData, 
+                (CVECTOR*)pPrim, 
+                (CVECTOR*)&pPoly->r0
+            );
+            g_pCurModelLightData += sizeof(SVECTOR);
+            pPoly->code = pPrim->code;
+        } else {
+            MathTriangleNormal(
+                &g_pCurModelVertices[pIndices[0]], 
+                &g_pCurModelVertices[pIndices[1]], 
+                &g_pCurModelVertices[pIndices[2]], 
+                &vecNormal
+            );
+            NormalLightCol(&vecNormal, (CVECTOR*)pPrim, (CVECTOR*)&pPoly->r0);
+            pPoly->code = pPrim->code;
+        }
+    } else if (flags & 4) {
+        g_pCurModelLightData += sizeof(P_CODE);
+        NormalLightCol(
+            (SVECTOR*)g_pCurModelLightData, 
+            (CVECTOR*)pPrim, 
+            (CVECTOR*)&pPoly->r0
+        );
+        g_pCurModelLightData += sizeof(SVECTOR);
+        pPoly->code = pPrim->code;
+    } else {
+        *(u32*)&pPoly->r0 = *(u32*)pPrim;
+    }
+    return 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D244);
+u_int ModelPacketInitUnlitPolyF4(UntexturedPrimitive* pPrim, short* pIndices, u_int flags) {
+    POLY_F4* pPoly;
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D354);
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 5);
+    *(u32*)&pPoly->r0 = *(u32*)pPrim;
+    return 1;
+}
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D420);
+u_int ModelPacketInitUnlitPolyFT4(TexturedQuadPrimitive* pPrim, short* pIndices, u_int flags) {
+    POLY_FT4* pPoly;
+    
+    if (ModelPacketSetTextureData(pPrim) == PRIM_HAS_TEX_DATA) {
+        return 0;
+    }
 
-int ModelPacketInitPolyFT4(TexturedQuadPrimitive* pPrim, short* pVertexIndices, int flags) {
+    pPoly = (POLY_FT4*)g_pCurModelPacket;
+    setlen(pPoly, 9);
+    *(u32*)&pPoly->r0 = *(u32*)&pPrim->r;
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (g_ModelClut << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (g_ModelTexPage << 0x10);
+    *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
+    *(u16*)&pPoly->u3 = *(u16*)&pPrim->u3;
+    return 1;
+}
+
+u_int ModelPacketInitPolyG4(UntexturedPrimitive* pPrim, short* pIndices, u_int flags) {
+    POLY_G4* pPoly;
+
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 8);
+    NormalColorCol3(
+        &g_pCurModelNormals[pIndices[0]], 
+        &g_pCurModelNormals[pIndices[1]],
+        &g_pCurModelNormals[pIndices[2]],
+        (CVECTOR*)&pPrim->r,
+        &pPoly->r0,
+        &pPoly->r1,
+        &pPoly->r2
+    );
+    NormalLightCol(
+        &g_pCurModelNormals[pIndices[3]], 
+        (CVECTOR*)&pPrim->r,
+        &pPoly->r3
+    );
+
+    setcode(pPoly, pPrim->code);
+    
+    POSSIBLE_DEBUG_CODE;
+    return 1;
+}
+
+u_int ModelPacketInitPolyGT4(TexturedQuadPrimitive* pPrim, short* pIndices, u_int flags) {
+    POLY_GT4* pPoly;
+
+    if (ModelPacketSetTextureData(pPrim) == PRIM_HAS_TEX_DATA) {
+        return 0;
+    }
+    
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 12);
+    
+    NormalColor3(
+        &g_pCurModelNormals[pIndices[0]], 
+        &g_pCurModelNormals[pIndices[1]],
+        &g_pCurModelNormals[pIndices[2]],
+        &pPoly->r0,
+        &pPoly->r1,
+        &pPoly->r2
+    );
+    NormalColor(&g_pCurModelNormals[pIndices[3]], &pPoly->r3);
+    
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (g_ModelClut << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (g_ModelTexPage << 0x10);
+    *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
+    *(u16*)&pPoly->u3 = *(u16*)&pPrim->u3;
+
+    setcode(pPoly, pPrim->code);
+    return 1;
+}
+
+u_int func_8002D354(UntexturedPrimitive* pPrim, short* pIndices, u_int flags) {
+    POLY_G4* pPoly;
+
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 8);
+
+    *(u32*)&pPoly->r0 = *(u32*)&pPrim->r;
+    
+    NormalColorCol3(
+        &g_pCurModelNormals[pIndices[0]], 
+        &g_pCurModelNormals[pIndices[1]],
+        &g_pCurModelNormals[pIndices[2]],
+        (CVECTOR*)&pPrim->r,
+        &pPoly->r0,
+        &pPoly->r1,
+        &pPoly->r2
+    );
+    NormalLightCol(
+        &g_pCurModelNormals[pIndices[3]], 
+        (CVECTOR*)&pPrim->r,
+        &pPoly->r3
+    );
+
+    setcode(pPoly, pPrim->code);
+    
+    POSSIBLE_DEBUG_CODE
+    return 1;
+}
+
+u_int func_8002D420(TexturedQuadPrimitive* pPrim, short* pIndices, u_int flags) {
+    POLY_GT4* pPoly;
+
+    if (ModelPacketSetTextureData(pPrim) == PRIM_HAS_TEX_DATA) {
+        return 0;
+    }
+    
+    pPoly = g_pCurModelPacket;
+    setlen(pPoly, 12);
+    
+    NormalColor3(
+        &g_pCurModelNormals[pIndices[0]], 
+        &g_pCurModelNormals[pIndices[1]],
+        &g_pCurModelNormals[pIndices[2]],
+        &pPoly->r0,
+        &pPoly->r1,
+        &pPoly->r2
+    );
+    NormalColor(&g_pCurModelNormals[pIndices[3]], &pPoly->r3);
+    
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (g_ModelClut << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (g_ModelTexPage << 0x10);
+    *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
+    *(u16*)&pPoly->u3 = *(u16*)&pPrim->u3;
+
+    setcode(pPoly, pPrim->code);
+    return 1;
+}
+
+u_int ModelPacketInitPolyFT4(TexturedQuadPrimitive* pPrim, short* pVertexIndices, u_int flags) {
     SVECTOR vecNormal;
     POLY_FT4* pPoly;
 
-    if (!func_8002CD64(pPrim)) {
+    if (ModelPacketSetTextureData(pPrim) == PRIM_HAS_TEX_DATA) {
         return 0;
     }
     
     pPoly = g_pCurModelPacket;
     setlen(pPoly, 9);
 
-    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (D_8005930C << 0x10);
-    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (D_80059308 << 0x10);
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (g_ModelClut << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (g_ModelTexPage << 0x10);
     *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
     *(u16*)&pPoly->u3 = *(u16*)&pPrim->u3;
     
@@ -208,7 +459,7 @@ int ModelPacketInitPolyFT4(TexturedQuadPrimitive* pPrim, short* pVertexIndices, 
     return 1;
 }
 
-int ModelPacketInitPolyG3(UntexturedPrimitive* pPrim, short* pIndices, int flags) {
+u_int ModelPacketInitPolyG3(UntexturedPrimitive* pPrim, short* pIndices, u_int flags) {
     POLY_G3* pPoly;
 
     pPoly = g_pCurModelPacket;
@@ -233,7 +484,7 @@ int ModelPacketInitPolyG3(UntexturedPrimitive* pPrim, short* pIndices, int flags
     return 1;
 }
 
-int ModelPacketInitPolyG3_2(UntexturedPrimitive* pPrim, short* pIndices, int flags) {
+u_int ModelPacketInitPolyG3_2(UntexturedPrimitive* pPrim, short* pIndices, u_int flags) {
     POLY_G3* pPoly;
 
     pPoly = g_pCurModelPacket;
@@ -253,19 +504,19 @@ int ModelPacketInitPolyG3_2(UntexturedPrimitive* pPrim, short* pIndices, int fla
     return 1;
 }
 
-s32 ModelPacketInitPolyFT3(TexturedTrianglePrimitive* pPrim, short* pIndices, int flags) {
+u_int ModelPacketInitPolyFT3(TexturedTrianglePrimitive* pPrim, short* pIndices, u_int flags) {
     SVECTOR vecNormal;
     POLY_FT3* pPoly;
 
-    if (func_8002CD64(pPrim) == 0) {
+    if (ModelPacketSetTextureData(pPrim) == PRIM_HAS_TEX_DATA) {
         return 0;
     }
     pPoly = g_pCurModelPacket;
     setlen(pPoly, 7);
     
     // Set UVs, clut and tpage
-    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (D_8005930C << 0x10);
-    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (D_80059308 << 0x10);
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (g_ModelClut << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (g_ModelTexPage << 0x10);
     *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
     
     if (flags & 1) {
@@ -295,12 +546,28 @@ s32 ModelPacketInitPolyFT3(TexturedTrianglePrimitive* pPrim, short* pIndices, in
     return 1;
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002D984);
+u_int ModelPacketInitUnlitPolyFT3(TexturedTrianglePrimitive* pPrim, short* pIndices, u_int flags) {
+    POLY_FT3* pPoly;
+    
+    if (ModelPacketSetTextureData(pPrim) == PRIM_HAS_TEX_DATA) {
+        return 0;
+    }
+    pPoly = (POLY_FT3*)g_pCurModelPacket;
+    setlen(pPoly, 7);
+    
+    // Set UVs, clut and tpage
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (g_ModelClut << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (g_ModelTexPage << 0x10);
+    *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
 
-s32 ModelPacketInitPolyGT3(TexturedTrianglePrimitive* pPrim, short* pIndices, int flags) {
+    setcode(pPoly, pPrim->code);
+    return 1;
+}
+
+u_int ModelPacketInitPolyGT3(TexturedTrianglePrimitive* pPrim, short* pIndices, u_int flags) {
     POLY_GT3* pPoly;
     
-    if (func_8002CD64(pPrim) == 0) {
+    if (ModelPacketSetTextureData(pPrim) == PRIM_HAS_TEX_DATA) {
         return 0;
     }
     
@@ -316,22 +583,22 @@ s32 ModelPacketInitPolyGT3(TexturedTrianglePrimitive* pPrim, short* pIndices, in
     );
 
     // Set UVs, clut and tpage
-    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (D_8005930C << 0x10);
-    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (D_80059308 << 0x10);
+    *(u32*)&pPoly->u0 = *(u16*)&pPrim->u0 | (g_ModelClut << 0x10);
+    *(u32*)&pPoly->u1 = *(u16*)&pPrim->u1 | (g_ModelTexPage << 0x10);
     *(u16*)&pPoly->u2 = *(u16*)&pPrim->u2;
     
     pPoly->code = pPrim->code;
     return 1;
 }
 
-s32 ModelPacketInitPolyFT3_2(void) {
+u_int ModelPacketInitPolyFT3_2(TexturedTrianglePrimitive* pPrim, short* pIndices, u_int flags) {
     POLY_FT3* pPoly;
 
     pPoly = g_pCurModelPacket;
     SetPolyFT3(pPoly);
     SetShadeTex(pPoly, 1);
-    pPoly->tpage = (GetTPage(1, 0, 0x280, 0) & 0xFFE0) | D_80059310;
-    pPoly->clut = (GetClut(0, 0x1E0) & 0xF) | D_80059314;
+    pPoly->tpage = (GetTPage(1, 0, 0x280, 0) & 0xFFE0) | g_ModelBaseTexPage;
+    pPoly->clut = (GetClut(0, 0x1E0) & 0xF) | g_ModelBaseClut;
     return 1;
 }
 // -------------------------------------

@@ -119,10 +119,23 @@ ArchiveCdDriveCommandHandler = 0x8002A68C;
 ModelResolvePointers = 0x8002C3E8;
 ModelAllocatePackets = 0x8002CB54;
 ModelPartFreeLightData = 0x8002CBBC;
+ModelPacketSetBaseTexPage = 0x8002CC10;
+ModelPacketSetBaseClut = 0x8002CC74;
+ModelPacketSetTexPage = 0x8002CCC8;
+ModelPacketSetClut = 0x8002CD24;
+ModelPacketSetTextureData = 0x8002CD64;
+ModelPacketInitPolyF3 = 0x8002CDCC;
+ModelPacketInitUnlitPolyF3 = 0x8002CF34;
+ModelPacketInitPolyF4 = 0x8002CF58;
+ModelPacketInitUnlitPolyF4 = 0x8002D0C0;
+ModelPacketInitUnlitPolyFT4 = 0x8002D0E4;
+ModelPacketInitPolyG4 = 0x8002D180;
+ModelPacketInitPolyGT4 = 0x8002D244;
 ModelPacketInitPolyFT4 = 0x8002D530;
 ModelPacketInitPolyG3 = 0x8002D6AC;
 ModelPacketInitPolyG3_2 = 0x8002D77C;
 ModelPacketInitPolyFT3 = 0x8002D814;
+ModelPacketInitUnlitPolyFT3 = 0x8002D984;
 ModelPacketInitPolyGT3 = 0x8002DA14;
 ModelPacketInitPolyFT3_2 = 0x8002DAFC;
 
@@ -1036,6 +1049,12 @@ g_GamePartyMemberSkins = 0x8006FABC; // size:0xC
 g_GamePartySkinsInitialized = 0x8004F30C;
 
 // 3D Models
+g_ModelTextureMode = 0x80050108;
+g_ModelClutMode = 0x8005010C;
+g_ModelTexPage = 0x80059308;
+g_ModelClut = 0x8005930C;
+g_ModelBaseTexPage = 0x80059310;
+g_ModelBaseClut = 0x80059314;
 g_pCurModelPacket = 0x80059424;
 g_pCurModelLightData = 0x80059498;
 g_pCurModelNormals = 0x8005952C;

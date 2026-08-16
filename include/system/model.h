@@ -7,10 +7,13 @@
 // Model part flags
 #define MODEL_FLAG_HAS_LIGHT_DATA 0x1
 
+#define PRIM_HAS_TEX_DATA 0x0
+#define PRIM_NO_TEX_DATA 0x1
 
 // All primitive data sent to renderer has a code
 typedef struct {
-    /* 0x0 */ u8 _data[0x3];
+    /* 0x0 */ u16 texpageAndClut;
+    /* 0x2 */ u8 unk2;
     /* 0x3 */ u8 code;
 } PrimitiveHeader;
 

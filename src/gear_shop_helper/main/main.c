@@ -117,8 +117,8 @@ ModelJoint* MenuHelperInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJo
             }
     
             if (hasTexture) {
-                func_8002CC10(texX, texY);
-                func_8002CC74(clutX, clutY);
+                ModelPacketSetBaseTexPage(texX, texY);
+                ModelPacketSetBaseClut(clutX, clutY);
             }
     
             // Initialize model packets
