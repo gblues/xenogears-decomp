@@ -58,7 +58,7 @@ FieldMatrixCopyTranslation = 0x80074078;
 FieldMatrixCopyTransform = 0x8007409C;
 
 FieldPollControllers = 0x80074700;
-
+FieldRenderModels = 0x800748E8;
 FieldAddPrimitives = 0x80075458;
 
 FieldInitializeControllers = 0x800775C0;

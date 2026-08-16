@@ -115,8 +115,13 @@ ArchiveCdSetMode = 0x8002A428;
 ArchiveStreamFreeQueueData = 0x8002A524;
 ArchiveCdDriveCommandHandler = 0x8002A68C;
 
+ArchiveGetDebugTable = 0x8002C3D8;
+
 // 3D Models
 ModelResolvePointers = 0x8002C3E8;
+SetNearColor = 0x8002C6E0;
+ModelRenderPacket = 0x8002C700;
+ModelInitializePacket = 0x8002C8CC;
 ModelAllocatePackets = 0x8002CB54;
 ModelPartFreeLightData = 0x8002CBBC;
 ModelPacketSetBaseTexPage = 0x8002CC10;

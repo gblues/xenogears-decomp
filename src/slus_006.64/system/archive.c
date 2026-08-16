@@ -532,3 +532,25 @@ void ArchiveCdDriveCommandHandler(u_char status, u_char* pResult) {
             return;
     }
 }
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002AC24);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002B084);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002B2F0);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002B5D0);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002B8B0);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002BA40);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002BA58);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002BB50);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002BF38);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", func_8002C310);
+
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/archive", ArchiveGetDebugTable);

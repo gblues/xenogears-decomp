@@ -96,7 +96,7 @@ segments:
       - [0x18564, c, graphics/line_scroll]
       - [0x18A30, c, system/libarchive]
       - [0x19E90, c, system/archive]
-      - [0x1B424, c, system/temp2]
+      - [0x1CBE8, c, system/model]
       - [0x22094, c, system/memory]
       - [0x235CC, c, system/heap_debug]
       - [0x23688, hasm, util/lzss]

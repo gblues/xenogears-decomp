@@ -122,7 +122,7 @@ ModelJoint* MenuHelperInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJo
             }
     
             // Initialize model packets
-            func_8002C8CC(pModel->pParts[jointIndex], pCurJoint->pModelPacketBuffer, arg2);
+            ModelInitializePacket(pModel->pParts[jointIndex], pCurJoint->pModelPacketBuffer, arg2);
             memcpy(pCurJoint->pCurModelPacket, pCurJoint->pModelPacketBuffer, pModel->pParts[jointIndex]->unk20[1].modelPacketSize);
         } else {
             pCurJoint->pModelPacketBuffer = NULL;

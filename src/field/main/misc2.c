@@ -226,7 +226,7 @@ INCLUDE_ASM("asm/field/nonmatchings/main/misc2", func_8007469C);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc2", FieldPollControllers);
 
-INCLUDE_ASM("asm/field/nonmatchings/main/misc2", func_800748E8);
+INCLUDE_ASM("asm/field/nonmatchings/main/misc2", FieldRenderModels);
 
 INCLUDE_ASM("asm/field/nonmatchings/main/misc2", func_8007520C);
 

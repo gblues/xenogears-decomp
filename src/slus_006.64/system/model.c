@@ -15,28 +15,6 @@ extern void* g_pCurModelPacket;
 extern SVECTOR* g_pCurModelNormals;
 extern SVECTOR* g_pCurModelVertices;
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002AC24);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002B084);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002B2F0);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002B5D0);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002B8B0);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002BA40);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002BA58);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002BB50);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002BF38);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C310);
-
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C3D8);
-
 // When a model file has been loaded somewhere in memory, the relative pointers
 // in the file needs to be resolved to their concrete address.
 int ModelResolvePointers(ModelFileHeader* pModelFile) {
@@ -74,19 +52,26 @@ int ModelResolvePointers(ModelFileHeader* pModelFile) {
     return numParts;
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C4BC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002C4BC);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C59C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002C59C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C644);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002C644);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C68C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002C68C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C6E0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", SetNearColor);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C700);
+// Render a model part's packet.
+// This usually calls into a handler for the chosen render path, where
+// vertices are converted from local to screen space, clipping is performed,
+// and the primitives in the packet is added to the OT provided.
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", ModelRenderPacket);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002C8CC);
+// Initialize a model part's packet.
+// This involves setting primitive code and len, color (which can include light computation),
+// and UVs, texture page and clut for textured primitives.
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", ModelInitializePacket);
 
 void ModelAllocatePackets(ModelPart* pModelPart, void** pPacket1, void** pPacket2) {
     void* pPacketBuffer;
@@ -672,114 +657,114 @@ long MathGetLargestVectorComponent(long x, long y, long z) {
     return result;
 }
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DD20);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002DD20);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DDE4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002DDE4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DFE0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002DFE0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002DFF0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002DFF0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002E010);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002E010);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002E448);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002E448);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002E64C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002E64C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002E8B4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002E8B4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002EAB8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002EAB8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002ED20);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002ED20);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002EEF8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002EEF8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002F0E4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002F0E4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002F2E0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002F2E0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002F4B4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002F4B4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002F6B4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002F6B4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002F8D0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002F8D0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002FAE8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002FAE8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002FCFC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002FCFC);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8002FF0C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8002FF0C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8003014C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8003014C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800301C8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800301C8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030228);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030228);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800302D4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800302D4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800303C8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800303C8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800305D8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800305D8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800306D0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800306D0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030750);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030750);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030988);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030988);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030A30);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030A30);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030B14);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030B14);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030C40);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030C40);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030C78);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030C78);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030C98);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030C98);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80030EE8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80030EE8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8003101C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8003101C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800315A0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800315A0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800315C4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800315C4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800315E8);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800315E8);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8003160C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8003160C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031630);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031630);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031654);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031654);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031678);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031678);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8003169C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8003169C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800316C0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800316C0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800316E4);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800316E4);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031708);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031708);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8003172C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8003172C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031750);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031750);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031774);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031774);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031798);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031798);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800317BC);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800317BC);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_800317E0);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_800317E0);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031804);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031804);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031828);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031828);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_8003184C);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_8003184C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/temp2", func_80031870);
+INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/model", func_80031870);
