@@ -229,11 +229,10 @@ typedef struct {
     /* 0x2E */ s16 unk_field2;
 
     /* 0x30 */ AudioInterpolator masterInterpolator;
-    /* 0x3C */ AudioInterpolator cdInterpolator;
 } SoundVolumeController;
 
 extern SoundVolumeController g_SoundVolumeController;
-
+extern AudioInterpolator g_SoundCdAudioInterpolator;
 extern s32 g_ReverbWorkAreaSizes[SPU_REV_MODE_MAX];
 extern u8 g_SoundReverbType;
 extern u8 g_SoundReverbDelay;

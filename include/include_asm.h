@@ -21,7 +21,7 @@
         #ifndef INCLUDE_RODATA
                 #define INCLUDE_RODATA(FOLDER, NAME)                                                 \
                         __asm__(".section .rodata\n"                                                 \
-                                "\t.include \"" FOLDER "/" #NAME ".s\"\n"                            \
+                                "\t.include \"" FOLDER "/" #NAME ".rodata.s\"\n"                            \
                                 ".section .text")
         #endif
 

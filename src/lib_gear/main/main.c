@@ -4,16 +4,16 @@
 #include "psyq/gtemac.h"
 #include "psyq/inline_c.h"
 #include "system/memory.h"
-#include "menuhelper/main.h"
+#include "libgear/main.h"
 
 extern s32 D_80050100;
 
 extern s32 D_801E8640;
 extern s16 D_801E869C;
-extern VertexBuffer g_MenuHelperVertexBuffer;
+extern VertexBuffer g_LibGearVertexBuffer;
 extern Temp4 D_801E86A8;
 
-ModelMesh* MenuHelperInitializeMesh(ModelFileHeader* pModelFile, ModelMesh* pModel) {
+ModelMesh* LibGearInitializeMesh(ModelFileHeader* pModelFile, ModelMesh* pModel) {
     u_int numParts;
     int i;
 
@@ -29,7 +29,7 @@ ModelMesh* MenuHelperInitializeMesh(ModelFileHeader* pModelFile, ModelMesh* pMod
     return pModel;
 }
 
-ModelJoint* MenuHelperInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJointEntries, s32 arg2, s32 hasTexture, s16 texX, s16 texY, s16 clutX, s16 clutY) {
+ModelJoint* LibGearInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJointEntries, s32 arg2, s32 hasTexture, s16 texX, s16 texY, s16 clutX, s16 clutY) {
     int i;
     int numJoints;
     u_short jointIndex;
@@ -112,7 +112,7 @@ ModelJoint* MenuHelperInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJo
             // Allocate model packets
             ModelAllocatePackets(pModel->pParts[jointIndex], &pCurJoint->pModelPacketBuffer, &pCurJoint->pCurModelPacket);
             if (pCurJoint->pModelPacketBuffer == NULL) {
-                MenuHelperFreeModelSkeleton(pSkeleton);
+                LibGearFreeModelSkeleton(pSkeleton);
                 return NULL;
             }
     
@@ -224,13 +224,13 @@ unsigned func_801DC5C0(ModelJoint* pJoint, s32 degrees) {
 }
 
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DC848);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DC848);
 
 void func_801DCC34(void) {}
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DCC3C);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DCC3C);
 
-void MenuHelperFreeModelSkeleton(ModelJoint* pSkeleton) {
+void LibGearFreeModelSkeleton(ModelJoint* pSkeleton) {
     int i;
     ModelJoint* pJoint = pSkeleton;
 
@@ -248,7 +248,7 @@ void MenuHelperFreeModelSkeleton(ModelJoint* pSkeleton) {
     }
 }
 
-void MenuHelperFreeModelMesh(ModelMesh* pMesh, s32 shouldFreeLightData) {
+void LibGearFreeModelMesh(ModelMesh* pMesh, s32 shouldFreeLightData) {
     int i;
 
     if (pMesh != NULL) {
@@ -267,15 +267,15 @@ void MenuHelperFreeModelMesh(ModelMesh* pMesh, s32 shouldFreeLightData) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DCEC8);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DCEC8);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DDBF8);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DDBF8);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DEF10);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DEF10);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF0B4);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DF0B4);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF52C);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DF52C);
 
 void* func_801DF5F4(Temp4* pUnk, int numObjects) {
     if (numObjects <= 0) {
@@ -318,7 +318,7 @@ void func_801DF6A8(Temp4* pUnk) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF6F0);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DF6F0);
 
 int func_801DF7A8(Temp4* pUnk, s8* arg1) {
     int index;
@@ -335,29 +335,29 @@ int func_801DF7A8(Temp4* pUnk, s8* arg1) {
     return index;
 }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DF7F4);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DF7F4);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DFAC4);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DFAC4);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DFE8C);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DFE8C);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801DFF78);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DFF78);
 
-void* MenuHelperInitializeVertexBuffer(VertexBuffer* pVertexBuffer, u32 capacity) {
+void* LibGearInitializeVertexBuffer(VertexBuffer* pVertexBuffer, u32 capacity) {
     HeapChangeCurrentUser(HEAP_USER_MASA, HEAP_CONTENT_NULL);
     pVertexBuffer->capacity = capacity;
     pVertexBuffer->curIndex = 0;
     pVertexBuffer->pVertices = HeapAlloc((capacity + 1) * sizeof(Vertex), 0x0);
     
     if (pVertexBuffer->pVertices) {
-        MenuHelperInitializeVertices(pVertexBuffer);
+        LibGearInitializeVertices(pVertexBuffer);
         return pVertexBuffer;
     }
     
     return NULL;
 }
 
-void MenuHelperFreeVertexBuffer(VertexBuffer* pVertexBuffer) {
+void LibGearFreeVertexBuffer(VertexBuffer* pVertexBuffer) {
     pVertexBuffer->capacity = 0;
     pVertexBuffer->curIndex = 0;
     if (pVertexBuffer->pVertices != NULL) {
@@ -366,7 +366,7 @@ void MenuHelperFreeVertexBuffer(VertexBuffer* pVertexBuffer) {
     pVertexBuffer->pVertices = NULL;
 }
 
-void MenuHelperInitializeVertices(VertexBuffer* pVertexBuffer) {
+void LibGearInitializeVertices(VertexBuffer* pVertexBuffer) {
     int i;
     int j;
     Vertex* pVertex;
@@ -497,93 +497,93 @@ void func_801E0398(VertexBuffer* pVertexBuffer, MATRIX* pMatrix, s32 arg2, s32* 
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0698);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E0698);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0844);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E0844);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0850);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E0850);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E08D4);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E08D4);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0938);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E0938);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0988);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E0988);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E0A00);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E0A00);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E1258);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E1258);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E165C);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E165C);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E1708);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E1708);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E17B8);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E17B8);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E1880);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E1880);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E1A14);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E1A14);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E22F8);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E22F8);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E3438);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E3438);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E34BC);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E34BC);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E3534);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E3534);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E35D0);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E35D0);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E36BC);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E36BC);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E37D0);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E37D0);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E39F0);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E39F0);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E59D4);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E59D4);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E5B50);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E5B50);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E5C74);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E5C74);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E5CD8);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E5CD8);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E5D44);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E5D44);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E632C);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E632C);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6338);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6338);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E63A8);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E63A8);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6578);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6578);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6668);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6668);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E66BC);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E66BC);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E67F8);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E67F8);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6830);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6830);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6910);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6910);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6974);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6974);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6D94);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6D94);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6E48);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6E48);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E6F64);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E6F64);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7094);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E7094);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7298);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E7298);
 
 void func_801E72CC(MATRIX* pMatrix, void* _unk, int index, int jointIndex) {
     MATRIX _mat;
     Model* pModel;
 
-    pModel = g_MenuHelperModels[index];
+    pModel = g_LibGearModels[index];
     if (pModel == NULL) {
         return;
     }
@@ -600,23 +600,23 @@ void func_801E72CC(MATRIX* pMatrix, void* _unk, int index, int jointIndex) {
     *pMatrix = pModel->pSkeleton[0].matrix1;
 }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7378);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E7378);
 
-void MenuHelperInitialize(int capacity) {
+void LibGearInitialize(int capacity) {
     int i;
 
     D_801E8640 = 0;
     D_801E869C = 0;
     
     func_801DF5F4(&D_801E86A8, capacity);
-    MenuHelperInitializeVertexBuffer(&g_MenuHelperVertexBuffer, 0x10);
+    LibGearInitializeVertexBuffer(&g_LibGearVertexBuffer, 0x10);
 
     for (i = 0; i < MAX_MODELS; i++) {
-        g_MenuHelperModels[i] = NULL;
+        g_LibGearModels[i] = NULL;
     }
 
     for (i = 0; i < MAX_MODEL_MESHES; i++) {
-        g_MenuHelperMeshes[i].pParts = NULL;
+        g_LibGearMeshes[i].pParts = NULL;
     }
 
     for (i = 0; i < 2; i++) {
@@ -624,21 +624,21 @@ void MenuHelperInitialize(int capacity) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E742C);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E742C);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7D14);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E7D14);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E7FD4);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E7FD4);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8030);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E8030);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8330);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E8330);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8394);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E8394);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8430);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E8430);
 
-INCLUDE_ASM("asm/gear_shop_helper/nonmatchings/main/main", func_801E8480);
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E8480);
 
 void func_801E8510(Model* pModel) {
     int i;

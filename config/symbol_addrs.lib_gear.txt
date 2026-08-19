@@ -1,0 +1,16 @@
+LibGearInitializeMesh = 0x801DC22C;
+LibGearInitializeSkeleton = 0x801DC2D0;
+
+LibGearFreeModelSkeleton = 0x801DCD8C;
+LibGearFreeModelMesh = 0x801DCE18;
+
+LibGearInitializeVertexBuffer = 0x801E0064;
+LibGearFreeVertexBuffer = 0x801E00DC;
+LibGearInitializeVertices = 0x801E011C;
+
+LibGearInitialize = 0x801E738C;
+
+g_LibGearMeshes = 0x801E85F4;
+D_801E8648 = 0x801E8648; // type:Temp6[] size:0x28
+g_LibGearModels = 0x801E8670; // type:Model*[] size:0x28
+g_LibGearVertexBuffer = 0x801E86A0;
