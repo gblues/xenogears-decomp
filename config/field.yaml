@@ -61,7 +61,6 @@ segments:
       - [0x11C, .rodata, main/misc8]
       - [0x198, .rodata, main/misc]
       - [0x1B8, .rodata, main/misc11]
-      - [0x1D0, .rodata, main/misc11]
       - [0x22C, .rodata, main/misc7]
       - [0x240, .rodata, main/misc12]
       - [0x254, rodata]
