@@ -40,6 +40,8 @@ extern s32* D_8005917C; // TODO: should be in a header for main program stuff si
 
 extern s8  D_801D697C;
 
+#define TEX_PAIR_CURSOR 0
+#define TEX_PAIR_TEXT   1
 
 extern int D_801D69A0[]; // MENU_TEX_BALL_CURSOR_8
 extern int D_801D69A4[];
@@ -2259,7 +2261,45 @@ void GearShopMenuInitializeSubmenu(u_char offset) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CD838);
+void func_801CD838(u8 count, u8 currentChoice, s32* pTextureIds) {
+    s32 i;
+    s32* pTexturePair;
+    int cursorTextureId;
+
+    g_Menu->pSelectionMenu->numCursors = 0;
+    g_Menu->pSelectionMenu->numTexts = 0;
+
+    for(i = 0; i < count; i++) {
+        pTexturePair = &pTextureIds[i*2];
+
+        if(i == currentChoice) {
+            cursorTextureId = FONT_LETTER_HEIGHT + pTexturePair[TEX_PAIR_CURSOR];
+        } else {
+            cursorTextureId = pTexturePair[TEX_PAIR_CURSOR];
+        }
+
+        g_Menu->pSelectionMenu->numCursors += func_8002675C(g_Menu->resources,
+                                                            cursorTextureId,
+                                                            &g_Menu->pSelectionMenu->polysCursors[g_Menu->pSelectionMenu->numCursors * 2],
+                                                            g_Menu->renderContext,
+                                                            0xA0,
+                                                            0x96,
+                                                            0x1000
+                                                           );
+        g_Menu->pSelectionMenu->numTexts += func_8002675C(g_Menu->resources,
+                                                          pTexturePair[TEX_PAIR_TEXT],
+                                                          &g_Menu->pSelectionMenu->polysTexts[g_Menu->pSelectionMenu->numTexts * 2],
+                                                          g_Menu->renderContext,
+                                                          0xA0,
+                                                          0x96,
+                                                          0x1000
+                                                         );
+    }
+    g_Menu->pSelectionMenu->cursorsRenderCtx = g_Menu->renderContext;
+    g_Menu->pSelectionMenu->textsRenderCtx = g_Menu->renderContext;
+    func_801C6278(currentChoice, 1);
+    g_Menu->pManager->unk4 = 1;
+}
 
 void GearShopMenuUpdateSubmenuTextures(u_char offset) {
     int i;
