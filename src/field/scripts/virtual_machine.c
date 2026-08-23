@@ -232,7 +232,7 @@ void FieldScriptVMRun(int maxInstructionCount) {
         asm(ASM_BREAKPOINT);
         if (nInstructionCount > 0x400) {
             if (g_FieldSystemMode == SYSTEM_PC_HARDDRIVE) {
-                func_800379C8(&D_8006FD84, D_800AFD1C); // Error printing
+                func_800379C8(D_8006FD84, D_800AFD1C); // Error printing
             }
             return;
         }

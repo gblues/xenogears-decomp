@@ -63,14 +63,25 @@ segments:
     align: 4
     subsegments:
       - [0x800, rodata]
-      #- [0x88FC, .rodata, main/main_loop]
-      #- [0x8A6C, rodata]
+      - [0x8BA4, .rodata, system/menu]
+      - [0x8BD8, .rodata, system/animation_scripts]
+      - [0x8E44, rodata]
+      - [0x8E64, .rodata, system/temp1]
+      - [0x8EE0, .rodata, system/temp2]
+      - [0x90CC, rodata]
       - [0x90F4, .rodata, system/archive]
       - [0x9144, rodata]
+      - [0x9180, .rodata, system/model]
+      - [0x9198, rodata]
       - [0x9258, .rodata, system/memory]
-      - [0x927C, rodata]
+      - [0x927C, .rodata, system/system]
+      - [0x92BC, rodata]
+      # NB: this is a jumptable consumed by the asm segment at 0x26644
+      - [0x9358, rodata]
       - [0x93DC, .rodata, system/sound]
       - [0x93F0, rodata]
+      - [0x9418, .rodata, psyq/libc]
+      - [0x94CC, rodata]
       - [0x969C, .rodata, psyq/libcd/bios]
       - [0x96B0, rodata]
       - [0x9788, .rodata, psyq/libgpu]
@@ -93,6 +104,7 @@ segments:
       - [0x103A4, c, system/animation_scripts]
       - [0x1320C, c, system/graphics]
       - [0x1332C, c, system/temp1] # Graphics stuff
+      - [0x150D4, c, system/temp2] # more graphics stuff
       - [0x18564, c, graphics/line_scroll]
       - [0x18A30, c, system/libarchive]
       - [0x19E90, c, system/archive]

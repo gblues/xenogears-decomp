@@ -1,18 +1,18 @@
 name: Gear Shop Menu
-# The sha1 is calculated by running `sha1sum disc/gear_shop_helper.bin`
+# The sha1 is calculated by running `sha1sum disc/lib_gear.bin`
 sha1: 466f2d11b6bb49df667465c1df6eca74579b90b1
 options:
-  basename: gear_shop_helper.bin
-  target_path: disc/gear_shop_helper.bin
+  basename: lib_gear.bin
+  target_path: disc/lib_gear.bin
   base_path: ../
   platform: psx
   compiler: PSYQ
 
-  asm_path: asm/gear_shop_helper
-  src_path: src/gear_shop_helper
+  asm_path: asm/lib_gear
+  src_path: src/lib_gear
   build_path: build/
 
-  ld_script_path: linker/gear_shop_helper.ld
+  ld_script_path: linker/lib_gear.ld
 
   find_file_boundaries: False
   # Do not modify gp_value unless you know what you are doing.
@@ -29,13 +29,13 @@ options:
   section_order: [".rodata", ".text", ".data", ".bss"]
 
   symbol_addrs_path:
-    - config/symbol_addrs.gear_shop_helper.txt
+    - config/symbol_addrs.lib_gear.txt
     - config/symbol_addrs.slus_006.64.txt
   reloc_addrs_path:
-    - configs/reloc_addrs.gear_shop_helper.txt
+    - configs/reloc_addrs.lib_gear.txt
 
-  undefined_funcs_auto_path: linker/undefined_funcs_auto.gear_shop_helper.txt
-  undefined_syms_auto_path: linker/undefined_syms_auto.gear_shop_helper.txt
+  undefined_funcs_auto_path: linker/undefined_funcs_auto.lib_gear.txt
+  undefined_syms_auto_path: linker/undefined_syms_auto.lib_gear.txt
 
   extensions_path: tools/splat_ext
 
@@ -47,7 +47,7 @@ options:
   data_string_guesser_level: 2
   ld_bss_is_noload: true
 segments:
-  - name: gear_shop_helper
+  - name: lib_gear
     type: code
     start: 0x0
     vram: 0x801DC000
@@ -55,10 +55,9 @@ segments:
     align: 4
     subalign: 4
     subsegments:
-      - [0x0, rodata]
+      # NB: this rodata is 100% jump tables
+      - [0x0, .rodata, main/main]
       - [0x22C, c, main/main]
-#      - [0xEC8, rodata]
-#      - [0x2f10, c, main/misc]
       - [0xC590, data]
       - { vram: 0x801E8800, type: bss}
   - [0xC800]

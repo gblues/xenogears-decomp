@@ -1,5 +1,5 @@
-#ifndef __MENUHELPER_MAIN_H__
-#define __MENUHELPER_MAIN_H__
+#ifndef __LIBGEAR_MAIN_H__
+#define __LIBGEAR_MAIN_H__
 
 #include "psyq/libgpu.h"
 #include "psyq/libgte.h"
@@ -127,8 +127,8 @@ typedef struct {
 #define MAX_MODEL_MESHES 8
 #define MAX_MODELS 10
 
-extern ModelMesh g_MenuHelperMeshes[MAX_MODEL_MESHES];
+extern ModelMesh g_LibGearMeshes[MAX_MODEL_MESHES];
 extern Temp6 D_801E8648[2];
-extern Model* g_MenuHelperModels[MAX_MODELS];
+extern Model* g_LibGearModels[MAX_MODELS];
 
 #endif

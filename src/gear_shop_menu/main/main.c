@@ -40,6 +40,8 @@ extern s32* D_8005917C; // TODO: should be in a header for main program stuff si
 
 extern s8  D_801D697C;
 
+#define TEX_PAIR_CURSOR 0
+#define TEX_PAIR_TEXT   1
 
 extern int D_801D69A0[]; // MENU_TEX_BALL_CURSOR_8
 extern int D_801D69A4[];
@@ -75,6 +77,8 @@ extern u32 D_801D6A80;
 extern int D_801D6A84[];
 extern int D_801D6AFC[];
 extern int D_801D6B7C[];
+extern u32 D_801D6BFC[9]; // = {0x49, 0x48, 0x43, 0x3C, 0x25, 0x24, 0x1F, 0x18, 0x10}
+extern s32 D_801D6C20[9]; // = {0xC9, 0xB5, 0xA2, 0x90, 0xC9, 0xB5, 0xA2, 0x90, 0x80}
 extern int D_801D6C44[];
 extern u16 D_801D6C68[];
 extern int g_gearShopGearEquipFlags[];
@@ -2092,15 +2096,56 @@ void func_801CCE90(s32 count, MenuString *menuString, s8 *arg2, s8 *unused) {
     func_801C5EE8(menuString, arg2, 2, (u8)count);
 }
 
-void func_801CCEBC(s32 count, s8* buffer) {
+void func_801CCEBC(u8 count, s8* buffer) {
     int i;
 
-    for(i = 0; i < (u8)count; i++) {
+    for(i = 0; i < count; i++) {
         buffer[i] = 0;
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CCEE8);
+void func_801CCEE8(s32 arg0, MenuString *pStringList, s32 __unused, int* pPaddingOffsets, u8 *pUnkByteArray, u8 choice, u8 scrollOffset, u8 unkBoolean) {
+    switch(unkBoolean) {
+        case FALSE:
+            func_801CCEBC(arg0, pUnkByteArray);
+
+            setXY4(&pStringList[choice].polys[g_Menu->renderContext],
+                (D_801D6BFC[scrollOffset + choice]) + (22 + pPaddingOffsets[choice]), // x0
+                D_801D6C20[scrollOffset + choice] - 34, // y0
+
+                pStringList[choice].width + ((D_801D6BFC[scrollOffset + choice]) + (22 + pPaddingOffsets[choice])), // x1
+                D_801D6C20[scrollOffset + choice] - 34, // y1
+
+                (D_801D6BFC[scrollOffset + choice]) + (22 + pPaddingOffsets[choice]), // x2
+                D_801D6C20[scrollOffset + choice] - 21, // y2
+
+                pStringList[choice].width + ((D_801D6BFC[scrollOffset + choice]) + (22 + pPaddingOffsets[choice])), // x3
+                D_801D6C20[scrollOffset + choice] - 21 // y3
+            );
+            break;
+        case TRUE:
+
+            if(choice) {
+                setXY4(&pStringList[choice].polys[g_Menu->renderContext],
+                       206, 126,
+                       pStringList[0].width + 206, 126,
+                       206, 139,
+                       pStringList[0].width + 206, 139
+                );
+            } else {
+                setXY4(&pStringList[choice].polys[g_Menu->renderContext],
+                       236, 126,
+                       pStringList[choice].width + 236, 126,
+                       236, 139,
+                       pStringList[choice].width + 236, 139
+                );
+            }
+            break;
+
+    }
+    pStringList[choice].renderContext = g_Menu->renderContext;
+    pUnkByteArray[choice] = 1;
+}
 
 void GearShopMenuInitializeShopModeSelectionMenu(int count, int* pResourceIDs) {
     int i, j;
@@ -2216,7 +2261,45 @@ void GearShopMenuInitializeSubmenu(u_char offset) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CD838);
+void func_801CD838(u8 count, u8 currentChoice, s32* pTextureIds) {
+    s32 i;
+    s32* pTexturePair;
+    int cursorTextureId;
+
+    g_Menu->pSelectionMenu->numCursors = 0;
+    g_Menu->pSelectionMenu->numTexts = 0;
+
+    for(i = 0; i < count; i++) {
+        pTexturePair = &pTextureIds[i*2];
+
+        if(i == currentChoice) {
+            cursorTextureId = FONT_LETTER_HEIGHT + pTexturePair[TEX_PAIR_CURSOR];
+        } else {
+            cursorTextureId = pTexturePair[TEX_PAIR_CURSOR];
+        }
+
+        g_Menu->pSelectionMenu->numCursors += func_8002675C(g_Menu->resources,
+                                                            cursorTextureId,
+                                                            &g_Menu->pSelectionMenu->polysCursors[g_Menu->pSelectionMenu->numCursors * 2],
+                                                            g_Menu->renderContext,
+                                                            0xA0,
+                                                            0x96,
+                                                            0x1000
+                                                           );
+        g_Menu->pSelectionMenu->numTexts += func_8002675C(g_Menu->resources,
+                                                          pTexturePair[TEX_PAIR_TEXT],
+                                                          &g_Menu->pSelectionMenu->polysTexts[g_Menu->pSelectionMenu->numTexts * 2],
+                                                          g_Menu->renderContext,
+                                                          0xA0,
+                                                          0x96,
+                                                          0x1000
+                                                         );
+    }
+    g_Menu->pSelectionMenu->cursorsRenderCtx = g_Menu->renderContext;
+    g_Menu->pSelectionMenu->textsRenderCtx = g_Menu->renderContext;
+    func_801C6278(currentChoice, 1);
+    g_Menu->pManager->unk4 = 1;
+}
 
 void GearShopMenuUpdateSubmenuTextures(u_char offset) {
     int i;

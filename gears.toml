@@ -7,7 +7,7 @@ build = 'build'
 
 [compilation]
 binary = "slus_006.64"
-overlays = ["field", "member_change_menu", "shop_menu", "gear_shop_menu", "gear_shop_helper"]
+overlays = ["field", "member_change_menu", "shop_menu", "gear_shop_menu", "lib_gear"]
 target = 'mips-linux-gnu'
 
 [[build_preset]]
@@ -43,7 +43,7 @@ paths = [
     "{binary}/system/sound.",
     "member_change_menu/main/misc.",
     "shop_menu/main/misc.",
-    "gear_shop_helper/main/main.",
+    "lib_gear/main/main.",
     "gear_shop_menu/main/main.",
     "gear_shop_menu/main/render."
 ]
@@ -56,7 +56,8 @@ build_variables = {
 }
 paths = [
     "{binary}/system/animation_scripts.",
-    "{binary}/system/temp1."
+    "{binary}/system/temp1.",
+    "{binary}/system/temp2."
 ]
 
 [[build_preset]]

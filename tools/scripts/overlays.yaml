@@ -77,7 +77,7 @@ overlays:
 #  - name: dir_0x10_file_0xb.bin
 #    file_id: 0x0b
 #    directory_id: 0x10
-  - name: gear_shop_helper.bin
+  - name: lib_gear.bin
     file_id: 0x0c
     directory_id: 0x10
 #  - name: dir_0x10_file_0xd.bin
