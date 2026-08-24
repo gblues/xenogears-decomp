@@ -39,7 +39,7 @@ jobs:
           curl -L -o disc/member_change_menu.bin "${{ secrets.FILE_URL_4 }}"
           curl -L -o disc/shop_menu.bin "${{ secrets.FILE_URL_5 }}"
           curl -L -o disc/gear_shop_menu.bin "${{ secrets.OVL_GEAR_SHOP_URL }}"
-          curl -L -o disc/gear_shop_helper.bin "${{ secrets.OVL_GEAR_SHOP_HELPER_URL }}"
+          curl -L -o disc/lib_gear.bin "${{ secrets.OVL_GEAR_SHOP_HELPER_URL }}"
       
       - name: Build
         run: |
