@@ -5,6 +5,7 @@
 #include "system/graphics.h"
 #include "system/debug.h"
 #include "system/sound.h"
+#include "libgear/main.h"
 
 #define SHOP_DATA_INITIALIZE 0x0
 #define SHOP_DATA_FREE 0x10
@@ -46,7 +47,7 @@ extern s32* D_8005917C;
 extern u32* D_8005945C; // file handle used to retrieve the overlay's resources
 extern SoundFile* D_8006259C;
 
-extern s8  D_801D697C;
+extern u8  D_801D697C;
 
 #define TEX_PAIR_CURSOR 0
 #define TEX_PAIR_TEXT   1
@@ -108,7 +109,10 @@ extern u16 D_801D7074[6];
 extern u16 D_801D7080[6];
 extern u8  D_801D70F4[9];
 
+extern POLY_FT4 D_801D7108[];
+
 extern s8  D_801D70FD;
+extern s32 D_801D9048;
 extern s32 D_801D9050;
 extern s32 D_801D9054;
 extern s32 D_801D9058;
@@ -2029,9 +2033,77 @@ void func_801CBDA0(void) {
     SetRotMatrix(&g_Menu->matTransform);
     SetTransMatrix(&g_Menu->matTransform);
 }
+#define LETTER_WIDTH 0x8
+#define LETTER_HEIGHT 0x10
 
-// Debug function drawing X, Y, Z, A, G, S values - https://decomp.me/scratch/Ygk4d
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CBE60);
+
+// Debug function drawing X, Y, Z, A, G, S values
+void func_801CBE60(void) {
+    int values[6];
+    int i;
+    int j;
+    int digitsOffset;
+    int curValue;
+
+    if ((D_801D697C != 0) && ((u8) g_Menu->unk458[1]->unk12 != 0)) {
+        // X, Y, Z letters
+        func_8002675C(g_Menu->resources, 0x21, &D_801D7108[0], g_Menu->renderContext, 0x10, 0x10, 0x1000U);
+        func_8002675C(g_Menu->resources, 0x22, &D_801D7108[2], g_Menu->renderContext, 0x10, 0x20, 0x1000U);
+        func_8002675C(g_Menu->resources, 0x23, &D_801D7108[4], g_Menu->renderContext, 0x10, 0x30, 0x1000U);
+        // A, G, S letters
+        func_8002675C(g_Menu->resources, 0xA, &D_801D7108[6], g_Menu->renderContext, 0x10, 0x40, 0x1000U);
+        func_8002675C(g_Menu->resources, 0x10, &D_801D7108[8], g_Menu->renderContext, 0x10, 0x50, 0x1000U);
+        func_8002675C(g_Menu->resources, 0x1C, &D_801D7108[10], g_Menu->renderContext, 0x10, 0x60, 0x1000U);
+
+        func_8002675C(g_Menu->resources, MENU_TEX_PLUS, &D_801D7108[12], g_Menu->renderContext, 0xA0, 0x64, 0x1000U);
+        values[0] = g_Menu->cameraPosition.vx;
+        values[1] = g_Menu->cameraPosition.vy;
+        values[2] = g_Menu->cameraPosition.vz;
+        values[3] = g_LibGearModels[1]->pSkeleton->vec2.vy;
+        values[4] = g_LibGearModels[1]->ground;
+        values[5] = g_LibGearModels[1]->scale;
+
+        D_801D9048 = 7; // poly count
+
+        // There's 6 values to process in total (X, Y, Z, A, G, S)
+        for(i = 0; i < 6; i++) {
+            curValue = values[i];
+            digitsOffset = 0;
+
+            // Negative value, add a minus symbol to it first
+            if (curValue < 0) {
+                digitsOffset = 1;
+                D_801D9048 += func_8002675C(
+                    g_Menu->resources,
+                    MENU_TEX_MINUS,
+                    &D_801D7108[D_801D9048 * 2],
+                    g_Menu->renderContext,
+                    0x30, LETTER_HEIGHT * (i + 1),
+                    0x1000
+                );
+                curValue = ~values[i] + 1;
+            }
+            // Parse value to string and create primitives for it
+            GearShopMenuParseNumberToString(curValue);
+           //;
+            for (j = 0; j < 9; j++) {
+                if (g_Menu->digits[j] != 0xFF) {
+                    D_801D9048 += func_8002675C(
+                        g_Menu->resources,
+                        g_Menu->digits[j],
+                        &D_801D7108[D_801D9048 * 2],
+                        g_Menu->renderContext,
+                        (LETTER_WIDTH * digitsOffset++) + 0x30,
+                        LETTER_HEIGHT * (i + 1),
+                        0x1000
+                    );
+                }
+            }
+        }
+        // Render the values
+        GearShopMenuRenderString(D_801D9048, &D_801D7108[0], g_Menu->renderContext);
+    }
+}
 
 void GearShopMenuUpdateAndRender(void) {
     if (*D_8005917C != -1) {
