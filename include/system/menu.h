@@ -756,7 +756,7 @@ typedef struct {
     /* 0x1E2C */ void* pShopEntries;
     /* 0x1E30 */ u_char shopItemIDs[MAX_SHOP_ITEMS];
     /* 0x1E60 */ u_char shopItemTypes[MAX_SHOP_ITEMS];
-    /* 0x1E90 */ void* pGearShopEntries; // Array of GearShopDefinition
+    /* 0x1E90 */ GearShopDefinition* pGearShopEntries; // Array of GearShopDefinition
     /* 0x1E94 */ u8 unk1E94;
     // Decompiling `MenuProcessControllerInput` worked better if this field is
     // volatile.  If you need to remove `volatile`, you can insert a temporary

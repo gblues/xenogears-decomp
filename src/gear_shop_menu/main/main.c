@@ -41,6 +41,7 @@
  * TODO: probably should be in a header for main program stuff since this is not coming from the overlay
  */
 
+extern u8   D_80059171;
 extern s32* D_8005917C;
 extern u32* D_8005945C; // file handle used to retrieve the overlay's resources
 extern SoundFile* D_8006259C;
@@ -98,6 +99,7 @@ extern s32 D_801D6D5C[2]; // indexed by renderContext
 extern u16 D_801D6D7C[2];
 extern int D_801D6D14[8];
 extern int D_801D6D3C[8];
+extern int g_GearShopInventoryCounts[5];
 
 // // D_801D6D7C
 extern s32 D_801D6FD0[2];
@@ -651,8 +653,106 @@ void GearShopMenuShopDataManager(u8 mode) {
     }
 }
 
-// https://decomp.me/scratch/j5f3F
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6E74);
+void func_801C6E74(void) {
+    int i, j;
+    GearShopDefinition *pShopDef;
+
+    pShopDef = &g_Menu->pGearShopEntries[D_80059171];
+
+    g_GearShopInventoryCounts[0] = 0;
+    for(i = 0; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[0].itemIds[i] = pShopDef->unk14[i];
+        if(g_Menu->pShop->gearShopItemTables[0].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[0]++;
+        }
+    }
+    i = 0;
+    g_GearShopInventoryCounts[1] = 0;
+    for(; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[1].itemIds[i] = pShopDef->unk0[i];
+        if(g_Menu->pShop->gearShopItemTables[1].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[1]++;
+        }
+    }
+
+    i = 0;
+    g_GearShopInventoryCounts[2] = 0;
+    for(; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[2].itemIds[i] = pShopDef->unk28[i];
+        if(g_Menu->pShop->gearShopItemTables[2].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[2]++;
+        }
+    }
+
+    i = 0;
+    g_GearShopInventoryCounts[3] = 0;
+    for(; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[3].itemIds[i] = pShopDef->unk50[i];
+        if(g_Menu->pShop->gearShopItemTables[3].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[3]++;
+        }
+    }
+
+    i = 0;
+    g_GearShopInventoryCounts[4] = 0;
+    for(; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[4].itemIds[i] = pShopDef->unk3C[i];
+        if(g_Menu->pShop->gearShopItemTables[4].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[4]++;
+        }
+    }
+
+    HeapFree(g_Menu->pGearShopEntries);
+    GearShopMenuShopDataManager(0);
+
+    for(j = 0; j < 9; j++) {
+        for(i = 0; i < 2; i++) {
+            SetLineF3(&g_Menu->pShop->linesPortraitHighlight1[(j*2)+i]);
+            setRGB0(&g_Menu->pShop->linesPortraitHighlight1[(j*2)+i], 0xFF, 0, 0);
+            SetLineF3(&g_Menu->pShop->linesPortraitHighlight2[(j*2)+i]);
+            setRGB0(&g_Menu->pShop->linesPortraitHighlight2[(j*2)+i], 0xFF, 0, 0);
+            setXY3(&g_Menu->pShop->linesPortraitHighlight1[(j*2)+i],
+                   D_801D6C44[j], 0xA6,
+                   D_801D6C44[j] + 0x18, 0xA6,
+                   D_801D6C44[j] + 0x18, 0xBC
+            );
+            setXY3(&g_Menu->pShop->linesPortraitHighlight2[(j*2)+i],
+                   D_801D6C44[j], 0xA6,
+                   D_801D6C44[j], 0xBC,
+                   D_801D6C44[j] + 0x18, 0xBC
+            );
+        }
+
+        g_Menu->pShop->unk469C[j] = 0;
+    }
+
+    func_8002675C(g_Menu->resources, 0x166, (POLY_FT4* ) g_Menu->menuUnk8->unk80, g_Menu->renderContext, 0x108, 0x18, 0x1000U);
+
+    for(j = 0; j < 2; j++) {
+        SetPolyFT4(&g_Menu->menuUnk8->unk0.polys[j]);
+        SetSemiTrans(&g_Menu->menuUnk8->unk0.polys[j], 0);
+        SetShadeTex(&g_Menu->menuUnk8->unk0.polys[j], 0);
+
+        setRGB0(&g_Menu->menuUnk8->unk0.polys[j], 0x80, 0x80, 0x80);
+
+        g_Menu->menuUnk8->unk0.polys[j].tpage = GetTPage(0, 0, 0x180, 0);
+        g_Menu->menuUnk8->unk0.polys[j].clut = g_SystemPalette1;
+
+        setUV4(&g_Menu->menuUnk8->unk0.polys[j],
+               0, 0x48,
+               0x60, 0x48,
+               0, 0x55,
+               0x60, 0x55
+        );
+
+        setXY4(&g_Menu->menuUnk8->unk0.polys[j],
+               0x10, 0x20,
+               0x70, 0x20,
+               0x10, 0x2D,
+               0x70, 0x2D
+        );
+    }
+}
 
 void GearShopMenuSetVertices(SVECTOR* pVertices, u_short x, u_short y, u_short width, u_short height) {
     pVertices[0].vx = x - 160;
