@@ -4,6 +4,7 @@
 #include "system/archive.h"
 #include "system/graphics.h"
 #include "system/debug.h"
+#include "util/copyspec.h"
 
 #define MAX_NUM_SUBMENU_OPTIONS 0x4
 
@@ -113,6 +114,8 @@ extern s32 D_801D6980[];
 //    MENU_TEX_BALL_CURSOR_4, MENU_TEX_STRING_TUNE_UP,
 //    }
 extern s32 D_801D6A30[];
+
+extern MenuTransitionEffectState g_gearShopTransitionState;
 
 void GearShopMenuShoulderButtonUiInitialize(void) {
     int i;
@@ -254,10 +257,6 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CFAB8);
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CFC60);
 
 void func_801CFF18(void) {
-    s32 temp1;
-    s32 temp2;
-    s32 temp3;
-
     g_Menu->menuUnk8->unk1ED9 = 3;
     g_Menu->menuUnk8->unk1EDA = 3;
     g_Menu->menuUnk8->unk1EDB = 3;
@@ -266,18 +265,20 @@ void func_801CFF18(void) {
     g_Menu->menuUnk8->unk1EDE = 0;
     g_Menu->menuUnk8->unk1EDF = 0;
     g_Menu->pManager->unk5C[9] = 1;
-    // this is probably some swappy-copy function but without the data better defined we have to do it explicitly
-    temp1 = D_801D905C;
-    temp2 = D_801D9060;
-    temp3 = D_801D9064;
-    D_801D905C = 0x400;
-    D_801D9060 = 0;
-    D_801D9064 = -0x400;
-    D_801D9050 = temp1;
-    D_801D9054 = temp2;
-    D_801D9058 = temp3;
-    func_801CB690(D_801D9050, D_801D9054);
-    g_Menu->transitionEffectState = 7;
+
+    pushXYZ(
+         0x400, 0, -0x400,
+        &g_gearShopTransitionState.vecs[1].x,
+        &g_gearShopTransitionState.vecs[1].y,
+        &g_gearShopTransitionState.vecs[1].z,
+        &g_gearShopTransitionState.vecs[0].x,
+        &g_gearShopTransitionState.vecs[0].y,
+        &g_gearShopTransitionState.vecs[0].z
+
+    );
+
+    func_801CB690(g_gearShopTransitionState.vecs[0].x, g_gearShopTransitionState.vecs[0].y);
+    g_Menu->transitionEffectState = MENU_OPEN_ANIMATION|MENU_CLOSE_ANIMATION|MENU_CLOSE_ANIMATION_START;
 }
 
 void func_801D0054(int count, POLY_FT4 *pPolys, u_char mode) {

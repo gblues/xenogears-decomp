@@ -127,6 +127,20 @@ typedef struct {
  */
 
 typedef struct {
+    /* 0x00 */ int x;
+    /* 0x04 */ int y;
+    /* 0x08 */ int z;
+} IVECTOR3; /* size: 0xC */
+
+typedef struct {
+    /* 0x00 */ IVECTOR3 vecs[4];
+    /* 0x30 */ u8 xIsMirrored;
+    /* 0x31 */ u8 yIsMirrored;
+    /* 0x32 */ u8 zIsMirrored;
+    /* 0x33 */ u8 count;
+} MenuTransitionEffectState; /* size: 0x34 */
+
+typedef struct {
     /* 0x0 */ u16 unk0;
     /* 0x2 */ u_short price;
     /* 0x4 */ u8 unk4[0xC];
