@@ -4,7 +4,7 @@
 #include "system/archive.h"
 #include "system/graphics.h"
 #include "system/debug.h"
-
+#include "system/sound.h"
 
 #define SHOP_DATA_INITIALIZE 0x0
 #define SHOP_DATA_FREE 0x10
@@ -36,7 +36,15 @@
 
 
 // probably something like: DEBUGGER_ATTACHED, guards a breakpoint left in the code
-extern s32* D_8005917C; // TODO: should be in a header for main program stuff since this is not coming from an overlay
+
+/*
+ * TODO: probably should be in a header for main program stuff since this is not coming from the overlay
+ */
+
+extern u8   D_80059171;
+extern s32* D_8005917C;
+extern u32* D_8005945C; // file handle used to retrieve the overlay's resources
+extern SoundFile* D_8006259C;
 
 extern s8  D_801D697C;
 
@@ -91,6 +99,7 @@ extern s32 D_801D6D5C[2]; // indexed by renderContext
 extern u16 D_801D6D7C[2];
 extern int D_801D6D14[8];
 extern int D_801D6D3C[8];
+extern int g_GearShopInventoryCounts[5];
 
 // // D_801D6D7C
 extern s32 D_801D6FD0[2];
@@ -122,9 +131,7 @@ extern s32 D_801D6980[];
 //    }
 extern s32 D_801D6A30[];
 
-
-
-
+extern MenuTransitionEffectState g_gearShopTransitionState;
 
 /* this function doesn't seem to get called by anything, possibly dead code? I spent a little time decomping this
  * and got it to 94% but don't want to spend a ton of time on it.
@@ -275,7 +282,97 @@ void GearShopMenuMenuUnk8Manager(u_char isInitialization) {
     HeapFree(g_Menu->menuUnk8);
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", GearShopMenuLoadResources);
+#define FIELD_TEX_COUNT(_i) ((_i) * 6) + 0
+#define FIELD_TEX_PAGE(_i)  ((_i) * 6) + 1
+#define FIELD_CLUT_X(_i)    ((_i) * 6) + 2
+#define FIELD_CLUT_Y(_i)    ((_i) * 6) + 3
+#define FIELD_TPAGE_X(_i)   ((_i) * 6) + 4
+#define FIELD_TPAGE_Y(_i)   ((_i) * 6) + 5
+
+void GearShopMenuLoadResources(void) {
+    TIM_IMAGE tim;
+    int metadata[18];
+    SoundFile* pSoundFile;
+
+    u32* pFileHandle;
+    int i;
+    u8 *pData;
+
+    pFileHandle = D_8005945C;
+    ResolveArchiveEntryPointers(pFileHandle);
+    pData = LZSSHeapDecompress((void *)pFileHandle[1], 1);
+    OpenTIM((void *)pData);
+    ReadTIM(&g_Menu->menuUnk2->tim);
+    memcpy(&g_Menu->menuUnk2->unk4FCE, "BISLPS-00800", 0xD);
+    g_Menu->menuUnk2->unk4B94 = 0x53;
+    g_Menu->menuUnk2->unk4B95 = 0x43;
+    g_Menu->menuUnk2->unk4B96 = 0x11;
+    g_Menu->menuUnk2->unk4B97 = 1;
+    bzero(g_Menu->menuUnk2->unk4B98, 0x5C);
+
+    memmove(g_Menu->menuUnk2->unk4BF4, (u8* ) g_Menu->menuUnk2->tim.caddr, 0x20);
+    memmove(g_Menu->menuUnk2->unk4C14, (u8* ) g_Menu->menuUnk2->tim.paddr, 0x80);
+    HeapFree(pData);
+    pData = LZSSHeapDecompress((void *)pFileHandle[2], 1);
+    func_8002DD20(pData);
+    HeapFree(pData);
+    g_Menu->resources = LZSSHeapDecompress((void *)pFileHandle[3], 0);
+    g_Menu->unk2E0 = LZSSHeapDecompress((void *)pFileHandle[4], 0);
+
+    ResourceHelperGetTexCoords(g_Menu->resources, MENU_TEX_PORTRAIT_PARTY_MEMBER_1,
+                               &metadata[FIELD_TEX_COUNT(0)],
+                               &metadata[FIELD_TEX_PAGE(0)],
+                               &metadata[FIELD_CLUT_X(0)],
+                               &metadata[FIELD_CLUT_Y(0)],
+                               &metadata[FIELD_TPAGE_X(0)],
+                               &metadata[FIELD_TPAGE_Y(0)]);
+    ResourceHelperGetTexCoords(g_Menu->resources, MENU_TEX_PORTRAIT_PARTY_MEMBER_2,
+                               &metadata[FIELD_TEX_COUNT(1)],
+                               &metadata[FIELD_TEX_PAGE(1)],
+                               &metadata[FIELD_CLUT_X(1)],
+                               &metadata[FIELD_CLUT_Y(1)],
+                               &metadata[FIELD_TPAGE_X(1)],
+                               &metadata[FIELD_TPAGE_Y(1)]);
+    ResourceHelperGetTexCoords(g_Menu->resources, MENU_TEX_PORTRAIT_PARTY_MEMBER_3,
+                               &metadata[FIELD_TEX_COUNT(2)],
+                               &metadata[FIELD_TEX_PAGE(2)],
+                               &metadata[FIELD_CLUT_X(2)],
+                               &metadata[FIELD_CLUT_Y(2)],
+                               &metadata[FIELD_TPAGE_X(2)],
+                               &metadata[FIELD_TPAGE_Y(2)]);
+
+    metadata[FIELD_TPAGE_X(1)] += 0xC;
+    pData = LZSSHeapDecompress((void *)pFileHandle[5], 1);
+
+    for(i = 0; i < 3; i++) {
+        if(g_Menu->pManager->currentCharacterIDs[i] != CHARACTER_ID_NONE) {
+            OpenTIM((void *)&pData[(g_Menu->pManager->currentCharacterIDs[i] * 0xB20)]);
+            ReadTIM(&tim);
+            tim.crect->x = metadata[FIELD_CLUT_X(i)];
+            tim.crect->y = metadata[FIELD_CLUT_Y(i)];
+            tim.prect->x = metadata[FIELD_TPAGE_X(i)];
+            tim.prect->y = metadata[FIELD_TPAGE_Y(i)];
+            LoadImage(tim.crect, tim.caddr);
+            LoadImage(tim.prect, tim.paddr);
+        }
+    }
+
+    DrawSync(0);
+    HeapFree(pData);
+    if (g_MenuDebugEnabled) {
+        ArchiveSetIndex(0x10, 2);
+        pSoundFile = HeapAlloc(ArchiveDecodeAlignedSize(5U), 0U);
+        D_8006259C = pSoundFile;
+        ArchiveReadFileToBuffer(5, (s32) pSoundFile, 0U, 0x80U);
+        ArchiveCdDataSync(0);
+        ArchiveSetIndex(0x10, 0);
+        SoundAddSedsEntry(D_8006259C);
+    }
+    g_Menu->unk2E4 = D_8006259C;
+    g_Menu->pGearShopEntries = LZSSHeapDecompress((void *)pFileHandle[8], 1);
+    HeapFree(pFileHandle);
+}
+
 
 void GearShopMenuFilterPartyMembers(void) {
     int i;
@@ -375,7 +472,6 @@ void func_801C5CA8(MenuString* pMenuString, s32 arg1, s32 arg2, u8 attributes) {
     pMenuString->unk7F = 0;
 }
 
-
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5EE8);
 
 void func_801C6098(void) {
@@ -422,7 +518,34 @@ void GearShopMenuInitializeWindowBorders(void) {
     ResourceHelperGetTexCoords(g_Menu->resources, MENU_TEX_WINDOW_BORDER_RIGHT, &g_Menu->texCount3, &g_Menu->texPage3, &g_Menu->clutX3, &g_Menu->clutY3, &g_Menu->texPageX3, &g_Menu->texPageY3);
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6278);
+void func_801C6278(s32 arg0, u8 doInit) {
+    func_8002675C(g_Menu->resources, 0x108, g_Menu->unk348->polysPointerCursor, g_Menu->renderContext, D_801D6BFC[arg0], D_801D6C20[arg0], 0x1000U);
+    g_Menu->unk348->cursorRenderContext = (u8) g_Menu->renderContext;
+
+    if (doInit) {
+        setXY4(&g_Menu->unk348->polyG4s[g_Menu->renderContext],
+               D_801D6BFC[arg0] + 0x14, D_801D6C20[arg0] - 0x24,
+               D_801D6BFC[arg0] + (g_Menu->unk348->unk15B + 0x14), D_801D6C20[arg0] - 0x24,
+               D_801D6BFC[arg0] + 0x14, D_801D6C20[arg0] - 0x14,
+               D_801D6BFC[arg0] + (g_Menu->unk348->unk15B + 0x14), D_801D6C20[arg0] - 0x14
+        );
+
+        setXY3(&g_Menu->unk348->lines1[g_Menu->renderContext],
+               D_801D6BFC[arg0] + 0x14, D_801D6C20[arg0] - 0x24,
+               D_801D6BFC[arg0] + (g_Menu->unk348->unk15B + 0x14), D_801D6C20[arg0] - 0x24,
+               D_801D6BFC[arg0] + (g_Menu->unk348->unk15B + 0x14), D_801D6C20[arg0] - 0x14
+        );
+
+        setXY3(&g_Menu->unk348->lines2[g_Menu->renderContext],
+               D_801D6BFC[arg0] + 0x14, D_801D6C20[arg0] - 0x24,
+               D_801D6BFC[arg0] + 0x14, D_801D6C20[arg0] - 0x14,
+               D_801D6BFC[arg0] + (g_Menu->unk348->unk15B + 0x14), D_801D6C20[arg0] - 0x14
+        );
+
+        g_Menu->unk348->unk159 = (u8) g_Menu->renderContext;
+        g_Menu->pManager->unk3 = 1;
+    }
+}
 
 void func_801C665C(void) {
     g_Menu->pManager->unk4 = 0;
@@ -530,8 +653,106 @@ void GearShopMenuShopDataManager(u8 mode) {
     }
 }
 
-// https://decomp.me/scratch/j5f3F
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C6E74);
+void func_801C6E74(void) {
+    int i, j;
+    GearShopDefinition *pShopDef;
+
+    pShopDef = &g_Menu->pGearShopEntries[D_80059171];
+
+    g_GearShopInventoryCounts[0] = 0;
+    for(i = 0; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[0].itemIds[i] = pShopDef->unk14[i];
+        if(g_Menu->pShop->gearShopItemTables[0].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[0]++;
+        }
+    }
+    i = 0;
+    g_GearShopInventoryCounts[1] = 0;
+    for(; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[1].itemIds[i] = pShopDef->unk0[i];
+        if(g_Menu->pShop->gearShopItemTables[1].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[1]++;
+        }
+    }
+
+    i = 0;
+    g_GearShopInventoryCounts[2] = 0;
+    for(; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[2].itemIds[i] = pShopDef->unk28[i];
+        if(g_Menu->pShop->gearShopItemTables[2].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[2]++;
+        }
+    }
+
+    i = 0;
+    g_GearShopInventoryCounts[3] = 0;
+    for(; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[3].itemIds[i] = pShopDef->unk50[i];
+        if(g_Menu->pShop->gearShopItemTables[3].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[3]++;
+        }
+    }
+
+    i = 0;
+    g_GearShopInventoryCounts[4] = 0;
+    for(; i < 20; i++) {
+        g_Menu->pShop->gearShopItemTables[4].itemIds[i] = pShopDef->unk3C[i];
+        if(g_Menu->pShop->gearShopItemTables[4].itemIds[i] != 0) {
+            g_GearShopInventoryCounts[4]++;
+        }
+    }
+
+    HeapFree(g_Menu->pGearShopEntries);
+    GearShopMenuShopDataManager(0);
+
+    for(j = 0; j < 9; j++) {
+        for(i = 0; i < 2; i++) {
+            SetLineF3(&g_Menu->pShop->linesPortraitHighlight1[(j*2)+i]);
+            setRGB0(&g_Menu->pShop->linesPortraitHighlight1[(j*2)+i], 0xFF, 0, 0);
+            SetLineF3(&g_Menu->pShop->linesPortraitHighlight2[(j*2)+i]);
+            setRGB0(&g_Menu->pShop->linesPortraitHighlight2[(j*2)+i], 0xFF, 0, 0);
+            setXY3(&g_Menu->pShop->linesPortraitHighlight1[(j*2)+i],
+                   D_801D6C44[j], 0xA6,
+                   D_801D6C44[j] + 0x18, 0xA6,
+                   D_801D6C44[j] + 0x18, 0xBC
+            );
+            setXY3(&g_Menu->pShop->linesPortraitHighlight2[(j*2)+i],
+                   D_801D6C44[j], 0xA6,
+                   D_801D6C44[j], 0xBC,
+                   D_801D6C44[j] + 0x18, 0xBC
+            );
+        }
+
+        g_Menu->pShop->unk469C[j] = 0;
+    }
+
+    func_8002675C(g_Menu->resources, 0x166, (POLY_FT4* ) g_Menu->menuUnk8->unk80, g_Menu->renderContext, 0x108, 0x18, 0x1000U);
+
+    for(j = 0; j < 2; j++) {
+        SetPolyFT4(&g_Menu->menuUnk8->unk0.polys[j]);
+        SetSemiTrans(&g_Menu->menuUnk8->unk0.polys[j], 0);
+        SetShadeTex(&g_Menu->menuUnk8->unk0.polys[j], 0);
+
+        setRGB0(&g_Menu->menuUnk8->unk0.polys[j], 0x80, 0x80, 0x80);
+
+        g_Menu->menuUnk8->unk0.polys[j].tpage = GetTPage(0, 0, 0x180, 0);
+        g_Menu->menuUnk8->unk0.polys[j].clut = g_SystemPalette1;
+
+        setUV4(&g_Menu->menuUnk8->unk0.polys[j],
+               0, 0x48,
+               0x60, 0x48,
+               0, 0x55,
+               0x60, 0x55
+        );
+
+        setXY4(&g_Menu->menuUnk8->unk0.polys[j],
+               0x10, 0x20,
+               0x70, 0x20,
+               0x10, 0x2D,
+               0x70, 0x2D
+        );
+    }
+}
 
 void GearShopMenuSetVertices(SVECTOR* pVertices, u_short x, u_short y, u_short width, u_short height) {
     pVertices[0].vx = x - 160;
@@ -2473,13 +2694,13 @@ void GearShopMenuMain(void) {
     g_Menu->unk218.vx = 0;
     g_Menu->unk218.vy = 0x400;
     g_Menu->transitionEffectState = MENU_ANIMATION_DONE;
-    D_801D9058 = -0x400;
-    D_801D9064 = -0x400;
-    D_801D9050 = 0x400;
-    D_801D9054 = 0;
-    D_801D905C = 0x400;
-    D_801D9060 = 0;
-    D_801D9083 = 0x10;
+    g_gearShopTransitionState.vecs[0].z = -0x400;
+    g_gearShopTransitionState.vecs[1].z = -0x400;
+    g_gearShopTransitionState.vecs[0].x = 0x400;
+    g_gearShopTransitionState.vecs[0].y = 0;
+    g_gearShopTransitionState.vecs[1].x = 0x400;
+    g_gearShopTransitionState.vecs[1].y = 0;
+    g_gearShopTransitionState.count = 0x10;
     GearShopMenuFilterPartyMembers();
     GearShopMenuResetRenderContext();
     func_801C6114(); // initMenuGeometry()?
