@@ -111,7 +111,11 @@ typedef struct {
 typedef struct {
     /* 0x0   */ ModelMesh* pMesh;
     /* 0x4   */ ModelJoint* pSkeleton; // Array of joints
-    /* 0x8   */ u8 unk8[0xB0];
+    /* 0x8   */ u8 unk8[0x14];
+    /* 0x1C  */ s16 scale;
+    /* 0x20  */ u8 unk20[0x42];
+    /* 0x60  */ s16 ground; // seems to be some kind of offset? maybe "below this point model will clip through the ground"?
+    /* 0x64  */ u8 unk64[0x56];
     /* 0xB8  */ POLY_FT4 polys[2];
     /* 0x108 */ u8 unk108[0x4];
     /* 0x10C */ u8 unk10C;

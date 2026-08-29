@@ -31,6 +31,7 @@ options:
   symbol_addrs_path:
     - config/symbol_addrs.gear_shop_menu.txt
     - config/symbol_addrs.slus_006.64.txt
+    - config/symbol_addrs.lib_gear.txt
   reloc_addrs_path:
     - configs/reloc_addrs.gear_shop_menu.txt
 
