@@ -7,142 +7,45 @@
 #include "system/sound.h"
 #include "libgear/main.h"
 
-#define SHOP_DATA_INITIALIZE 0x0
-#define SHOP_DATA_FREE 0x10
-
-#define MAX_NUM_SUBMENU_OPTIONS 0x4
-
-// Confirmation window choices
-#define MENU_CHOICE_NO 0
-#define MENU_CHOICE_YES 1
-
-// Selection modes
-#define MENU_AUTO_ADVANCE 0
-#define MENU_MANUAL_CHOICE 0xFF
+#include "gear_shop/gear_shop.h"
 
 
-// Submenu choices for "Tune up"
-#define MENU_CHOICE_ARMOR 0x0
-#define MENU_CHOICE_FRAME 0x1
-#define MENU_CHOICE_ENGINE 0x2
-#define MENU_CHOICE_FUEL 0x3
-
-// Submenu choices for "Sell"
-#define MENU_CHOICE_WEAPONS 0x3
-#define MENU_CHOICE_PARTS 0x4
-
-
-#define MENU_CYCLE_TO_NEXT 0x0
-#define MENU_CYCLE_TO_PREV 0x1
-
-
-// probably something like: DEBUGGER_ATTACHED, guards a breakpoint left in the code
 
 /*
  * TODO: probably should be in a header for main program stuff since this is not coming from the overlay
  */
 
-extern u8   D_80059171;
+extern u8   D_80059171; // probably something like: DEBUGGER_ATTACHED, guards a breakpoint left in the code
 extern s32* D_8005917C;
 extern u32* D_8005945C; // file handle used to retrieve the overlay's resources
 extern SoundFile* D_8006259C;
 
-extern u8  D_801D697C;
-
-#define TEX_PAIR_CURSOR 0
-#define TEX_PAIR_TEXT   1
-
-extern int D_801D69A0[]; // MENU_TEX_BALL_CURSOR_8
-extern int D_801D69A4[];
-// = {
-//    Buy Submenu
-//                             MENU_TEX_STRING_WEAPONS, 
-//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_PARTS, 
-//    MENU_TEX_BALL_CURSOR_10, MENU_TEX_STRING_FUEL, 
-//    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_ENGINE, 
-//    MENU_TEX_BALL_CURSOR_8,  MENU_TEX_STRING_PARTS, 
-//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_WEAPONS, 
-//    0xFFFF, 0xFFFF
-//    0xFFFF, 0xFFFF,
-//    ------------------------------------------------
-//    Sell Submenu
-//    MENU_TEX_BALL_CURSOR_8, MENU_TEX_STRING_PARTS, 
-//    MENU_TEX_BALL_CURSOR_9, MENU_TEX_STRING_WEAPONS, 
-//    0xFFFF, 0xFFFF, 
-//    0xFFFF, 0xFFFF, 
-//    ------------------------------------------------
-//    Tune up Submenu
-//    MENU_TEX_BALL_CURSOR_8,  MENU_TEX_STRING_ARMOR, 
-//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_FRAME, 
-//    MENU_TEX_BALL_CURSOR_10, MENU_TEX_STRING_ENGINE, 
-//    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_FUEL
-//   }
-
-extern u8  D_801D6A20;
-extern u8  D_801D6A24;
-extern int D_801D6A60[4];
-extern int D_801D6A70[4];
-extern u32 D_801D6A80;
-extern int D_801D6A84[];
-extern int D_801D6AFC[];
-extern int D_801D6B7C[];
-extern u32 D_801D6BFC[9]; // = {0x49, 0x48, 0x43, 0x3C, 0x25, 0x24, 0x1F, 0x18, 0x10}
-extern s32 D_801D6C20[9]; // = {0xC9, 0xB5, 0xA2, 0x90, 0xC9, 0xB5, 0xA2, 0x90, 0x80}
-extern int D_801D6C44[];
-extern u16 D_801D6C68[];
-extern int g_gearShopGearEquipFlags[];
-extern u8  D_801D6D08[8]; // indexed by (renderContext * 4)+i
-extern u8  D_801D6D10[2]; // indexed by renderContext
-extern int D_801D6D14[8]; // indexed by (renderContext * 4)+i
-extern s32 D_801D6D34[2]; // indexed by renderContext
-extern int D_801D6D3C[8]; // indexed by (renderContext * 4)+i
-extern s32 D_801D6D5C[2]; // indexed by renderContext
-extern u16 D_801D6D7C[2];
-extern int D_801D6D14[8];
-extern int D_801D6D3C[8];
-extern int g_GearShopInventoryCounts[5];
-
-// // D_801D6D7C
-extern s32 D_801D6FD0[2];
-
-extern u16 D_801D7074[6];
-extern u16 D_801D7080[6];
-extern u8  D_801D70F4[9];
-
-extern POLY_FT4 D_801D7108[];
-
-extern s8  D_801D70FD;
-extern s32 D_801D9048;
-extern s32 D_801D9050;
-extern s32 D_801D9054;
-extern s32 D_801D9058;
-extern s32 D_801D905C;
-extern s32 D_801D9060;
-extern s32 D_801D9064;
-extern s8  D_801D9083;
-extern int g_gearShopAvailableCharacterCount;
-extern int g_gearShopCurCharacterIndex;
-
-extern u_char  g_gearShopCurrentGearId;
-extern u8* D_801D9088;
-
-extern s32 D_801D6980[];
-// = {
-//    MENU_TEX_BALL_CURSOR_1, MENU_TEX_STRING_BUY,
-//    MENU_TEX_BALL_CURSOR_2, MENU_TEX_STRING_SELL,
-//    MENU_TEX_BALL_CURSOR_3, MENU_TEX_STRING_EXIT,
-//    MENU_TEX_BALL_CURSOR_4, MENU_TEX_STRING_TUNE_UP,
-//    }
-extern s32 D_801D6A30[];
-
-extern MenuTransitionEffectState g_gearShopTransitionState;
-
-/* this function doesn't seem to get called by anything, possibly dead code? I spent a little time decomping this
- * and got it to 94% but don't want to spend a ton of time on it.
- *
- * https://decomp.me/scratch/t631n
+/*
+ * this function doesn't seem to get called by anything, possibly dead code?
  */
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C511C);
+u16 func_801C511C(u16 arg0, u16 arg1) {
+    s32 delta;
+    s32 result;
+
+    if(arg0 != 0xffff) {
+        result = 0;
+        if(arg1 != 0) {
+            if(arg0 == arg1) {
+                return arg0;
+            }
+            delta = arg1 - arg0;
+            if (delta <= 0xFFFE) {
+                return arg0 + ((u16)rand() % (delta+1));
+            }
+            result = (u16)rand();
+            return result;
+        }
+    } else {
+        result = 0xffff;
+    }
+
+    return result;
+}
 
 void func_801C51B8(POLY_FT4* pPoly, short x, short y, u_char u, u_char v, short width, short height) {
     setXY4(
@@ -2016,10 +1919,114 @@ void GearShopMenuPollInput(void) {
     g_Menu->input = input;
 }
 
-/* TODO: this function appears to just manipulate objects in memory, it doesn't make any function calls */
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CB690);
+void func_801CB690(void) {
+    u8 xTotal;
+    u8 yTotal;
+    int i;
 
-/* TODO: This is probably updating a transition effect, but it's not the same effect as ShopMenuUpdateTransitionEffect() */
+    u8 notDone;
+
+    g_gearShopTransitionState.delta.cameraX = g_gearShopTransitionState.delta.cameraY = g_gearShopTransitionState.delta.gearY = xTotal = yTotal = 0;
+
+    if(g_gearShopTransitionState.target.cameraX >= g_gearShopTransitionState.start.cameraX) {
+        g_gearShopTransitionState.step.cameraX = g_gearShopTransitionState.target.cameraX - g_gearShopTransitionState.start.cameraX;
+        g_gearShopTransitionState.isCameraPanningLeft = FALSE;
+    } else {
+        g_gearShopTransitionState.step.cameraX = g_gearShopTransitionState.target.cameraX - g_gearShopTransitionState.start.cameraX;
+        g_gearShopTransitionState.isCameraPanningLeft = TRUE;
+    }
+
+    if(g_gearShopTransitionState.target.cameraY >= g_gearShopTransitionState.start.cameraY) {
+        g_gearShopTransitionState.step.cameraY = g_gearShopTransitionState.target.cameraY - g_gearShopTransitionState.start.cameraY;
+        g_gearShopTransitionState.isCameraPanningDown = FALSE;
+    } else {
+        g_gearShopTransitionState.step.cameraY = g_gearShopTransitionState.target.cameraY - g_gearShopTransitionState.start.cameraY;
+        g_gearShopTransitionState.isCameraPanningDown = TRUE;
+    }
+
+    if(g_gearShopTransitionState.step.cameraX < 0) {
+        g_gearShopTransitionState.step.cameraX = (~g_gearShopTransitionState.step.cameraX)+1;
+    }
+
+    if (g_gearShopTransitionState.step.cameraY < 0) {
+        g_gearShopTransitionState.step.cameraY = ~g_gearShopTransitionState.step.cameraY + 1;
+    }
+
+    if(g_gearShopTransitionState.step.cameraX >= g_gearShopTransitionState.step.cameraY) {
+
+        g_gearShopTransitionState.step.cameraY = (g_gearShopTransitionState.step.cameraY << 16) / g_gearShopTransitionState.step.cameraX;
+        g_gearShopTransitionState.step.cameraX = 0x10000;
+    } else {
+
+        g_gearShopTransitionState.step.cameraX = (g_gearShopTransitionState.step.cameraX << 16) / g_gearShopTransitionState.step.cameraY;
+        g_gearShopTransitionState.step.cameraY = 0x10000;
+    }
+
+    notDone = TRUE;
+    while(notDone) {
+        for(i = 0; i < g_gearShopTransitionState.stepFactor; i++) {
+            g_gearShopTransitionState.delta.cameraX += g_gearShopTransitionState.step.cameraX;
+        }
+
+        if(g_gearShopTransitionState.isCameraPanningLeft == FALSE) {
+            if( (g_gearShopTransitionState.delta.cameraX / 0x10000) + g_gearShopTransitionState.start.cameraX >= g_gearShopTransitionState.target.cameraX ) {
+                notDone = FALSE;
+            } else {
+                xTotal++;
+            }
+        } else {
+            if(g_gearShopTransitionState.target.cameraX >= (g_gearShopTransitionState.start.cameraX - (g_gearShopTransitionState.delta.cameraX / 0x10000))) {
+                notDone = FALSE;
+            } else {
+                xTotal += 1;
+            }
+        }
+    }
+
+    notDone = TRUE;
+    while(notDone) {
+        for(i = 0; i < g_gearShopTransitionState.stepFactor; i++) {
+            g_gearShopTransitionState.delta.cameraY += g_gearShopTransitionState.step.cameraY;
+        }
+
+        if(g_gearShopTransitionState.isCameraPanningDown == FALSE) {
+            if (((g_gearShopTransitionState.delta.cameraY / 0x10000) + g_gearShopTransitionState.start.cameraY) >= g_gearShopTransitionState.target.cameraY) {
+                notDone = FALSE;
+            } else {
+                yTotal++;
+            }
+        } else {
+            if( g_gearShopTransitionState.target.cameraY >= (g_gearShopTransitionState.start.cameraY - (g_gearShopTransitionState.delta.cameraY / 0x10000) )) {
+                notDone = FALSE;
+            } else {
+                yTotal++;
+            }
+        }
+    }
+
+    if(xTotal < yTotal)
+        xTotal = yTotal;
+
+    if (g_gearShopTransitionState.target.gearY >= g_gearShopTransitionState.start.gearY) {
+        g_gearShopTransitionState.step.gearY = g_gearShopTransitionState.target.gearY - g_gearShopTransitionState.start.gearY;
+        g_gearShopTransitionState.isGearMovingDown = FALSE;
+    } else {
+        g_gearShopTransitionState.step.gearY = g_gearShopTransitionState.target.gearY - g_gearShopTransitionState.start.gearY;
+        g_gearShopTransitionState.isGearMovingDown = TRUE;
+    }
+
+    if (g_gearShopTransitionState.step.gearY < 0) {
+        g_gearShopTransitionState.step.gearY = ~g_gearShopTransitionState.step.gearY + 1;
+    }
+
+    g_gearShopTransitionState.delta.gearY = 0;
+    g_gearShopTransitionState.delta.cameraY = 0;
+    g_gearShopTransitionState.delta.cameraX = 0;
+
+    g_gearShopTransitionState.step.gearY = (g_gearShopTransitionState.step.gearY << 0x10) / xTotal;
+}
+
+/* 93.14% match: https://decomp.me/scratch/JuNxu */
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CBA2C);
 
 void func_801CBDA0(void) {
@@ -2766,13 +2773,13 @@ void GearShopMenuMain(void) {
     g_Menu->unk218.vx = 0;
     g_Menu->unk218.vy = 0x400;
     g_Menu->transitionEffectState = MENU_ANIMATION_DONE;
-    g_gearShopTransitionState.vecs[0].z = -0x400;
-    g_gearShopTransitionState.vecs[1].z = -0x400;
-    g_gearShopTransitionState.vecs[0].x = 0x400;
-    g_gearShopTransitionState.vecs[0].y = 0;
-    g_gearShopTransitionState.vecs[1].x = 0x400;
-    g_gearShopTransitionState.vecs[1].y = 0;
-    g_gearShopTransitionState.count = 0x10;
+    g_gearShopTransitionState.start.gearY = -0x400;
+    g_gearShopTransitionState.target.gearY = -0x400;
+    g_gearShopTransitionState.start.cameraX = 0x400;
+    g_gearShopTransitionState.start.cameraY = 0;
+    g_gearShopTransitionState.target.cameraX = 0x400;
+    g_gearShopTransitionState.target.cameraY = 0;
+    g_gearShopTransitionState.stepFactor = 0x10;
     GearShopMenuFilterPartyMembers();
     GearShopMenuResetRenderContext();
     func_801C6114(); // initMenuGeometry()?

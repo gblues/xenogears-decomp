@@ -5,117 +5,7 @@
 #include "system/graphics.h"
 #include "system/debug.h"
 #include "util/copyspec.h"
-
-#define MAX_NUM_SUBMENU_OPTIONS 0x4
-
-// Confirmation window choices
-#define MENU_CHOICE_NO 0
-#define MENU_CHOICE_YES 1
-
-// Selection modes
-#define MENU_AUTO_ADVANCE 0
-#define MENU_MANUAL_CHOICE 0xFF
-
-
-// Submenu choices for "Tune up"
-#define MENU_CHOICE_ARMOR 0x0
-#define MENU_CHOICE_FRAME 0x1
-#define MENU_CHOICE_ENGINE 0x2
-#define MENU_CHOICE_FUEL 0x3
-
-// Submenu choices for "Sell"
-#define MENU_CHOICE_WEAPONS 0x3
-#define MENU_CHOICE_PARTS 0x4
-
-
-#define MENU_CYCLE_TO_NEXT 0x0
-#define MENU_CYCLE_TO_PREV 0x1
-
-
-// probably something like: DEBUGGER_ATTACHED, guards a breakpoint left in the code
-extern s32* D_8005917C; // TODO: should be in a header for main program stuff since this is not coming from an overlay
-
-extern s8  D_801D697C;
-
-
-extern int D_801D69A0[]; // MENU_TEX_BALL_CURSOR_8
-extern int D_801D69A4[];
-// = {
-//    Buy Submenu
-//                             MENU_TEX_STRING_WEAPONS,
-//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_PARTS,
-//    MENU_TEX_BALL_CURSOR_10, MENU_TEX_STRING_FUEL,
-//    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_ENGINE,
-//    MENU_TEX_BALL_CURSOR_8,  MENU_TEX_STRING_PARTS,
-//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_WEAPONS,
-//    0xFFFF, 0xFFFF
-//    0xFFFF, 0xFFFF,
-//    ------------------------------------------------
-//    Sell Submenu
-//    MENU_TEX_BALL_CURSOR_8, MENU_TEX_STRING_PARTS,
-//    MENU_TEX_BALL_CURSOR_9, MENU_TEX_STRING_WEAPONS,
-//    0xFFFF, 0xFFFF,
-//    0xFFFF, 0xFFFF,
-//    ------------------------------------------------
-//    Tune up Submenu
-//    MENU_TEX_BALL_CURSOR_8,  MENU_TEX_STRING_ARMOR,
-//    MENU_TEX_BALL_CURSOR_9,  MENU_TEX_STRING_FRAME,
-//    MENU_TEX_BALL_CURSOR_10, MENU_TEX_STRING_ENGINE,
-//    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_FUEL
-//   }
-
-extern u8  D_801D6A20;
-extern u8  D_801D6A24;
-extern int D_801D6A60[4];
-extern int D_801D6A70[4];
-extern u32 D_801D6A80;
-extern int D_801D6A84[];
-extern int D_801D6AFC[];
-extern int D_801D6B7C[];
-extern int D_801D6C44[];
-extern u16 D_801D6C68[];
-extern int g_gearShopGearEquipFlags[];
-extern u8  D_801D6D08[8]; // indexed by (renderContext * 4)+i
-extern u8  D_801D6D10[2]; // indexed by renderContext
-extern int D_801D6D14[8]; // indexed by (renderContext * 4)+i
-extern s32 D_801D6D34[2]; // indexed by renderContext
-extern int D_801D6D3C[8]; // indexed by (renderContext * 4)+i
-extern s32 D_801D6D5C[2]; // indexed by renderContext
-extern u16 D_801D6D7C[2];
-extern int D_801D6D14[8];
-extern int D_801D6D3C[8];
-
-// // D_801D6D7C
-extern s32 D_801D6FD0[2];
-
-extern u16 D_801D7074[6];
-extern u16 D_801D7080[6];
-extern u8  D_801D70F4[9];
-
-extern s8  D_801D70FD;
-extern s32 D_801D9050;
-extern s32 D_801D9054;
-extern s32 D_801D9058;
-extern s32 D_801D905C;
-extern s32 D_801D9060;
-extern s32 D_801D9064;
-extern s8  D_801D9083;
-extern int g_gearShopAvailableCharacterCount;
-extern int g_gearShopCurCharacterIndex;
-
-extern u_char  g_gearShopCurrentGearId;
-extern u8* D_801D9088;
-
-extern s32 D_801D6980[];
-// = {
-//    MENU_TEX_BALL_CURSOR_1, MENU_TEX_STRING_BUY,
-//    MENU_TEX_BALL_CURSOR_2, MENU_TEX_STRING_SELL,
-//    MENU_TEX_BALL_CURSOR_3, MENU_TEX_STRING_EXIT,
-//    MENU_TEX_BALL_CURSOR_4, MENU_TEX_STRING_TUNE_UP,
-//    }
-extern s32 D_801D6A30[];
-
-extern MenuTransitionEffectState g_gearShopTransitionState;
+#include "gear_shop/gear_shop.h"
 
 void GearShopMenuShoulderButtonUiInitialize(void) {
     int i;
@@ -268,16 +158,16 @@ void func_801CFF18(void) {
 
     pushXYZ(
          0x400, 0, -0x400,
-        &g_gearShopTransitionState.vecs[1].x,
-        &g_gearShopTransitionState.vecs[1].y,
-        &g_gearShopTransitionState.vecs[1].z,
-        &g_gearShopTransitionState.vecs[0].x,
-        &g_gearShopTransitionState.vecs[0].y,
-        &g_gearShopTransitionState.vecs[0].z
+        &g_gearShopTransitionState.target.cameraX,
+        &g_gearShopTransitionState.target.cameraY,
+        &g_gearShopTransitionState.target.gearY,
+        &g_gearShopTransitionState.start.cameraX,
+        &g_gearShopTransitionState.start.cameraY,
+        &g_gearShopTransitionState.start.gearY
 
     );
 
-    func_801CB690(g_gearShopTransitionState.vecs[0].x, g_gearShopTransitionState.vecs[0].y);
+    func_801CB690(g_gearShopTransitionState.start.cameraX, g_gearShopTransitionState.start.cameraY);
     g_Menu->transitionEffectState = MENU_OPEN_ANIMATION|MENU_CLOSE_ANIMATION|MENU_CLOSE_ANIMATION_START;
 }
 
