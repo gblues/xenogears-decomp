@@ -378,7 +378,7 @@ void func_801C5CA8(MenuString* pMenuString, s32 arg1, s32 arg2, u8 attributes) {
 
     pMenuString->unk7F = 0;
 }
-
+// 96.94% match: https://decomp.me/scratch/fYkQC
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5EE8);
 
 void func_801C6098(void) {
