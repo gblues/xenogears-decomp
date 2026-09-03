@@ -378,8 +378,41 @@ void func_801C5CA8(MenuString* pMenuString, s32 arg1, s32 arg2, u8 attributes) {
 
     pMenuString->unk7F = 0;
 }
-// 96.94% match: https://decomp.me/scratch/fYkQC
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801C5EE8);
+
+void func_801C5EE8(MenuString* pStringList, u8* pStringIdList, s32 yOffset, s32 count) {
+    s32 yPos;
+    s32 i;
+    u32 offset;
+    RECT *pRect;
+    MenuString *pString;
+
+    for (i = 0; i < count; i += 2) {
+        pStringList[i].width = SystemRenderStringEntry(
+            GetStringEntry(g_Menu->unk2E0, pStringIdList[i]),
+            (u32*) g_Menu->unk4E0[0].pVramBuffer, 0x18, 0
+        );
+        pStringList[i + 1].width = SystemRenderStringEntry(
+            GetStringEntry(g_Menu->unk2E0, pStringIdList[i + 1]),
+            (u32*) g_Menu->unk4E0[0].pVramBuffer, 0x18, 1
+        );
+
+        pString = &pStringList[i];
+        pRect = &pString->vramDest;
+        setRECT(pRect,
+                ((u32)(i / 2) % 2 * 32) + 0x140,
+                ((i+yOffset) / 4) * FONT_LETTER_HEIGHT,
+                28,
+                FONT_LETTER_HEIGHT
+        );
+        memcpy(&pString[1].vramDest, pRect, sizeof(RECT));
+
+        func_801C5CA8(&pStringList[i], i, yOffset, 0);
+        func_801C5CA8(&pStringList[i + 1], i + 1, yOffset, 0);
+
+        LoadImage(pRect, g_Menu->unk4E0[0].pVramBuffer);
+        DrawSync(0);
+    }
+}
 
 void func_801C6098(void) {
     u32* pImg;
@@ -2026,8 +2059,81 @@ void func_801CB690(void) {
     g_gearShopTransitionState.step.gearY = (g_gearShopTransitionState.step.gearY << 0x10) / xTotal;
 }
 
-/* 93.14% match: https://decomp.me/scratch/JuNxu */
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/main", func_801CBA2C);
+
+/*
+ * In GearShopMenu, g_Menu->transitionEffectState is a bitmask to track which directional vectors need to be handled.
+ * This function checks for each of these flags, clearing them when they are done processing.
+ */
+
+void func_801CBA2C(void) {
+    int i;
+
+    if (g_Menu->transitionEffectState & EFFECTSTATE_UPDATE_X) {
+        for(i = 0; i < g_gearShopTransitionState.stepFactor; i++) {
+            g_gearShopTransitionState.delta.cameraX += g_gearShopTransitionState.step.cameraX;
+        }
+
+        if (g_gearShopTransitionState.isCameraPanningLeft == 0) {
+            if (g_gearShopTransitionState.delta.cameraX / 0x10000 + g_gearShopTransitionState.start.cameraX < g_gearShopTransitionState.target.cameraX) {
+            g_Menu->cameraPosition.vz = g_gearShopTransitionState.delta.cameraX / 0x10000 + g_gearShopTransitionState.start.cameraX;
+            } else {
+                g_Menu->cameraPosition.vz = g_gearShopTransitionState.target.cameraX;
+                g_Menu->transitionEffectState &= EFFECTSTATE_UPDATE_Y|EFFECTSTATE_UPDATE_Z;
+            }
+        } else {
+
+            if (g_gearShopTransitionState.target.cameraX >= g_gearShopTransitionState.start.cameraX - g_gearShopTransitionState.delta.cameraX / 0x10000) {
+                g_Menu->cameraPosition.vz = g_gearShopTransitionState.target.cameraX;
+                g_Menu->transitionEffectState &= EFFECTSTATE_UPDATE_Y|EFFECTSTATE_UPDATE_Z;
+            } else {
+                g_Menu->cameraPosition.vz = g_gearShopTransitionState.start.cameraX - g_gearShopTransitionState.delta.cameraX / 0x10000;
+            }
+        }
+    }
+    if (g_Menu->transitionEffectState & EFFECTSTATE_UPDATE_Y) {
+        for(i = 0; i < g_gearShopTransitionState.stepFactor; i++) {
+            g_gearShopTransitionState.delta.cameraY += g_gearShopTransitionState.step.cameraY;
+        }
+
+        if (g_gearShopTransitionState.isCameraPanningDown == 0) {
+
+            if (g_gearShopTransitionState.delta.cameraY / 0x10000 + g_gearShopTransitionState.start.cameraY < g_gearShopTransitionState.target.cameraY) {
+                g_Menu->cameraPosition.vy = g_gearShopTransitionState.delta.cameraY / 0x10000 + g_gearShopTransitionState.start.cameraY;
+            } else {
+                g_Menu->cameraPosition.vy = g_gearShopTransitionState.target.cameraY;
+                g_Menu->transitionEffectState &= EFFECTSTATE_UPDATE_X|EFFECTSTATE_UPDATE_Z;
+            }
+        } else {
+
+            if (g_gearShopTransitionState.target.cameraY >= g_gearShopTransitionState.start.cameraY - g_gearShopTransitionState.delta.cameraY / 0x10000) {
+                g_Menu->cameraPosition.vy = g_gearShopTransitionState.target.cameraY;
+                g_Menu->transitionEffectState &= EFFECTSTATE_UPDATE_X|EFFECTSTATE_UPDATE_Z;
+            } else {
+                g_Menu->cameraPosition.vy = g_gearShopTransitionState.start.cameraY - g_gearShopTransitionState.delta.cameraY / 0x10000;
+            }
+        }
+    }
+    if (g_Menu->transitionEffectState & EFFECTSTATE_UPDATE_Z) {
+        g_gearShopTransitionState.delta.gearY += g_gearShopTransitionState.step.gearY;
+
+        if (g_gearShopTransitionState.isGearMovingDown == 0) {
+            if (g_gearShopTransitionState.start.gearY + g_gearShopTransitionState.delta.gearY / 0x10000 < g_gearShopTransitionState.target.gearY) {
+                g_LibGearModels[1]->pSkeleton->vec2.vy = g_gearShopTransitionState.delta.gearY / 0x10000 + g_gearShopTransitionState.start.gearY;
+            } else {
+                g_LibGearModels[1]->pSkeleton->vec2.vy = g_gearShopTransitionState.target.gearY;
+                g_Menu->transitionEffectState &= EFFECTSTATE_UPDATE_X|EFFECTSTATE_UPDATE_Y;
+            }
+        } else {
+            if (g_gearShopTransitionState.target.gearY >= g_gearShopTransitionState.start.gearY - g_gearShopTransitionState.delta.gearY / 0x10000) {
+                g_LibGearModels[1]->pSkeleton->vec2.vy = g_gearShopTransitionState.target.gearY;
+                g_Menu->transitionEffectState &= EFFECTSTATE_UPDATE_X|EFFECTSTATE_UPDATE_Y;
+            } else {
+                g_LibGearModels[1]->pSkeleton->vec2.vy = g_gearShopTransitionState.start.gearY - g_gearShopTransitionState.delta.gearY / 0x10000;
+            }
+        }
+    }
+}
+
 
 void func_801CBDA0(void) {
     func_801CBA2C();
@@ -2278,7 +2384,7 @@ void GearShopMenuConfirmationWindowFree(void) {
     GearShopMenuUpdateAndRender();
 }
 
-u_char GearShopMenuConfirmationWindowGetChoice(u_char mode, u8 arg1) {
+u_char GearShopMenuConfirmationWindowGetChoice(u_char isConfirmationPrompt, u8 isYesNo) {
     u_char choice;
     u_char isRunning;
     u_char curTimer;
@@ -2288,7 +2394,7 @@ u_char GearShopMenuConfirmationWindowGetChoice(u_char mode, u8 arg1) {
     curTimer = 60;
 
     while (isRunning) {
-        if (mode == MENU_AUTO_ADVANCE) {
+        if (!isConfirmationPrompt) {
             g_Menu->pCursors->shouldRender[2] = FALSE;
             g_Menu->pCursors->shouldRender[3] = FALSE;
 
@@ -2312,14 +2418,14 @@ u_char GearShopMenuConfirmationWindowGetChoice(u_char mode, u8 arg1) {
                 isRunning = FALSE;
                 break;
             case MENU_INPUT_LEFT:
-                if (arg1 == 0) 
+                if (isYesNo == 0)
                     break;
                 g_Menu->pCursors->shouldRender[2] = TRUE;
                 g_Menu->pCursors->shouldRender[3] = FALSE;
                 choice = MENU_CHOICE_YES;
                 break;
             case MENU_INPUT_RIGHT:
-                if (arg1 == 0) 
+                if (isYesNo == 0)
                     break;
                 g_Menu->pCursors->shouldRender[2] = FALSE;
                 g_Menu->pCursors->shouldRender[3] = TRUE;
@@ -2335,27 +2441,42 @@ u_char GearShopMenuConfirmationWindowGetChoice(u_char mode, u8 arg1) {
     return choice;
 }
 
-s32 func_801CCC18(u8 arg0, s32 arg1, s32 arg2) {
-    u8 unkBool = TRUE;
+#define STRING_ID_NONE 0xFF
+
+/*
+ * Display a modal yes/no dialog
+ *
+ * firstLine: string ID of the contents of the modal (required)
+ * secondLine: an optional second line of text, set to STRING_ID_NONE to disable
+ * isConfirmationPrompt: if true, presents and handles yes/no prompts. if false, the modal is presented
+ * for up to 1 second and dismisses on any keypress.
+ *
+ * If secondLine is not STRING_ID_NONE, the first line of text will be displayed as a simple "OK" modal, after
+ * which the yes/no prompt will be presented with the contents of `secondLine`.
+ * returns 1 for yes, 0 for no.
+ */
+
+s32 GearShopMenuShowModal(u8 firstLine, s32 secondLine, s32 isConfirmationPrompt) {
+    u8 isYesNo = TRUE;
     u8 result;
 
-    GearShopMenuConfirmationWindowInitialize(arg0);
-    if ((u8)arg1 == 0xFF) {
+    GearShopMenuConfirmationWindowInitialize(firstLine);
+    if ((u8)secondLine == STRING_ID_NONE) {
         g_Menu->pCursors->shouldRender[3] = TRUE;
     } else {
         g_Menu->pCursors->shouldRender[2] = FALSE;
-        unkBool = 0;
+        isYesNo = FALSE;
         g_Menu->pCursors->shouldRender[3] = FALSE;
     }
 
-    result = GearShopMenuConfirmationWindowGetChoice(arg2, unkBool);
+    result = GearShopMenuConfirmationWindowGetChoice(isConfirmationPrompt, isYesNo);
     GearShopMenuConfirmationWindowFree();
 
-    if ((u8)arg1 != 0xFF) {
+    if ((u8)secondLine != STRING_ID_NONE) {
         g_Menu->pCursors->shouldRender[3] = TRUE;
-        GearShopMenuConfirmationWindowInitialize(arg1);
+        GearShopMenuConfirmationWindowInitialize(secondLine);
         g_Menu->pCursors->shouldRender[3] = TRUE;
-        result = GearShopMenuConfirmationWindowGetChoice(arg2, 1);
+        result = GearShopMenuConfirmationWindowGetChoice(isConfirmationPrompt, TRUE);
         GearShopMenuConfirmationWindowFree();
     }
     return result;

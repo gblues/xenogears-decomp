@@ -78,6 +78,10 @@
 #define ITEM_TYPE_GEAR_ACCESSORY 0x3
 #define ITEM_TYPE_GEAR_WEAPON    0x4
 
+// So far these _seem_ to be consistent across overlays?
+#define MENU_SOUND_ERROR    4
+#define MENU_SOUND_CONFIRM  2
+
 /*
  * Menu Resource type definitions
  */
@@ -572,6 +576,7 @@ typedef struct {
     /* 0x46D7 */ u8 unk46D7[0x9]; // Render contexts
     /* 0x46E0 */ u16 unk46E0[0x10];
     /* 0x4700 */ u16 unk4700[0x10];
+    // /* 0x4720 */ u_char gearShopItemTables[5 * 20]; // Frames, armor, engines, weapons, parts. Not necessarily in that order.
     /* 0x4720 */ GearShopItemTableEntry gearShopItemTables[5]; // Frames, armor, engines, weapons, parts. Not necessarily in that order.
     /* 0x4784 */ u8 unk4784;
     /* 0x4785 */ u8 unk4785;

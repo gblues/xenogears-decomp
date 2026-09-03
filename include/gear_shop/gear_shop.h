@@ -14,6 +14,9 @@
 #define MENU_AUTO_ADVANCE 0
 #define MENU_MANUAL_CHOICE 0xFF
 
+#define EFFECTSTATE_UPDATE_X 0x01
+#define EFFECTSTATE_UPDATE_Y 0x02
+#define EFFECTSTATE_UPDATE_Z 0x04
 
 // Submenu choices for "Tune up"
 #define MENU_CHOICE_ARMOR 0x0
@@ -115,7 +118,11 @@ extern s32 D_801D6980[];
 //    MENU_TEX_BALL_CURSOR_3, MENU_TEX_STRING_EXIT,
 //    MENU_TEX_BALL_CURSOR_4, MENU_TEX_STRING_TUNE_UP,
 //    }
+extern s8 D_801D6A2C[4];
 extern s32 D_801D6A30[];
+extern int D_801D6A40[8]; // = { 0, 0x18, 0, 0, 0x18, 0xC, 0xC, 0x6 }
+
+extern u16 g_gearShopCurrentItemQuantityHeld;
 
 typedef struct {
     /* 0x00 */ int cameraX;

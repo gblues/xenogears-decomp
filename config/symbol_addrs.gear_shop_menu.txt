@@ -61,6 +61,7 @@ GearShopMenuFreePointerCursors             =  0x801CC4DC;
 GearShopMenuConfirmationWindowInitialize   =  0x801CC530;
 GearShopMenuConfirmationWindowFree         =  0x801CC9A0;
 GearShopMenuConfirmationWindowGetChoice    = 0x801CCA40;
+GearShopMenuShowModal                      = 0x801CCC18;
 GearShopMenuFree                           =  0x801CCD20;
 GearShopMenuInitializeShopModeSelectionMenu = 0x801CD310;
 GearShopMenuInitializeSubmenu              = 0x801CD564;
@@ -77,6 +78,7 @@ GearShopMenuSellMenu                       = 0x801D2054;
 GearShopMenuSellWeaponsMenu                = 0x801D2784;
 GearShopMenuSellPartsMenu                  = 0x801D27C4;
 GearShopMenuSellModeMenuHandleSelectedOption = 0x801D2804;
+GearShopMenuPurchaseDialog = 0x801D498C;
 
 g_gearShopGearEquipFlags                 =  0x801D6C88; // type:s32 size:20
 g_gearShopAvailableCharacterCount        =  0x801D6FD8; // type:s32
