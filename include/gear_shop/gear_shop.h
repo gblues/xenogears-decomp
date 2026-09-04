@@ -25,9 +25,9 @@
 #define MENU_CHOICE_FUEL 0x3
 
 // Submenu choices for "Sell"
-#define MENU_CHOICE_WEAPONS 0x3
-#define MENU_CHOICE_PARTS 0x4
 
+#define MENU_CHOICE_GEAR_PARTS 0x3
+#define MENU_CHOICE_GEAR_WEAPONS 0x4
 
 #define MENU_CYCLE_TO_NEXT 0x0
 #define MENU_CYCLE_TO_PREV 0x1

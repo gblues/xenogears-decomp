@@ -158,10 +158,10 @@ typedef struct {
     /* 0x1F90 */ u_char itemQuantities[MAX_INVENTORY_ITEMS];
     /* 0x2026 */ u_char itemIDs[MAX_INVENTORY_ITEMS];
 
-    /* 0x20BC */ undefined8 unk20BC[0x64];
-    /* 0x2120 */ undefined8 unk2120[0x64];
-    /* 0x2184 */ undefined8 unk2184[0x96];
-    /* 0x221A */ undefined8 unk221A[0x96];
+    /* 0x20BC */ undefined8 gearWeaponsQty[0x64];
+    /* 0x2120 */ undefined8 gearWeaponsIds[0x64];
+    /* 0x2184 */ undefined8 gearPartsQty[0x96];
+    /* 0x221A */ undefined8 gearPartsIds[0x96];
     /* 0x22B0 */ undefined8 unk22B0;
     /* 0x22B1 */ undefined8 gearRide[MAX_PARTY_MEMBERS];
     /* 0x22B4 */ undefined8 unk22B4[0x2];

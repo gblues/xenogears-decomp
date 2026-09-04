@@ -75,8 +75,8 @@ GearShopMenuUpdateCharacterPortraits       =  0x801D0220;
 GearShopMenuSetAvailableCharacterCount     = 0x801D0348;
 GearShopMenuChangeCurrentGear              = 0x801D0398;
 GearShopMenuSellMenu                       = 0x801D2054;
-GearShopMenuSellWeaponsMenu                = 0x801D2784;
-GearShopMenuSellPartsMenu                  = 0x801D27C4;
+GearShopMenuSellPartsMenu                = 0x801D2784;
+GearShopMenuSellWeaponsMenu                  = 0x801D27C4;
 GearShopMenuSellModeMenuHandleSelectedOption = 0x801D2804;
 GearShopMenuPurchaseDialog = 0x801D498C;
 

@@ -392,24 +392,24 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D1F20);
 // Spawn and run the logic for a sell menu
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", GearShopMenuSellMenu);
 
-void GearShopMenuSellWeaponsMenu(void) {
+void GearShopMenuSellPartsMenu(void) {
     GearShopMenuSellMenu(
         0x96,
-        g_GameState.unk221A,
-        g_GameState.unk2184,
+        g_GameState.gearPartsIds,
+        g_GameState.gearPartsQty,
         3, 1,
-        g_GameState.unk2184,
+        g_GameState.gearPartsQty,
         0
     );
 }
 
-void GearShopMenuSellPartsMenu(void) {
+void GearShopMenuSellWeaponsMenu(void) {
     GearShopMenuSellMenu(
         0x64,
-        g_GameState.unk2120,
-        g_GameState.unk20BC,
+        g_GameState.gearWeaponsIds,
+        g_GameState.gearWeaponsQty,
         4, 1,
-        g_GameState.unk20BC,
+        g_GameState.gearWeaponsQty,
         0
     );
 }
@@ -427,12 +427,12 @@ void GearShopMenuSellModeMenuHandleSelectedOption(u_char offset) {
 
     // The functions here goes into and will run the actual sell menus
     switch (choice) {
-        case MENU_CHOICE_WEAPONS:
-            GearShopMenuSellWeaponsMenu();
+        case MENU_CHOICE_GEAR_PARTS:
+            GearShopMenuSellPartsMenu();
             break;
 
-        case MENU_CHOICE_PARTS:
-            GearShopMenuSellPartsMenu();
+        case MENU_CHOICE_GEAR_WEAPONS:
+            GearShopMenuSellWeaponsMenu();
             break;
     }
 
