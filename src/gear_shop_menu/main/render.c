@@ -7,6 +7,10 @@
 #include "util/copyspec.h"
 #include "gear_shop/gear_shop.h"
 
+// TODO: remove once matched
+void func_801D2950(u8, u8);
+s32 func_801D2B74(s32, u32, u8*);
+
 void GearShopMenuShoulderButtonUiInitialize(void) {
     int i;
     int polyIndex;
@@ -388,24 +392,24 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D1F20);
 // Spawn and run the logic for a sell menu
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", GearShopMenuSellMenu);
 
-void GearShopMenuSellWeaponsMenu(void) {
+void GearShopMenuSellPartsMenu(void) {
     GearShopMenuSellMenu(
         0x96,
-        g_GameState.unk221A,
-        g_GameState.unk2184,
+        g_GameState.gearPartsIds,
+        g_GameState.gearPartsQty,
         3, 1,
-        g_GameState.unk2184,
+        g_GameState.gearPartsQty,
         0
     );
 }
 
-void GearShopMenuSellPartsMenu(void) {
+void GearShopMenuSellWeaponsMenu(void) {
     GearShopMenuSellMenu(
         0x64,
-        g_GameState.unk2120,
-        g_GameState.unk20BC,
+        g_GameState.gearWeaponsIds,
+        g_GameState.gearWeaponsQty,
         4, 1,
-        g_GameState.unk20BC,
+        g_GameState.gearWeaponsQty,
         0
     );
 }
@@ -423,12 +427,12 @@ void GearShopMenuSellModeMenuHandleSelectedOption(u_char offset) {
 
     // The functions here goes into and will run the actual sell menus
     switch (choice) {
-        case MENU_CHOICE_WEAPONS:
-            GearShopMenuSellWeaponsMenu();
+        case MENU_CHOICE_GEAR_PARTS:
+            GearShopMenuSellPartsMenu();
             break;
 
-        case MENU_CHOICE_PARTS:
-            GearShopMenuSellPartsMenu();
+        case MENU_CHOICE_GEAR_WEAPONS:
+            GearShopMenuSellWeaponsMenu();
             break;
     }
 
@@ -562,7 +566,7 @@ u8 func_801D3A3C(u8* index, u8* haystack, s32 size, u8 needle) {
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D3A80);
 
-s32 func_801D3C78(s32 rowIndex, s32 scrollOffset) {
+s32 func_801D3C78(s32 rowIndex, s32 scrollOffset, u8 *unused) {
     int currentItem = scrollOffset + rowIndex;
 
     u8 gearId;
@@ -741,7 +745,243 @@ u8 func_801D4888(s32 itemId) {
     return result;
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D498C);
+
+s32 GearShopMenuPurchaseDialog(u8 arg0, u8 disableQuantitySelection) {
+    u8 values[8]; // sp28
+    int i; // s0
+    u8 *temp; // s0
+    u8 continueProcessing = TRUE; // s3
+    u8 redrawWindows = TRUE; // sp40
+    u8 redrawTransactionSummary = TRUE; // fp
+    int rowIndex = 0; // s4
+    int newRowIndex = 0xFF; // sp48
+    int scrollOffset = 0; // s2
+    int newScrollOffset = 0xFF; // sp50
+    int cartTotal = 0; // s6
+    int current_gold; // sp58
+    int newProjectedRemainingFunds; // sp60
+    int sellPrice; // sp68
+    int salesTotal; // sp70
+    u8 purchaseConfirmStringId1; // sp78
+    u8 purchaseConfirmStringId2; // sp80
+    int unkWindowX; // sp88
+    int unkWindowWidth; // sp90
+    int numItems; // sp98
+    int projectedRemainingFunds; // s5
+    int itemPrice; // s7
+
+    current_gold = g_GameState.gold;
+    purchaseConfirmStringId1 = 0x8F;
+    purchaseConfirmStringId2 = 0xFF;
+    unkWindowX = 0xE0;
+    projectedRemainingFunds = current_gold;
+    newProjectedRemainingFunds = projectedRemainingFunds;
+    salesTotal = 0;
+    unkWindowWidth = 0x40;
+    for(i = 0; i < MAX_GAME_CHARACTERS; i++) {
+        if(g_GameState.characters[i].gearId != GEAR_ID_NONE) {
+            func_801D6150(g_Menu->pDressingRoom, g_GameState.characters[i].gearId);
+            func_801D5F94(g_Menu->pDressingRoom, g_GameState.characters[i].gearId);
+            g_Menu->pShop->unk46E0[i] = g_Menu->pDressingRoom->unkB0;
+            g_Menu->pShop->unk4700[i] = g_Menu->pDressingRoom->totalDefense;
+        }
+    }
+
+    bzero(g_Menu->shopItemIDs, MAX_SHOP_ITEMS);
+    bzero(g_Menu->shopItemTypes, MAX_SHOP_ITEMS);
+    bzero(g_Menu->pShop->curItemQuantities, MAX_SHOP_ITEMS);
+
+    for(i = 0; i < MAX_GEAR_SHOP_ITEMS; i++) {
+        u_char *table = (u_char *)g_Menu->pShop->gearShopItemTables;
+        g_Menu->shopItemIDs[i] = table[((arg0 * 3) + g_Menu->subMenuChoice) * 20 + i];
+        g_Menu->shopItemTypes[i] = (arg0 * 3) + g_Menu->subMenuChoice;
+    }
+
+    numItems = g_GearShopInventoryCounts[(arg0 * 3) + g_Menu->subMenuChoice];
+    g_Menu->pSelectionMenu->unk1192 = 1;
+    GearShopMenuInitializeArrowCursor(0);
+
+     while(continueProcessing) {
+        GearShopMenuUpdateAndRender();
+
+        if ((scrollOffset != newScrollOffset) || (redrawTransactionSummary)) {
+            if (disableQuantitySelection) {
+                sellPrice = func_801D2B74(scrollOffset, newProjectedRemainingFunds, values);
+            } else {
+                sellPrice = func_801D2B74(scrollOffset, projectedRemainingFunds, values);
+            }
+            GearShopMenuUpdateScrollBarHandle(12, 50, 60, numItems, scrollOffset);
+        }
+
+        if ((rowIndex != newRowIndex) || (scrollOffset != newScrollOffset)) {
+            newRowIndex = rowIndex;
+            itemPrice = func_801D3C78(rowIndex, scrollOffset, values);
+            newScrollOffset = scrollOffset;
+            g_Menu->pManager->unk5A = 1;
+            if (disableQuantitySelection) {
+                unkWindowX = 0xC8;
+                projectedRemainingFunds = newProjectedRemainingFunds;
+                unkWindowWidth = 0x70; // 112
+                redrawTransactionSummary = TRUE;
+                cartTotal = 0;
+                salesTotal = 0;
+                if (values[rowIndex]) {
+                    cartTotal = itemPrice;
+                    projectedRemainingFunds -= itemPrice;
+                    salesTotal = sellPrice;
+                    projectedRemainingFunds += sellPrice;
+                }
+            }
+        }
+
+        GearShopMenuUpdateArrowCursor(rowIndex, scrollOffset, 0, 0);
+
+            if (redrawWindows) {
+                // void GearShopMenuInitializeWindow(u_char windowIndex, u_short x, u_short y, u_short width, u_short height, u_char shouldInitializeHandle, u8 arg6, int zIndex, u_char hasScrollbar)
+                GearShopMenuInitializeWindow(2, 0xC, 0x2A, 0xC4 - (disableQuantitySelection * 0x14), 0x74, 0, 1, 4, 1);
+                GearShopMenuInitializeWindow(3, 0x20, 0xE, 0xFCU, 0x14U, 0U, 1, 4, 0);
+                GearShopMenuInitializeWindow(5, unkWindowX, 0x7A, unkWindowWidth, 0x24, FALSE, 1, 4, FALSE);
+                temp = D_801D6A2C;
+                func_801CCE90(2, g_Menu->unk6E0, (s8* ) temp, (s8* ) g_Menu->pManager->unkC);
+                func_801CCEE8(2, g_Menu->unk6E0, (s32) temp, D_801D6A40, g_Menu->pManager->unkC, disableQuantitySelection, 0, 1);
+                if (disableQuantitySelection) {
+                    func_801D2950((g_Menu->subMenuChoice + (arg0 * 3)), arg0);
+                }
+                GearShopMenuUpdateCharacterPortraits();
+                func_801D04E8(disableQuantitySelection);
+                redrawWindows = FALSE;
+            }
+
+        if (redrawTransactionSummary) {
+            func_801D06D8(current_gold, cartTotal, projectedRemainingFunds, salesTotal, disableQuantitySelection);
+            redrawTransactionSummary = FALSE;
+        }
+        switch (g_Menu->input) {
+            case MENU_INPUT_CONFIRM:
+
+                if (cartTotal != 0) {
+                    GearShopMenuPlaySoundEffect(MENU_SOUND_CONFIRM);
+                    g_Menu->pManager->unk5A = FALSE;
+                    g_Menu->pManager->shouldRenderWindow[2] = FALSE;
+                    g_Menu->pManager->shouldRenderWindow[3] = FALSE;
+                    g_Menu->pManager->scrollHandleActive = FALSE;
+                    g_Menu->pManager->shouldRenderArrowCursor[0] = FALSE;
+                    g_Menu->pManager->shouldRenderWindow[5] = FALSE;
+                    continueProcessing = FALSE;
+                    g_Menu->pManager->unkC[disableQuantitySelection] = FALSE;
+                    if (disableQuantitySelection) {
+                        if (func_801D4888(scrollOffset + rowIndex) & 0xFF) {
+                            purchaseConfirmStringId1 = MENU_STRING_CONFIRM_PURCHASE;
+                        } else {
+                            purchaseConfirmStringId1 = MENU_STRING_NOT_AN_UPGRADE;
+                            purchaseConfirmStringId2 = MENU_STRING_BUY_ANYWAY;
+                        }
+                    } else {
+                        func_801D0C20(cartTotal, 0);
+                    }
+                    GearShopMenuInitializePointerCursors(0);
+                    if (GearShopMenuShowModal(purchaseConfirmStringId1, purchaseConfirmStringId2, TRUE) != MENU_CHOICE_NO) {
+                        if (disableQuantitySelection) {
+                            g_Menu->pShop->curItemQuantities[scrollOffset + rowIndex] = 1;
+                        }
+                        func_801D44FC(projectedRemainingFunds);
+                    } else {
+                        continueProcessing = TRUE;
+                        g_Menu->pManager->shouldRenderWindow[2] = TRUE;
+                        g_Menu->pManager->shouldRenderWindow[3] = TRUE;
+                        g_Menu->pManager->shouldRenderWindow[5] = TRUE;
+                        g_Menu->pManager->unkC[disableQuantitySelection] = TRUE;
+                        g_Menu->pManager->scrollHandleActive = TRUE;
+                        newScrollOffset = 0xFF;
+                        newRowIndex = 0xFF;
+                        g_Menu->pManager->shouldRenderArrowCursor[0] = TRUE;
+                    }
+                    GearShopMenuFreePointerCursors();
+                    purchaseConfirmStringId2 = 0xFF;
+                } else {
+                    GearShopMenuPlaySoundEffect(MENU_SOUND_ERROR);
+                }
+                break;
+            case MENU_INPUT_BACK:
+                g_Menu->pManager->shouldRenderWindow[5] = FALSE;
+                continueProcessing = FALSE;
+                g_Menu->pManager->unkC[disableQuantitySelection] = 0;
+                if(cartTotal && !disableQuantitySelection) {
+                    g_Menu->pManager->unk5A = 0;
+                    g_Menu->pManager->shouldRenderWindow[2] = 0;
+                    g_Menu->pManager->shouldRenderWindow[3] = 0;
+                    g_Menu->pManager->scrollHandleActive = 0;
+                    g_Menu->pManager->shouldRenderArrowCursor[0] = 0;
+                    GearShopMenuInitializePointerCursors(0U);
+                    // display the "Cancel all purchases?" modal; returns 1 for "yes" and 0 for "no"
+                    if (GearShopMenuShowModal(MENU_STRING_CANCEL_ALL_PURCHASES, MENU_STRING_NONE, TRUE) == MENU_CHOICE_NO) { // user chose "no" so reactivate the windows and keep on
+                        continueProcessing = TRUE;
+                        g_Menu->pManager->shouldRenderWindow[2] = 1;
+                        g_Menu->pManager->shouldRenderWindow[3] = 1;
+                        g_Menu->pManager->shouldRenderWindow[5] = 1;
+                        g_Menu->pManager->unkC[0] = 1;
+                        g_Menu->pManager->scrollHandleActive = 1;
+                        newScrollOffset = 0xFF;
+                        newRowIndex = 0xFF;
+                        g_Menu->pManager->shouldRenderArrowCursor[0] = 1;
+
+                    }
+                    GearShopMenuFreePointerCursors();
+                }
+                break;
+            case MENU_INPUT_DOWN:
+                rowIndex += 1;
+
+                if (rowIndex >= 8) {
+                    rowIndex = 7;
+                    scrollOffset += 1;
+                    if ((numItems - 8) < scrollOffset) {
+                        scrollOffset -= 1;
+                    }
+                }
+                break;
+            case MENU_INPUT_UP:
+                rowIndex -= 1;
+
+                if (rowIndex < 0) {
+                    scrollOffset -= 1;
+                    rowIndex = 0;
+                    if (scrollOffset < 0) {
+                        scrollOffset = 0;
+                    }
+                }
+                break;
+            case MENU_INPUT_RIGHT:
+                if(values[rowIndex]) {
+                if(!disableQuantitySelection) {
+                    if ((g_Menu->pShop->curItemQuantities[scrollOffset + rowIndex] + 1 + (g_gearShopCurrentItemQuantityHeld)) <= MAX_ITEM_QUANTITY) {
+                        cartTotal += itemPrice;
+                        projectedRemainingFunds -= itemPrice;
+                        redrawTransactionSummary = TRUE;
+                        g_Menu->pShop->curItemQuantities[scrollOffset + rowIndex]++;
+                    }
+                }
+                }
+
+                break;
+            case MENU_INPUT_LEFT:
+                if(!disableQuantitySelection) {
+                    if(g_Menu->pShop->curItemQuantities[scrollOffset+rowIndex]) {
+                        cartTotal -= itemPrice;
+                        projectedRemainingFunds += itemPrice;
+                        redrawTransactionSummary = TRUE;
+                        g_Menu->pShop->curItemQuantities[scrollOffset+rowIndex] += 0xFF;
+                    }
+                }
+                break;
+        }
+    }
+    g_Menu->pShop->unk4785 = 0;
+    GearShopMenuFreeWindow(5);
+    func_801CCEBC(2, (s8* ) g_Menu->pManager->unkC);
+    func_801D0EC8(1);
+    return 1;
+}
 
 // Handles the logic for the "Fuel" option under "Tune up"
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D5398);
@@ -761,7 +1001,7 @@ void func_801D57A8(void) {
         case MENU_CHOICE_ARMOR:
         case MENU_CHOICE_FRAME:
         case MENU_CHOICE_ENGINE:
-            func_801D498C(0, 1);
+            GearShopMenuPurchaseDialog(0, 1);
             func_801D6150(g_Menu->pDressingRoom, g_gearShopCurrentGearId);
             break;
         case MENU_CHOICE_FUEL:
