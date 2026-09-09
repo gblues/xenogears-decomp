@@ -85,9 +85,9 @@ extern s32 D_801D6D5C[2]; // indexed by renderContext
 extern u16 D_801D6D7C[2];
 extern int D_801D6D14[8];
 extern int D_801D6D3C[8];
+
 extern int g_GearShopInventoryCounts[5];
 
-// // D_801D6D7C
 extern s32 D_801D6FD0[2];
 
 extern u16 D_801D7074[6];

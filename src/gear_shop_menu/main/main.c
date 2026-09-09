@@ -1859,7 +1859,7 @@ void GearShopMenuRender(void) {
         func_801CB2E8();
         GearShopMenuRenderWindows();
         func_801CE82C();
-        GearShopMenuRenderString(1, &g_Menu->menuUnk8->unk80, g_Menu->menuUnk8->unk80[0x1E61]);
+        GearShopMenuRenderString(1, &g_Menu->menuUnk8->unk80, g_Menu->menuUnk8->unk1EE1);
         func_801CE7E0();
     }
     GearShopMenuRenderBackgroundDim();
