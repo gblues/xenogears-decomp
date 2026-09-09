@@ -74,6 +74,7 @@ GearShopMenuShoulderButtonUiFree           = 0x801CE2E8;
 GearShopMenuUpdateCharacterPortraits       =  0x801D0220;
 GearShopMenuSetAvailableCharacterCount     = 0x801D0348;
 GearShopMenuChangeCurrentGear              = 0x801D0398;
+GearShopMenuFinalizeSalesTransaction       = 0x801D1F20;
 GearShopMenuSellMenu                       = 0x801D2054;
 GearShopMenuSellPartsMenu                = 0x801D2784;
 GearShopMenuSellWeaponsMenu                  = 0x801D27C4;

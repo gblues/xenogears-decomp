@@ -46,6 +46,14 @@ typedef struct {
     /* 0xA1 */ undefined8 field_0xA1[0x3];
 } GameCharacter; // size: 0xA4
 
+typedef struct {
+    /* 0x00 */ u16 unk0;
+    /* 0x02 */ u8 unk2;
+    /* 0x03 */ u8 unk3;
+    /* 0x04 */ u8 unk4;
+    /* 0x05 */ u8 unk5;
+    /* 0x06 */ u16 unk6;
+} GearWeaponData;
 
 typedef struct {
     /* 0x00 */ u8 unk0;
@@ -55,27 +63,9 @@ typedef struct {
     /* 0x04 */ u8 unk4[4];
     /* 0x08 */ u8 armorId;
     /* 0x09 */ u8 accessorySlots[3];
-    /* 0x0C */ u8 weaponId;
-    /* 0x0D */ u8 unkD;
-    /* 0x0E */ u16 unkE;
-    /* 0x10 */ s16 ether;
-    /* 0x12 */ u8 maxEther;
-    /* 0x13 */ u8 unk13;
-    /* 0x14 */ u8 unk14;
-    /* 0x15 */ u8 unk15;
-    /* 0x16 */ u16 unk16;
-    /* 0x18 */ u16 unk18;
-    /* 0x1A */ u8 unk1A;
-    /* 0x1B */ u8 unk1B;
-    /* 0x1C */ u8 unk1C;
-    /* 0x1D */ u8 unk1D;
-    /* 0x1E */ u16 unk1E;
-    /* 0x20 */ u16 unk20;
-    /* 0x22 */ u8 unk22;
-    /* 0x23 */ u8 unk23;
-    /* 0x24 */ u8 unk24;
-    /* 0x25 */ u8 unk25;
-    /* 0x26 */ u8 unk26[0x12];
+    /* 0x0C */ u8 weaponId[4];
+    /* 0x10 */ GearWeaponData weaponData[3];
+    /* 0x28 */ u8 unk28[0x10];
     /* 0x38 */ u16 fuel;
     /* 0x3A */ u16 maxFuel;
     /* 0x3C */ u8 engineOutput;
@@ -98,10 +88,7 @@ typedef struct {
     /* 0x57 */ u8 unk57;
     /* 0x58 */ u16 unk58;
     /* 0x5A */ u16 unk5A;
-    /* 0x5C */ u8 unk5C;
-    /* 0x5D */ u8 unk5D;
-    /* 0x5E */ u8 unk5E;
-    /* 0x5F */ u8 unk5F;
+    /* 0x5C */ u8 unk5C[4];
     /* 0x60 */ u32 hp;
     /* 0x64 */ u32 maxHp;
     /* 0x68 */ u16 weight;

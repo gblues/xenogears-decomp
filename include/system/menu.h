@@ -324,15 +324,18 @@ typedef struct {
 
 // TODO: these are placeholders so the struct is the right size
 typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u16 unk2;
+    /* 0x00 */ u8 unk0;
+    /* 0x01 */ u8 unk1;
+    /* 0x02 */ u8 unk2;
+    /* 0x03 */ u8 unk3;
     /* 0x04 */ u32 equipFlags;
     /* 0x08 */ u16 price;
     /* 0x0A */ u16 unkA;
     /* 0x0C */ u16 unkC;
     /* 0x0E */ u8 unkE;
     /* 0x0F */ u8 unkF;
-    /* 0x10 */ u16 unk10;
+    /* 0x10 */ u8 unk10;
+    /* 0x11 */ u8 unk11;
     /* 0x12 */ u16 unk12;
 } GearWeapon; /* size: 0x14 */
 
@@ -372,26 +375,25 @@ typedef struct {
 
 typedef struct {
     /* 0x0000 */ MenuString unk0;
-    /* 0x0080 */ u8 unk80[0x50];
-    /* 0x00D0 */ POLY_FT4 polys[12];
-    /* 0x0120 */ u8 unk2B0[0xFF0];
-    /* 0x12A0 */ POLY_FT4 polys12A0[0xE * 2]; // Gear HP, FUEL, WEIGHT text
+    /* 0x0080 */ POLY_FT4 unk80[2];
+    /* 0x00D0 */ POLY_FT4 polysD0[0x6 * 2];
+    /* 0x02B0 */ POLY_FT4 polys2B0[11 * 2 * 2];
+    /* 0x0990 */ POLY_FT4 polys990[11 * 2];
+    /* 0x00D0 */ POLY_FT4 polysD00[18 * 2];
+    /* 0x12A0 */ POLY_FT4 polys12A0[14 * 2]; // Gear HP, FUEL, WEIGHT text
     /* 0x1700 */ POLY_FT4 polys1700[5 * 2]; // Gear HP digits
     /* 0x1890 */ POLY_FT4 polys1890[5 * 2]; // Gear Max HP digits
     /* 0x1A20 */ POLY_FT4 polys1A20[5 * 2]; // Gear fuel digits
     /* 0x1BB0 */ POLY_FT4 polys1BB0[5 * 2]; // Gear Max fuel digits
     /* 0x1D40 */ POLY_FT4 polys1D40[5 * 2]; // Gear weight digits
     /* 0x1ED0 */ u8 unk1ED0;
-    /* 0x1ED0 */ u8 unk1ED1;
-    /* 0x1ED0 */ u8 unk1ED2;
+    /* 0x1ED0 */ u8 unk1ED1[2];
     /* 0x1ED0 */ u8 unk1ED3;
     /* 0x1ED0 */ u8 unk1ED4;
-    /* 0x1ED0 */ u8 unk1ED5;
-    /* 0x1ED0 */ u8 unk1ED6;
+    /* 0x1ED0 */ u8 unk1ED5[2];
     /* 0x1ED0 */ u8 unk1ED7;
     /* 0x1ED8 */ u8 unk1ED8;
-    /* 0x1ED9 */ u8 unk1ED9;
-    /* 0x1EDA */ u8 unk1EDA;
+    /* 0x1ED9 */ u8 unk1ED9[2];
     /* 0x1EDB */ u8 unk1EDB;
     /* 0x1EDC */ u8 unk1EDC;
     /* 0x1EDD */ u8 unk1EDD;
@@ -523,7 +525,9 @@ typedef struct {
     /* 0xC80  */ POLY_FT4 polysGoldBefore[9 * 2];
     /* 0xF50  */ POLY_FT4 polysTotalPrice[9 * 2];
     /* 0x1220 */ POLY_FT4 polysFinalPrice[9 * 2];
-    /* 0x14F0 */ POLY_FT4 unk14F0[0x26];
+    /* 0x14F0 */ POLY_FT4 unk14F0[9*2]; // I suspect these are the "sell" versions of the above
+    /* 0x17C0 */ POLY_FT4 unk17C0[9*2];
+    /* 0x1A90 */ POLY_FT4 unk1A90[2];
     /* 0x1AE0 */ POLY_FT4 polysGoldAfter[9 * 2];
     /* 0x1DB0 */ POLY_FT4 polysShopInventory[SHOP_MAX_ITEMS_IN_VIEW][2];
     /* 0x2030 */ POLY_FT4 unk2030[0x30];
@@ -537,7 +541,8 @@ typedef struct {
     /* 0x4030 */ MenuString unk4030[8];
     /* 0x4430 */ MenuString strItemDesc;
     /* 0x44B0 */ MenuString str44B0;
-    /* 0x4530 */ u8 unk4530[0x100];
+    /* 0x4530 */ MenuString str4530;
+    /* 0x45B0 */ MenuString str45B0;
     /* 0x4630 */ void* pItemDescriptions;
     /* 0x4634 */ void* pWeaponDescriptions;
     /* 0x4638 */ void* pAccessoryDescriptions;
@@ -652,8 +657,9 @@ typedef struct {
     /* 0x2C0  */ s16 unk2C0;
     /* 0x2C2  */ s16 unk2C2;
     /* 0x2C4  */ s16 unk2C4;
+    /* 0x2C6  */ s16 unk2C6;
     /* 0x2C8  */ s16 unk2C8;
-    /* 0x2CA  */ s16 unk2CA[7];
+    /* 0x2CA  */ s16 unk2CA[6];
     /* 0x2D8  */ u32 unk2D8;
     /* 0x2DC  */ MenuResourceDirectory *resources;
     /* 0x2E0  */ void* unk2E0; // Pointer to resources (bin 3)

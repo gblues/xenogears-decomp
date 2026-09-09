@@ -7,8 +7,9 @@
 #include "util/copyspec.h"
 #include "gear_shop/gear_shop.h"
 
+s32 func_801C5260(u8);
+
 // TODO: remove once matched
-void func_801D2950(u8, u8);
 s32 func_801D2B74(s32, u32, u8*);
 
 void GearShopMenuShoulderButtonUiInitialize(void) {
@@ -60,7 +61,34 @@ void func_801CE7E0(void) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CE82C);
+void func_801CE82C(void) {
+    s32 i;
+
+    if (g_Menu->pManager->unk5C[9] != 0) {
+        if (g_Menu->menuUnk8->unk1ED8 != 0) {
+            GearShopMenuRenderString(g_Menu->menuUnk8->unk1ED0, g_Menu->menuUnk8->polysD0, g_Menu->menuUnk8->unk1ED4);
+            GearShopMenuRenderString(g_Menu->menuUnk8->unk1ED0, &g_Menu->menuUnk8->polysD0[4], g_Menu->menuUnk8->unk1ED4);
+            GearShopMenuRenderString(g_Menu->menuUnk8->unk1ED0, &g_Menu->menuUnk8->polysD0[8], g_Menu->menuUnk8->unk1ED4);
+        }
+        for(i = 0; i < 2; i++) {
+            if (g_Menu->menuUnk8->unk1ED9[i] != 0) {
+                GearShopMenuRenderString(g_Menu->menuUnk8->unk1ED1[i], &g_Menu->menuUnk8->polys2B0[(i*0x16)], g_Menu->menuUnk8->unk1ED5[i]);
+            }
+        }
+        if (g_Menu->menuUnk8->unk1EDB != 0) {
+            GearShopMenuRenderString(g_Menu->menuUnk8->unk1ED3, g_Menu->menuUnk8->polysD00, g_Menu->menuUnk8->unk1ED7);
+        }
+    }
+    if (g_Menu->pManager->unk5C[0xA] != 0) {
+        GearShopMenuRenderString(1U, g_Menu->menuUnk8->unk0.polys, g_Menu->renderContext);
+        GearShopMenuRenderString(0xEU, g_Menu->menuUnk8->polys12A0, g_Menu->menuUnk8->unk1EED);
+        GearShopMenuRenderString(g_Menu->menuUnk8->unk1EE8, g_Menu->menuUnk8->polys1700, g_Menu->menuUnk8->unk1EED);
+        GearShopMenuRenderString(g_Menu->menuUnk8->unk1EE9, g_Menu->menuUnk8->polys1890, g_Menu->menuUnk8->unk1EED);
+        GearShopMenuRenderString(g_Menu->menuUnk8->unk1EEA, g_Menu->menuUnk8->polys1A20, g_Menu->menuUnk8->unk1EED);
+        GearShopMenuRenderString(g_Menu->menuUnk8->unk1EEB, g_Menu->menuUnk8->polys1BB0, g_Menu->menuUnk8->unk1EED);
+        GearShopMenuRenderString(g_Menu->menuUnk8->unk1EEC, g_Menu->menuUnk8->polys1D40, g_Menu->menuUnk8->unk1EED);
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CEA68);
 
@@ -89,7 +117,7 @@ void func_801CF184(void) {
                 g_Menu->menuUnk8->unk1ED0 = func_8002675C(
                     g_Menu->resources,
                     g_Menu->menuUnk8->unk1EE0 + 0x167,
-                    &g_Menu->menuUnk8->polys[i * 4],
+                    &g_Menu->menuUnk8->polysD0[i * 4],
                     g_Menu->renderContext,
                     g_Menu->menuUnk8->unk1EF0 + i * 0x8,
                     g_Menu->menuUnk8->unk1EF2 + i * 0xA,
@@ -151,8 +179,8 @@ INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CFAB8);
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CFC60);
 
 void func_801CFF18(void) {
-    g_Menu->menuUnk8->unk1ED9 = 3;
-    g_Menu->menuUnk8->unk1EDA = 3;
+    g_Menu->menuUnk8->unk1ED9[0] = 3;
+    g_Menu->menuUnk8->unk1ED9[1] = 3;
     g_Menu->menuUnk8->unk1EDB = 3;
     g_Menu->menuUnk8->unk1EDC = 0;
     g_Menu->menuUnk8->unk1EDD = 0;
@@ -350,7 +378,38 @@ void func_801D0C20(int number, u8 arg1) {
     g_Menu->pManager->unk5B = 2;
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D0D4C);
+void func_801D0D4C(u32 value) {
+    int i;
+
+    GearShopMenuParseNumberToString(value);
+    g_Menu->pShop->unk46B6[5] = 0;
+
+    for(i = 0; i < 9; i++) {
+        if(g_Menu->digits[i] != 0xFF) {
+            g_Menu->pShop->unk46B6[5] += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i],
+                &g_Menu->pShop->unk17C0[g_Menu->pShop->unk46B6[5] * 2],
+                g_Menu->renderContext,
+                0xAA + (i * 8),
+                0xAE,
+                0x1000
+            );
+        }
+    }
+
+    g_Menu->pShop->unk46B6[5] += func_8002675C(
+        g_Menu->resources,
+        0x10,
+        &g_Menu->pShop->unk17C0[g_Menu->pShop->unk46B6[5] * 2],
+        g_Menu->renderContext,
+        0xF2,
+        0xAE,
+        0x1000
+    );
+    g_Menu->pShop->unk46B6[4] = g_Menu->renderContext;
+    g_Menu->pManager->unk5C[8] = 1;
+}
 
 void func_801D0EC8(u8 arg0) {
     int i;
@@ -381,13 +440,120 @@ void func_801D0EC8(u8 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D1078);
+s32 func_801D1078(u8 itemId, u8 itemType) {
+    int i;
+    int j;
+    u8 found;
+    u16 result = 0;
+
+    if(itemId) {
+        for(i = 0; i < 16; i++) {
+            found = FALSE;
+            if (g_Menu->availableCharacters[i]) {
+                found = FALSE;
+
+                switch(itemType) {
+                    case ITEM_TYPE_GEAR_FRAME:
+                        if(g_GameState.gears[g_GameState.characters[i].gearId].frameId == itemId) {
+                            found = TRUE;
+                        }
+                        break;
+                    case ITEM_TYPE_GEAR_ARMOR:
+                        if(g_GameState.gears[g_GameState.characters[i].gearId].armorId == itemId) {
+                            found = TRUE;
+                        }
+                        break;
+                    case ITEM_TYPE_GEAR_ENGINE:
+                        if(g_GameState.gears[g_GameState.characters[i].gearId].engineId == itemId) {
+                            found = TRUE;
+                            break;
+                        }
+
+                        break;
+                    case ITEM_TYPE_GEAR_WEAPON:
+                        for(j = 0; j < 4; j++) {
+                            if (itemId < 0x32) {
+                                if(g_GameState.gears[g_GameState.characters[i].gearId].weaponId[j] == itemId) {
+                                    found = TRUE;
+                                    break;
+                                }
+                            } else {
+                                if(g_GameState.gears[g_GameState.characters[i].gearId].unk4[j] == itemId) {
+                                    found = TRUE;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    case ITEM_TYPE_GEAR_ACCESSORY:
+                        for(j = 0; j < 3; j++) {
+                            if(g_GameState.gears[g_GameState.characters[i].gearId].accessorySlots[j] == itemId) {
+                                found = TRUE;
+                                break;
+                            }
+                        }
+                        break;
+                }
+            }
+            if(found) {
+                result |= func_801C5260(g_GameState.characters[i].gearId);
+            }
+        }
+    }
+
+    return result;
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D1304);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D18F8);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D1F20);
+/*
+ * Finalizes the sale.
+ *
+ * newBalance: the amount of GP the player has, will be clipped to MAX_GOLD_AMOUNT
+ * pItemIds: a coalesced version of the player's inventory
+ * pItemSellQtys: how many of each item in the pItemIds array were sold in the transaction
+ * listLength: the size of the pItemIds / pItemSellQtys arrays
+ * pInventoryItemIds: pointer to the actual game state containing un-coalesced inventory
+ * pInventoryQtys: pointer to the actual game state contaning how many of each item the player owns
+ * pItemTypes: unused
+ * isBulkSale: set to TRUE if the sales transaction actually affects the player's inventory.
+ * flag2: unused
+ *
+ */
+
+void GearShopMenuFinalizeSalesTransaction(s32 newBalance, u8* pItemIds, u8* pItemSellQtys, s32 listLength, u8* pInventoryItemIds, u8* pInventoryQtys, u8* pUnused, u8 isBulkSale, u8 ignored) {
+    s32 cartIndex, inventoryIndex;
+
+    GearShopMenuPlaySoundEffect(0xD1);
+    g_GameState.gold = (u32) newBalance;
+    if ((u32) newBalance > MAX_GOLD_AMOUNT) {
+        g_GameState.gold = MAX_GOLD_AMOUNT;
+    }
+    if (isBulkSale) {
+
+        /*
+         * indexes in pItemIds and pItemSellQtys are corrlated, and indexes in pInventoryItemIds and pInventoryQtys are correlated, but
+         * the two lists do not correlate because the former has been defragmented. So, what we do here is iterate over the defragmented
+         * list, and then search the fragmented list for the matching key (pItemId[i] == pInventoryItemIds[j]) and updating the quantities
+         * accordingly.
+         */
+
+        for(cartIndex = 0; cartIndex < listLength; cartIndex++) {
+            if(pItemIds[cartIndex]) {
+                for(inventoryIndex = 0; inventoryIndex < listLength; inventoryIndex++) {
+                    if(pItemIds[cartIndex] == pInventoryItemIds[inventoryIndex]) {
+                        pInventoryQtys[inventoryIndex] -= pItemSellQtys[cartIndex];
+                        if(pInventoryQtys[inventoryIndex] == 0) {
+                            pInventoryItemIds[inventoryIndex] = 0;
+                        }
+                    }
+                }
+            }
+       }
+    }
+}
 
 // Spawn and run the logic for a sell menu
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", GearShopMenuSellMenu);
@@ -397,7 +563,7 @@ void GearShopMenuSellPartsMenu(void) {
         0x96,
         g_GameState.gearPartsIds,
         g_GameState.gearPartsQty,
-        3, 1,
+        ITEM_TYPE_GEAR_ACCESSORY, 1,
         g_GameState.gearPartsQty,
         0
     );
@@ -408,7 +574,7 @@ void GearShopMenuSellWeaponsMenu(void) {
         0x64,
         g_GameState.gearWeaponsIds,
         g_GameState.gearWeaponsQty,
-        4, 1,
+        ITEM_TYPE_GEAR_WEAPON, 1,
         g_GameState.gearWeaponsQty,
         0
     );
@@ -443,7 +609,42 @@ void GearShopMenuSellModeMenuHandleSelectedOption(u_char offset) {
     func_801CCE90(4, g_Menu->unk6E0, &D_801D6A24, g_Menu->pManager->unkC);
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D2950);
+void func_801D2950(u8 itemType) {
+    RECT rect;
+
+    u32* pWorkspace;
+    u8 itemId;
+    void* pNames;
+
+    pWorkspace = HeapAlloc(0x3F6, 0);
+
+    switch (itemType) {
+        case 0:
+            itemId = g_GameState.gears[g_gearShopCurrentGearId].armorId;
+            pNames = g_Menu->pShop->pGearArmorNames;
+            g_Menu->pShop->str4530.width = SystemRenderStringEntry(GetStringEntry(pNames, itemId), pWorkspace, 0x24, 0);
+            break;
+        case 1:
+            itemId = g_GameState.gears[g_gearShopCurrentGearId].frameId;
+            pNames = g_Menu->pShop->pGearFrameNames;
+            g_Menu->pShop->str4530.width = SystemRenderStringEntry(GetStringEntry(pNames, itemId), pWorkspace, 0x24, 0);
+            break;
+        case 2:
+            itemId = g_GameState.gears[g_gearShopCurrentGearId].engineId;
+            pNames = g_Menu->pShop->pGearEngineNames;
+            g_Menu->pShop->str4530.width = SystemRenderStringEntry(GetStringEntry(pNames, itemId), pWorkspace, 0x24, 0);
+            break;
+    }
+
+    setRECT(&rect, 408, 180, 40, FONT_LETTER_HEIGHT);
+    LoadImage((RECT* ) &rect, pWorkspace);
+    func_801C5CA8(&g_Menu->pShop->str4530, 9, 128, 129);
+    GearShopMenuSetVertices(g_Menu->pShop->str4530.vertices, 212, 142, g_Menu->pShop->str4530.width, FONT_LETTER_HEIGHT);
+    DrawSync(0);
+    g_Menu->pShop->str4530.renderContext = g_Menu->renderContext;
+    g_Menu->pShop->unk46B6[0] = 1;
+    HeapFree(pWorkspace);
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D2B74);
 
@@ -464,7 +665,7 @@ void func_801D3558(s32* pDelta, s8* pIsImprovement, u8 itemId, u8 itemType, u8 c
 
     gearId = g_GameState.characters[characterId].gearId;
 
-    itemSlots[0] = g_GameState.gears[gearId].weaponId;
+    itemSlots[0] = g_GameState.gears[gearId].weaponId[0];
 
     itemSlots[1] = g_GameState.gears[gearId].unk4[0];
     itemSlots[2] = g_GameState.gears[gearId].unk4[1];
@@ -480,7 +681,7 @@ void func_801D3558(s32* pDelta, s8* pIsImprovement, u8 itemId, u8 itemType, u8 c
             // This **may** be a check to see if the weapon belongs to Billy or not,
             // since Billy uses guns w/ ammo which needs special handling? This should be double checked though.
             if (itemId < 0x32) {
-                g_GameState.gears[gearId].weaponId = itemId;
+                g_GameState.gears[gearId].weaponId[0] = itemId;
             } else {
                 pWeaponList = g_Menu->pDressingRoom->pGearWeapons;
 
@@ -538,7 +739,7 @@ void func_801D3558(s32* pDelta, s8* pIsImprovement, u8 itemId, u8 itemType, u8 c
         }
     }
 
-    g_GameState.gears[gearId].weaponId = itemSlots[0];
+    g_GameState.gears[gearId].weaponId[0] = itemSlots[0];
     g_GameState.gears[gearId].unk4[0] = itemSlots[1];
     g_GameState.gears[gearId].unk4[1] = itemSlots[2];
     g_GameState.gears[gearId].unk4[2] = itemSlots[3];
@@ -550,7 +751,7 @@ void func_801D3558(s32* pDelta, s8* pIsImprovement, u8 itemId, u8 itemType, u8 c
     func_801D6150(g_Menu->pDressingRoom, g_GameState.characters[characterId].gearId);
 }
 
-u8 func_801D3A3C(u8* index, u8* haystack, s32 size, u8 needle) {
+int func_801D3A3C(u8* index, u8* haystack, s32 size, u8 needle) {
     int i;
     u8 result = 0;
 
@@ -564,7 +765,54 @@ u8 func_801D3A3C(u8* index, u8* haystack, s32 size, u8 needle) {
     return result;
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D3A80);
+void func_801D3A80(u8 itemType, u8 itemId) {
+    RECT rect; // sp18
+    u8 digitBuffer[4]; // sp20
+    u8 stringBuffer[4]; // sp28
+    u8 isValid = FALSE;
+
+    u8 *pIdList;
+    u8 *pQtyList;
+    int listSize;
+    u32 *pWorkspace;
+    u16 qtyHeld;
+
+    if(itemType != ITEM_TYPE_GEAR_ACCESSORY) {
+        if(itemType == ITEM_TYPE_GEAR_WEAPON) {
+            pIdList = g_GameState.gearWeaponsIds;
+            pQtyList = g_GameState.gearWeaponsQty;
+            listSize = MAX_INVENTORY_WEAPONS;
+            isValid = TRUE;
+        }
+    } else {
+        pIdList = g_GameState.gearPartsIds;
+        pQtyList = g_GameState.gearPartsQty;
+        listSize = MAX_INVENTORY_ITEMS;
+        isValid = TRUE;
+    }
+
+    if (isValid) {
+        g_gearShopCurrentItemQuantityHeld = qtyHeld = func_801D3A3C(pIdList, pQtyList, listSize, itemId);
+
+        pWorkspace = HeapAlloc(0x3F6U, 0U);
+        digitBuffer[1] = 0;
+        digitBuffer[3] = 0;
+        digitBuffer[0] = ((qtyHeld / 10) == 0) ? 0xC3 : (qtyHeld / 10) + 0x10;
+        digitBuffer[2] = (qtyHeld % 10) + 0x10;
+
+        func_80033B34((u16 *)digitBuffer, stringBuffer, 2);
+        g_Menu->pShop->str45B0.width = SystemRenderStringEntry(stringBuffer, pWorkspace, 0x24, 1);
+        setRECT(&rect, 0x198, 0xB4, 0x28, FONT_LETTER_HEIGHT);
+        LoadImage(&rect, pWorkspace);
+        DrawSync(0);
+
+        func_801C5CA8(&g_Menu->pShop->str45B0, 9, 0x80, 0x82);
+        GearShopMenuSetVertices(g_Menu->pShop->str45B0.vertices, 0xF8, 0x8E, g_Menu->pShop->str45B0.width, FONT_LETTER_HEIGHT);
+        g_Menu->pShop->str45B0.renderContext = g_Menu->renderContext;
+        g_Menu->pShop->unk4785 = 1;
+        HeapFree(pWorkspace);
+    }
+}
 
 s32 func_801D3C78(s32 rowIndex, s32 scrollOffset, u8 *unused) {
     int currentItem = scrollOffset + rowIndex;
@@ -845,7 +1093,7 @@ s32 GearShopMenuPurchaseDialog(u8 arg0, u8 disableQuantitySelection) {
                 func_801CCE90(2, g_Menu->unk6E0, (s8* ) temp, (s8* ) g_Menu->pManager->unkC);
                 func_801CCEE8(2, g_Menu->unk6E0, (s32) temp, D_801D6A40, g_Menu->pManager->unkC, disableQuantitySelection, 0, 1);
                 if (disableQuantitySelection) {
-                    func_801D2950((g_Menu->subMenuChoice + (arg0 * 3)), arg0);
+                    func_801D2950(g_Menu->subMenuChoice + (arg0 * 3));
                 }
                 GearShopMenuUpdateCharacterPortraits();
                 func_801D04E8(disableQuantitySelection);
@@ -1055,10 +1303,10 @@ void func_801D5F94(MenuDressingRoom* pView, u_char gearId) {
     ether = pGear->engineOutput * (pGear->attackPower + pGear->unk56);
 
     if(gearId == 0x5 || gearId == 0xD) {
-        etherModifier = ((pGear->maxEther + pGear->unk22) * 6) / 10;
+        etherModifier = ((pGear->weaponData[0].unk2 + pGear->weaponData[2].unk2) * 6) / 10;
         pView->unkB0 = etherModifier + ether;
     } else {
-        pView->unkB0 = pGear->maxEther + ether;
+        pView->unkB0 = pGear->weaponData[0].unk2 + ether;
     }
 
     pView->totalResponsiveness = pGear->unk9F + pGear->responsiveness;
