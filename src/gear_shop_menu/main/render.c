@@ -12,6 +12,8 @@ s32 func_801C5260(u8);
 // TODO: remove once matched
 s32 func_801D2B74(s32, u32, u8*);
 
+u8 func_8001BD40(int, u8);
+
 void GearShopMenuShoulderButtonUiInitialize(void) {
     int i;
     int polyIndex;
@@ -92,9 +94,74 @@ void func_801CE82C(void) {
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CEA68);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CEEA8);
+void func_801CEEA8(void) {
+    u8 needsUpdate;
+    u16 var_s1;
+    u16 var_s2;
 
-u8 func_8001BD40(int, u8); // Required signature for function below to match
+    if (g_Menu->menuUnk8->unk1EDB) {
+        // update timer?
+        if (g_Menu->menuUnk8->unk1EDF != 0) {
+            (s8)g_Menu->menuUnk8->unk1EDF -= 1;
+            return;
+        }
+
+        needsUpdate = FALSE;
+        switch(g_Menu->menuUnk8->unk1EDB) {
+            case 1:
+                var_s2 = D_801D705C[D_801D7030[(g_Menu->mainMenuChoice * 4) + g_Menu->subMenuChoice]];
+                var_s1 = D_801D7068[D_801D7030[(g_Menu->mainMenuChoice * 4) + g_Menu->subMenuChoice]];
+                needsUpdate = TRUE;
+                break;
+            case 2:
+                if(func_8001BD40(0, 0xFF) < 4) {
+                    var_s2 = D_801D705C[func_8001BD40(0, 5)];
+                    var_s1 = D_801D7068[func_8001BD40(0, 5)];
+                    needsUpdate = TRUE;
+                }
+                break;
+        }
+
+        if(needsUpdate) {
+            g_Menu->menuUnk8->unk1EFC = var_s2;
+            g_Menu->menuUnk8->unk1EFE = var_s1;
+        }
+
+        g_Menu->menuUnk8->unk1ED3 = func_8002675C(g_Menu->resources,
+                      g_Menu->menuUnk8->unk1EE2 + 0x172,
+                      g_Menu->menuUnk8->polysD00,
+                      g_Menu->renderContext,
+                      g_Menu->menuUnk8->unk1EFC,
+                      g_Menu->menuUnk8->unk1EFE,
+                      0x1000);
+
+        g_Menu->menuUnk8->unk1ED7 = (u8) g_Menu->renderContext;
+        g_Menu->menuUnk8->unk1EDF = 1;
+
+        switch (g_Menu->menuUnk8->unk1EDB) {
+        case 1:
+            if (++g_Menu->menuUnk8->unk1EE2 >= 3) {
+                g_Menu->menuUnk8->unk1EDB = 2;
+            }
+            break;
+        case 2:
+            if (++g_Menu->menuUnk8->unk1EE2 >= 11) {
+                g_Menu->menuUnk8->unk1EE2 = 3;
+            }
+            break;
+        case 3:
+            g_Menu->menuUnk8->unk1EE2 = 2;
+            g_Menu->menuUnk8->unk1EDB = 4;
+            break;
+        case 4:
+            if (--g_Menu->menuUnk8->unk1EE2 < 0) {
+                g_Menu->menuUnk8->unk1EDB = 0;
+            }
+            break;
+        }
+    }
+}
+
 void func_801CF184(void) {
     MenuUnk8* pMenu;
     int i;

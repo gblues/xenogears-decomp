@@ -387,12 +387,12 @@ typedef struct {
     /* 0x1BB0 */ POLY_FT4 polys1BB0[5 * 2]; // Gear Max fuel digits
     /* 0x1D40 */ POLY_FT4 polys1D40[5 * 2]; // Gear weight digits
     /* 0x1ED0 */ u8 unk1ED0;
-    /* 0x1ED0 */ u8 unk1ED1[2];
-    /* 0x1ED0 */ u8 unk1ED3;
-    /* 0x1ED0 */ u8 unk1ED4;
-    /* 0x1ED0 */ u8 unk1ED5[2];
-    /* 0x1ED0 */ u8 unk1ED7;
-    /* 0x1ED8 */ u8 unk1ED8;
+    /* 0x1ED1 */ u8 unk1ED1[2];
+    /* 0x1ED3 */ u8 unk1ED3;
+    /* 0x1ED4 */ u8 unk1ED4;
+    /* 0x1ED5 */ u8 unk1ED5[2];
+    /* 0x1ED6 */ u8 unk1ED7;
+    /* 0x1ED7 */ u8 unk1ED8;
     /* 0x1ED9 */ u8 unk1ED9[2];
     /* 0x1EDB */ u8 unk1EDB;
     /* 0x1EDC */ u8 unk1EDC;
@@ -401,24 +401,28 @@ typedef struct {
     /* 0x1EDF */ u8 unk1EDF;
     /* 0x1EE0 */ u8 unk1EE0;
     /* 0x1EE1 */ u8 unk1EE1;
-    /* 0x1EE1 */ u8 unk1EE2;
-    /* 0x1EE1 */ u8 unk1EE3;
-    /* 0x1EE1 */ u8 unk1EE4;
-    /* 0x1EE1 */ u8 unk1EE5;
-    /* 0x1EE1 */ u8 unk1EE6;
-    /* 0x1EE1 */ u8 unk1EE7;
-    /* 0x1EE1 */ u8 unk1EE8; // Gear HP digits string length
-    /* 0x1EE1 */ u8 unk1EE9; // Gear Max HP digits string length
-    /* 0x1EE1 */ u8 unk1EEA; // Gear Fuel digits string length
-    /* 0x1EE1 */ u8 unk1EEB; // Gear Max fuel digits string length
-    /* 0x1EE1 */ u8 unk1EEC; // Gear Weight digits string length
-    /* 0x1EE1 */ u8 unk1EED; // Render context for the gear stat strings
-    /* 0x1EE1 */ u8 unk1EEE;
-    /* 0x1EE1 */ u8 unk1EEF;
+    /* 0x1EE2 */ s16 unk1EE2;
+    /* 0x1EE4 */ u8 unk1EE4;
+    /* 0x1EE5 */ u8 unk1EE5;
+    /* 0x1EE6 */ u8 unk1EE6;
+    /* 0x1EE7 */ u8 unk1EE7;
+    /* 0x1EE8 */ u8 unk1EE8; // Gear HP digits string length
+    /* 0x1EE9 */ u8 unk1EE9; // Gear Max HP digits string length
+    /* 0x1EEA */ u8 unk1EEA; // Gear Fuel digits string length
+    /* 0x1EEB */ u8 unk1EEB; // Gear Max fuel digits string length
+    /* 0x1EEC */ u8 unk1EEC; // Gear Weight digits string length
+    /* 0x1EED */ u8 unk1EED; // Render context for the gear stat strings
+    /* 0x1EEE */ u8 unk1EEE;
+    /* 0x1EEF */ u8 unk1EEF;
     /* 0x1EF0 */ u16 unk1EF0;
     /* 0x1EF2 */ u16 unk1EF2;
-    /* 0x1EF4 */ u8 unk1EF4[0xC];
-} MenuUnk8;
+    /* 0x1EF4 */ u16 unk1EF4;
+    /* 0x1EF6 */ u16 unk1EF6;
+    /* 0x1EF8 */ u16 unk1EF8;
+    /* 0x1EFA */ u16 unk1EFA;
+    /* 0x1EFC */ u16 unk1EFC;
+    /* 0x1EFE */ u16 unk1EFE;
+} MenuUnk8; /* size: 1F00 */
 
 // Character Info
 typedef struct {
