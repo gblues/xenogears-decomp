@@ -1029,7 +1029,78 @@ s32 func_801D3C78(s32 rowIndex, s32 scrollOffset, u8 *unused) {
     return price;
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D44FC);
+void func_801D44FC(u32 newBalance) {
+    s32 inventoryIndex;
+    s32 itemIndex;
+    u8 notFound;
+
+    GearShopMenuPlaySoundEffect(0xD1);
+    g_GameState.gold = newBalance;
+
+    if (newBalance > MAX_GOLD_AMOUNT) {
+        g_GameState.gold = MAX_GOLD_AMOUNT;
+    }
+    for(itemIndex = 0; itemIndex < MAX_SHOP_ITEMS; itemIndex++) {
+        if ((g_Menu->shopItemIDs[itemIndex] != 0) && (g_Menu->pShop->curItemQuantities[itemIndex] != 0)) {
+            switch (g_Menu->shopItemTypes[itemIndex]) {
+            case ITEM_TYPE_GEAR_ARMOR:
+                g_GameState.gears[g_gearShopCurrentGearId].armorId = g_Menu->shopItemIDs[itemIndex];
+                break;
+            case ITEM_TYPE_GEAR_FRAME:
+                g_GameState.gears[g_gearShopCurrentGearId].frameId = g_Menu->shopItemIDs[itemIndex];
+                break;
+            case ITEM_TYPE_GEAR_ENGINE:
+                g_GameState.gears[g_gearShopCurrentGearId].engineId = g_Menu->shopItemIDs[itemIndex];
+                break;
+            case ITEM_TYPE_GEAR_WEAPON:
+                notFound = 1;
+
+                for(inventoryIndex = 0; inventoryIndex < MAX_INVENTORY_WEAPONS; inventoryIndex++) {
+                    if (g_GameState.gearWeaponsIds[inventoryIndex] == g_Menu->shopItemIDs[itemIndex]) {
+                        notFound = 0;
+
+                        if( (g_GameState.gearWeaponsQty[inventoryIndex] = g_GameState.gearWeaponsQty[inventoryIndex] + g_Menu->pShop->curItemQuantities[itemIndex]) > MAX_ITEM_QUANTITY) {
+                            g_GameState.gearWeaponsQty[inventoryIndex] = MAX_ITEM_QUANTITY;
+                        }
+                    }
+                }
+
+                if(notFound) {
+                    for(inventoryIndex = 0; inventoryIndex < MAX_INVENTORY_WEAPONS; inventoryIndex++) {
+                        if (g_GameState.gearWeaponsIds[inventoryIndex] == 0) {
+                            g_GameState.gearWeaponsIds[inventoryIndex] = g_Menu->shopItemIDs[itemIndex];
+                            g_GameState.gearWeaponsQty[inventoryIndex] = g_Menu->pShop->curItemQuantities[itemIndex];
+                            break;
+                        }
+                    }
+                }
+                break;
+            case ITEM_TYPE_GEAR_ACCESSORY:
+                notFound = 1;
+                for(inventoryIndex = 0; inventoryIndex < MAX_INVENTORY_ITEMS; inventoryIndex++) {
+                    if (g_GameState.gearPartsIds[inventoryIndex] == g_Menu->shopItemIDs[itemIndex]) {
+                        notFound = 0;
+                        if( (g_GameState.gearPartsQty[inventoryIndex] = g_GameState.gearPartsQty[inventoryIndex] + g_Menu->pShop->curItemQuantities[itemIndex]) > MAX_ITEM_QUANTITY) {
+                            g_GameState.gearPartsQty[inventoryIndex] = MAX_ITEM_QUANTITY;
+                        }
+                    }
+                }
+
+                if(notFound) {
+                    for(inventoryIndex = 0; inventoryIndex < MAX_INVENTORY_ITEMS; inventoryIndex++) {
+                        if (g_GameState.gearPartsIds[inventoryIndex] == 0) {
+                            g_GameState.gearPartsIds[inventoryIndex] = g_Menu->shopItemIDs[itemIndex];
+                            g_GameState.gearPartsQty[inventoryIndex] = g_Menu->pShop->curItemQuantities[itemIndex];
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
+
 
 u8 func_801D4888(s32 itemId) {
     u8 equipped;
