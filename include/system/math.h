@@ -22,4 +22,12 @@
 #define CONV_TO_GTE(number) (number >> 0x10)
 #define CONV_FROM_GTE(number) (number << 0x10)
 
+
+// TODO: Move to more appropriate header file?
+typedef struct {
+    /* 0x0 */ long x;
+    /* 0x4 */ long y;
+    /* 0x8 */ long z;
+} LVEC3; // Size: 0xC
+
 #endif

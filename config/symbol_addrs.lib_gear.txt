@@ -1,5 +1,8 @@
 LibGearInitializeMesh = 0x801DC22C;
 LibGearInitializeSkeleton = 0x801DC2D0;
+LibGearComputeJointMatrices = 0x801DC5C0;
+
+LibGearRenderModel = 0x801DCC3C;
 
 LibGearFreeModelSkeleton = 0x801DCD8C;
 LibGearFreeModelMesh = 0x801DCE18;

@@ -53,7 +53,7 @@ ModelJoint* LibGearInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJoint
         return NULL;
     }
 
-    // ALways account for root scene
+    // Always account for the root bone / joint
     numJoints++;
     
     pSkeleton = HeapAlloc(numJoints * sizeof(ModelJoint), 0x0);
@@ -67,25 +67,25 @@ ModelJoint* LibGearInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJoint
     jointIndex = pCurJointEntry->jointIndex;
     parentIndex = pCurJointEntry->parentIndex;
 
-    // Root scene
+    // Root bone / joint
     pSkeleton[0].doTransform = TRUE;
     pSkeleton[0].doRotate = TRUE;
     pSkeleton[0].rotDirection = 1;
-    pSkeleton[0].vec1.vx = 0x1000;
-    pSkeleton[0].vec1.vy = 0x1000;
-    pSkeleton[0].vec1.vz = 0x1000;
+    pSkeleton[0].scale.vx = 0x1000;
+    pSkeleton[0].scale.vy = 0x1000;
+    pSkeleton[0].scale.vz = 0x1000;
     pSkeleton[0].pParent = NULL;
     pSkeleton[0].unk7 = 0;
     pSkeleton[0].jointIndex = 0xFFFF;
-    pSkeleton[0].length = numJoints;
+    pSkeleton[0].numChildren = numJoints;
     pSkeleton[0].pModelPacketBuffer = NULL;
     pSkeleton[0].pCurModelPacket = NULL;
-    pSkeleton[0].vec2.vx = 0;
-    pSkeleton[0].vec2.vy = 0;
-    pSkeleton[0].vec2.vz = 0;
-    pSkeleton[0].unk5C[0] = 0;
-    pSkeleton[0].unk5C[1] = 0;
-    pSkeleton[0].unk5C[2] = 0;
+    pSkeleton[0].rotation.vx = 0;
+    pSkeleton[0].rotation.vy = 0;
+    pSkeleton[0].rotation.vz = 0;
+    pSkeleton[0].translation.x = 0;
+    pSkeleton[0].translation.y = 0;
+    pSkeleton[0].translation.z = 0;
     pSkeleton[0].unk70 = 0;
     pSkeleton[0].unk74 = 0;
     pSkeleton[0].unk78 = 0;
@@ -97,15 +97,15 @@ ModelJoint* LibGearInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJoint
             pCurJoint->pParent = &pSkeleton[parentIndex] + 1;
         }
         
-        pCurJoint->length = i++;
+        pCurJoint->numChildren = i++;
         pCurJoint->doTransform = TRUE;
         pCurJoint->doRotate = TRUE;
         pCurJoint->unk7 = 1;
-        pCurJoint->vec1.vx = 0x1000;
-        pCurJoint->vec1.vy = 0x1000;
-        pCurJoint->vec1.vz = 0x1000;
+        pCurJoint->scale.vx = 0x1000;
+        pCurJoint->scale.vy = 0x1000;
+        pCurJoint->scale.vz = 0x1000;
         pCurJoint->rotDirection = 0;
-        pCurJoint->vec1.pad = 0;
+        pCurJoint->scale.pad = 0;
         pCurJoint->jointIndex = jointIndex;
     
         if (jointIndex != 0xFFFF) {
@@ -129,12 +129,12 @@ ModelJoint* LibGearInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJoint
             pCurJoint->pCurModelPacket = NULL;
         }
     
-        pCurJoint->vec2.vx = 0;
-        pCurJoint->vec2.vy = 0;
-        pCurJoint->vec2.vz = 0;
-        pCurJoint->unk5C[0] = 0;
-        pCurJoint->unk5C[1] = 0;
-        pCurJoint->unk5C[2] = 0;
+        pCurJoint->rotation.vx = 0;
+        pCurJoint->rotation.vy = 0;
+        pCurJoint->rotation.vz = 0;
+        pCurJoint->translation.x = 0;
+        pCurJoint->translation.y = 0;
+        pCurJoint->translation.z = 0;
         pCurJoint->unk70 = 0;
         pCurJoint->unk74 = 0;
         pCurJoint->unk78 = 0;
@@ -149,78 +149,77 @@ ModelJoint* LibGearInitializeSkeleton(ModelMesh* pModel, ModelJointEntry* pJoint
     return pSkeleton;
 }
 
-unsigned func_801DC5C0(ModelJoint* pJoint, s32 degrees) {
-    MATRIX* matrix1;
-    MATRIX* matrix2;
-    MATRIX* nextMatrix2;
+// Computes the local and global transform matrices for the joints of a skeleton
+unsigned LibGearComputeJointMatrices(ModelJoint* pJoint, int degrees) {
     ModelJoint* pSkeleton = pJoint;
-    SVECTOR* vec;
-    short *scratch = (short *)PSX_SCRATCH;
+    MATRIX* scratch = (MATRIX*)PSX_SCRATCH;
     unsigned i;
-    unsigned length;
+    unsigned numChildren;
 
-    pJoint->matrix2.t[0] = pJoint->unk5C[0];
-    pJoint->matrix2.t[1] = pJoint->unk5C[1];
-    pJoint->matrix2.t[2] = pJoint->unk5C[2];
-    length = pJoint->length;
+    pJoint->globalTransform.t[0] = pJoint->translation.x;
+    pJoint->globalTransform.t[1] = pJoint->translation.y;
+    pJoint->globalTransform.t[2] = pJoint->translation.z;
+
+    numChildren = pJoint->numChildren;
 
     if (pJoint->rotDirection != 0) {
-        RotMatrixYXZ(&pJoint->vec2, &pJoint->matrix2);
+        RotMatrixYXZ(&pJoint->rotation, &pJoint->globalTransform);
     } else {
-        RotMatrix(&pJoint->vec2, &pJoint->matrix2);
+        RotMatrix(&pJoint->rotation, &pJoint->globalTransform);
     }
 
-    scratch[0] = (degrees * pJoint->vec1.vx) >> 0xC;
-    scratch[1] = 0;
-    scratch[2] = 0;
-    scratch[3] = 0;
-    scratch[4] = (degrees * pJoint->vec1.vy) >> 0xC;
-    scratch[5] = 0;
-    scratch[6] = 0;
-    scratch[7] = 0;
-    scratch[8] = (degrees * pJoint->vec1.vz) >> 0xC;
+    scratch->m[0][0] = (degrees * pJoint->scale.vx) >> 0xC;
+    scratch->m[0][1] = 0;
+    scratch->m[0][2] = 0;
+    scratch->m[1][0] = 0;
+    scratch->m[1][1] = (degrees * pJoint->scale.vy) >> 0xC;
+    scratch->m[1][2] = 0;
+    scratch->m[2][0] = 0;
+    scratch->m[2][1] = 0;
+    scratch->m[2][2] = (degrees * pJoint->scale.vz) >> 0xC;
 
-    MulMatrix0(&pJoint->matrix2, (MATRIX* )scratch, &pJoint->matrix1);
+    MulMatrix0(&pJoint->globalTransform, scratch, &pJoint->localTransform);
 
-    pJoint->matrix1.t[0] = pJoint->matrix2.t[0];
-    pJoint->matrix1.t[1] = pJoint->matrix2.t[1];
-    pJoint->matrix1.t[2] = pJoint->matrix2.t[2];
+    pJoint->localTransform.t[0] = pJoint->globalTransform.t[0];
+    pJoint->localTransform.t[1] = pJoint->globalTransform.t[1];
+    pJoint->localTransform.t[2] = pJoint->globalTransform.t[2];
 
-    for (i = 1; i < length; i++) {
+    for (i = 1; i < numChildren; i++) {
         pJoint++;
 
-        if (pJoint->doRotate != 0) {
+        if (pJoint->doRotate) {
             if (pJoint->rotDirection != 0) {
-                RotMatrixYXZ(&pJoint->vec2, &pJoint->matrix1);
-                pJoint->doRotate = 0;
+                RotMatrixYXZ(&pJoint->rotation, &pJoint->localTransform);
+                pJoint->doRotate = FALSE;
             } else {
-                RotMatrix(&pJoint->vec2, &pJoint->matrix1);
-                pJoint->doRotate = 0;
+                RotMatrix(&pJoint->rotation, &pJoint->localTransform);
+                pJoint->doRotate = FALSE;
             }
         }
-        if ((pJoint->pParent != NULL) && (pJoint->pParent->doTransform == 1)) {
-            pJoint->doTransform = 1;
+
+        if ((pJoint->pParent != NULL) && (pJoint->pParent->doTransform == TRUE)) {
+            pJoint->doTransform = TRUE;
         }
 
-        if(pJoint->doTransform != 0) {
-            pJoint->matrix1.t[0] = pJoint->unk5C[0];
-            pJoint->matrix1.t[1] = pJoint->unk5C[1];
-            pJoint->matrix1.t[2] = pJoint->unk5C[2];
+        if(pJoint->doTransform) {
+            pJoint->localTransform.t[0] = pJoint->translation.x;
+            pJoint->localTransform.t[1] = pJoint->translation.y;
+            pJoint->localTransform.t[2] = pJoint->translation.z;
 
             if(pJoint->pParent != NULL) {
-                CompMatrix(&pJoint->pParent->matrix2, &pJoint->matrix1, &pJoint->matrix2);
+                CompMatrix(&pJoint->pParent->globalTransform, &pJoint->localTransform, &pJoint->globalTransform);
             } else {
-                pJoint->matrix2 = pJoint->matrix1;
+                pJoint->globalTransform = pJoint->localTransform;
             }
         }
     }
 
-    for(i = 1; i < length; i++) {
+    for(i = 1; i < numChildren; i++) {
         pSkeleton++;
         pSkeleton->doTransform = FALSE;
     }
 
-    return length;
+    return numChildren;
 }
 
 
@@ -228,14 +227,15 @@ INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DC848);
 
 void func_801DCC34(void) {}
 
-INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801DCC3C);
+// https://decomp.me/scratch/y7Bpn
+INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", LibGearRenderModel);
 
 void LibGearFreeModelSkeleton(ModelJoint* pSkeleton) {
     int i;
     ModelJoint* pJoint = pSkeleton;
 
     if (pSkeleton != NULL) {
-        for (i = 0; i < pSkeleton->length; i++) {
+        for (i = 0; i < pSkeleton->numChildren; i++) {
             if (pJoint->pModelPacketBuffer != NULL) {
                 HeapFree(pJoint->pModelPacketBuffer);
                 pJoint->pModelPacketBuffer = NULL;
@@ -243,7 +243,7 @@ void LibGearFreeModelSkeleton(ModelJoint* pSkeleton) {
             }
             pJoint++;
         }
-        pSkeleton->length = 0;
+        pSkeleton->numChildren = 0;
         HeapFree(pSkeleton);
     }
 }
@@ -579,6 +579,7 @@ INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E7094);
 
 INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E7298);
 
+// Computes the global transform matrix for a certain joint?
 void func_801E72CC(MATRIX* pMatrix, void* _unk, int index, int jointIndex) {
     MATRIX _mat;
     Model* pModel;
@@ -590,14 +591,14 @@ void func_801E72CC(MATRIX* pMatrix, void* _unk, int index, int jointIndex) {
     
     if (jointIndex != 0) {
         CompMatrix(
-            &pModel->pSkeleton[0].matrix1, 
-            &pModel->pSkeleton[jointIndex].matrix2, 
+            &pModel->pSkeleton[0].localTransform,
+            &pModel->pSkeleton[jointIndex].globalTransform, 
             pMatrix
         );
         return;
     }
     
-    *pMatrix = pModel->pSkeleton[0].matrix1;
+    *pMatrix = pModel->pSkeleton[0].localTransform;
 }
 
 INCLUDE_ASM("asm/lib_gear/nonmatchings/main/main", func_801E7378);

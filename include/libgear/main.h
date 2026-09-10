@@ -3,8 +3,8 @@
 
 #include "psyq/libgpu.h"
 #include "psyq/libgte.h"
+#include "system/math.h"
 #include "system/model.h"
-
 
 struct _ModelJoint;
 typedef struct _ModelJoint ModelJoint;
@@ -15,12 +15,18 @@ struct _ModelJoint {
     /* 0x06 */ u_char rotDirection;
     /* 0x07 */ u_char unk7;
     /* 0x08 */ u_short jointIndex;
-    /* 0x0A */ u_short length;
-    /* 0x0c */ MATRIX matrix1;
-    /* 0x2c */ MATRIX matrix2;
-    /* 0x4c */ SVECTOR vec1;
-    /* 0x54 */ SVECTOR vec2;
-    /* 0x5c */ long unk5C[3];
+    /* 0x0A */ u_short numChildren;
+    /* 0x0c */ MATRIX localTransform;
+
+    // Global transform matrix, where we've taken into account the
+    // local transform matrices of the parent joints
+    /* 0x2c */ MATRIX globalTransform;
+
+    // Local transform matrix is computed based on these values
+    /* 0x4C */ SVECTOR scale;
+    /* 0x54 */ SVECTOR rotation;
+    /* 0x5C */ LVEC3 translation;
+    
     /* 0x68 */ void* pModelPacketBuffer;
     /* 0x6c */ void* pCurModelPacket;
     /* 0x70 */ u32 unk70;

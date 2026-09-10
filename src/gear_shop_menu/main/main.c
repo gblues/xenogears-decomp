@@ -2118,17 +2118,17 @@ void func_801CBA2C(void) {
 
         if (g_gearShopTransitionState.isGearMovingDown == 0) {
             if (g_gearShopTransitionState.start.gearY + g_gearShopTransitionState.delta.gearY / 0x10000 < g_gearShopTransitionState.target.gearY) {
-                g_LibGearModels[1]->pSkeleton->vec2.vy = g_gearShopTransitionState.delta.gearY / 0x10000 + g_gearShopTransitionState.start.gearY;
+                g_LibGearModels[1]->pSkeleton->rotation.vy = g_gearShopTransitionState.delta.gearY / 0x10000 + g_gearShopTransitionState.start.gearY;
             } else {
-                g_LibGearModels[1]->pSkeleton->vec2.vy = g_gearShopTransitionState.target.gearY;
+                g_LibGearModels[1]->pSkeleton->rotation.vy = g_gearShopTransitionState.target.gearY;
                 g_Menu->transitionEffectState &= EFFECTSTATE_UPDATE_X|EFFECTSTATE_UPDATE_Y;
             }
         } else {
             if (g_gearShopTransitionState.target.gearY >= g_gearShopTransitionState.start.gearY - g_gearShopTransitionState.delta.gearY / 0x10000) {
-                g_LibGearModels[1]->pSkeleton->vec2.vy = g_gearShopTransitionState.target.gearY;
+                g_LibGearModels[1]->pSkeleton->rotation.vy = g_gearShopTransitionState.target.gearY;
                 g_Menu->transitionEffectState &= EFFECTSTATE_UPDATE_X|EFFECTSTATE_UPDATE_Y;
             } else {
-                g_LibGearModels[1]->pSkeleton->vec2.vy = g_gearShopTransitionState.start.gearY - g_gearShopTransitionState.delta.gearY / 0x10000;
+                g_LibGearModels[1]->pSkeleton->rotation.vy = g_gearShopTransitionState.start.gearY - g_gearShopTransitionState.delta.gearY / 0x10000;
             }
         }
     }
@@ -2172,7 +2172,7 @@ void func_801CBE60(void) {
         values[0] = g_Menu->cameraPosition.vx;
         values[1] = g_Menu->cameraPosition.vy;
         values[2] = g_Menu->cameraPosition.vz;
-        values[3] = g_LibGearModels[1]->pSkeleton->vec2.vy;
+        values[3] = g_LibGearModels[1]->pSkeleton->rotation.vy;
         values[4] = g_LibGearModels[1]->ground;
         values[5] = g_LibGearModels[1]->scale;
 
