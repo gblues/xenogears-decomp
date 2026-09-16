@@ -311,8 +311,8 @@ typedef struct {
     /* 0x0D */ u8 defense;
     /* 0x0E */ u8 etherDefense;
     /* 0x0F */ u8 unkF;
-    /* 0x10 */ int unk10;
-    /* 0x14 */ u8 unk14;
+    /* 0x10 */ u8 unk10[4];
+    /* 0x14 */ u8 responsiveness;
     /* 0x15 */ u8 unk15;
     /* 0x16 */ u16 unk16;
     /* 0x18 */ u8 unk18;

@@ -77,15 +77,15 @@ typedef struct {
     /* 0x44 */ u16 weightFromEquipment;
     /* 0x46 */ u16 unk46;
     /* 0x48 */ u16 unk48;
-    /* 0x4A */ u16 unk4A;
+    /* 0x4A */ u8 unk4A;
+    /* 0x4B */ u8 unk4B;
     /* 0x4C */ u8 unk4C;
     /* 0x4D */ u8 responsiveness;
     /* 0x4E */ u8 unk4E;
-    /* 0x50 */ u16 unk50;
-    /* 0x52 */ u16 unk52;
-    /* 0x54 */ u16 unk54;
-    /* 0x56 */ u8 unk56;
-    /* 0x57 */ u8 unk57;
+    /* 0x4F */ u8 unk4F;
+    /* 0x50 */ u8 unk50[4];
+    /* 0x54 */ u8 unk54;
+    /* 0x56 */ u8 unk55[3];
     /* 0x58 */ u16 unk58;
     /* 0x5A */ u16 unk5A;
     /* 0x5C */ u8 unk5C[4];
@@ -99,7 +99,20 @@ typedef struct {
     /* 0x72 */ u16 baseEtherDefense;
     /* 0x74 */ u8 attackPower;
     /* 0x75 */ u8 unk75;
-    /* 0x76 */ u8 unk76[0x10];
+    /* 0x76 */ u8 unk76;
+    /* 0x77 */ u8 unk77;
+    /* 0x78 */ u8 unk78;
+    /* 0x79 */ u8 unk79;
+    /* 0x7A */ u8 unk7A;
+    /* 0x7B */ u8 unk7B;
+    /* 0x7C */ u8 unk7C;
+    /* 0x7D */ u8 unk7D;
+    /* 0x76 */ u16 unk7E;
+    /* 0x80 */ u8 unk80;
+    /* 0x81 */ u8 unk81;
+    /* 0x82 */ u16 unk82;
+    /* 0x84 */ u8 unk84;
+    /* 0x85 */ u8 unk85;
     /* 0x86 */ u16 unk86;
     /* 0x88 */ u8 unk88[0x10];
     /* 0x98 */ u8 agility;
@@ -122,10 +135,32 @@ typedef struct {
 } StringEntry; /* size: 0x14 */
 
 typedef struct {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ s16 unk8;
+    /* 0x0A */ s16 unkA;
+    /* 0x0C */ s16 unkC;
+    /* 0x0E */ s16 unkE;
+    /* 0x10 */ u8 unk10;
+    /* 0x11 */ u8 unk11;
+    /* 0x12 */ s16 unk12;
+    /* 0x14 */ s16 unk14;
+    /* 0x16 */ s16 unk16;
+    /* 0x18 */ s16 unk18;
+    /* 0x1A */ s16 unk1A;
+    /* 0x1C */ s16 unk1C;
+    /* 0x1E */ s16 unk1E;
+} UnkGearState; /* size: 0x20 */
+
+typedef struct {
     /* 0x0000 */ StringEntry strings[31];
     /* 0x026C */ GameCharacter characters[MAX_GAME_CHARACTERS];
     /* 0x0978 */ GameGear gears[MAX_GAME_GEARS];
-    /* 0x1648 */ undefined8 unk1648[0x206];
+    /* 0x1648 */ undefined8 unk1648[0x74];
+    /* 0x16BC */ UnkGearState unk16BC[10];
+    /* 0x17FC */ undefined8 unk17FC[0x52];
     /* 0x184E */ undefined16 unk184E;
     /* 0x1850 */ undefined8 unk1850[0x2];
     /* 0x1852 */ undefined16 unk1852;

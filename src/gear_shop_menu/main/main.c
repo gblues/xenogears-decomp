@@ -2783,7 +2783,7 @@ u_char GearShopMenuShopModeMenuHandleSelectedOption(void) {
     // intentionally using selection w/o intialization
     if (selection) {
         func_801CC528();
-        func_801CCE90(4, g_Menu->unk6E0, &D_801D6A20, g_Menu->pManager->unkC);
+        func_801CCE90(4, g_Menu->unk6E0, &D_801D6A20[0], g_Menu->pManager->unkC);
     }
 
     // Render selection menu as active agian
@@ -2810,7 +2810,7 @@ void GearShopMenuShopModeMain(void) {
     g_Menu->mainMenuChoice = 2; // Start cursor at "Buy" option
     GearShopMenuInitializeShopModeSelectionMenu(5, &D_801D6980);
 
-    func_801CCE90(4, g_Menu->unk6E0, &D_801D6A20, g_Menu->pManager->unkC);
+    func_801CCE90(4, g_Menu->unk6E0, &D_801D6A20[0], g_Menu->pManager->unkC);
 
     if (g_gearShopAvailableCharacterCount >= 2) {
         g_Menu->pManager->shoulderButtonUiActive = TRUE;
@@ -2860,7 +2860,7 @@ void GearShopMenuShopModeMain(void) {
         
         if (g_Menu->mainMenuChoice != g_Menu->mainMenuPrevChoice) {
             func_801CD838(4, g_Menu->mainMenuChoice, &D_801D6980);
-            func_801CCEE8(4, g_Menu->unk6E0, &D_801D6A20, &D_801D6A30, g_Menu->pManager->unkC, g_Menu->mainMenuChoice, 0, 0);
+            func_801CCEE8(4, g_Menu->unk6E0, &D_801D6A20[0], &D_801D6A30, g_Menu->pManager->unkC, g_Menu->mainMenuChoice, 0, 0);
             g_Menu->mainMenuPrevChoice = g_Menu->mainMenuChoice;
         }
     }

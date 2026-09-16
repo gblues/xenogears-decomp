@@ -63,8 +63,8 @@ extern int D_801D69A4[];
 //    MENU_TEX_BALL_CURSOR_11, MENU_TEX_STRING_FUEL
 //   }
 
-extern u8  D_801D6A20;
-extern u8  D_801D6A24;
+extern u8  D_801D6A20[4];
+extern u8  D_801D6A24[8];
 extern int D_801D6A60[4];
 extern int D_801D6A70[4];
 extern u32 D_801D6A80;
@@ -82,9 +82,13 @@ extern int D_801D6D14[8]; // indexed by (renderContext * 4)+i
 extern s32 D_801D6D34[2]; // indexed by renderContext
 extern int D_801D6D3C[8]; // indexed by (renderContext * 4)+i
 extern s32 D_801D6D5C[2]; // indexed by renderContext
+extern s32 D_801D6D64;
+extern s32 D_801D6D68;
+extern int D_801D6D6C;
+extern int D_801D6D70;
+extern s32 D_801D6D74;
+extern s32 D_801D6D78;
 extern u16 D_801D6D7C[2];
-extern int D_801D6D14[8];
-extern int D_801D6D3C[8];
 
 extern int g_GearShopInventoryCounts[5];
 
