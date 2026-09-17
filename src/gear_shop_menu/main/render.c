@@ -12,6 +12,8 @@ s32 func_801C5260(u8);
 // TODO: remove once matched
 s32 func_801D2B74(s32, u32, u8*);
 
+u8 func_8001BD40(int, u8);
+
 void GearShopMenuShoulderButtonUiInitialize(void) {
     int i;
     int polyIndex;
@@ -48,11 +50,72 @@ void GearShopMenuShoulderButtonUiFree(void) {
     HeapFree(g_Menu->pShoulderButtonUi);
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CE32C);
+void func_801CE32C(void) {
+    int i;
+
+    if (g_Menu->pManager->unk5A) {
+        for(i = 0; i < 9; i++) {
+            if (g_Menu->pShop->unk469C[i]) {
+                AddPrim(&g_Menu->pGfxEnv->ot[4], &g_Menu->pShop->linesPortraitHighlight1[(i*2) + g_Menu->renderContext]);
+                AddPrim(&g_Menu->pGfxEnv->ot[4], &g_Menu->pShop->linesPortraitHighlight2[(i*2) + g_Menu->renderContext]);
+            }
+        }
+
+        GearShopMenuRenderString(g_Menu->pShop->explanationsLen, g_Menu->pShop->polysExplanations, g_Menu->pShop->explanationsRenderCtx);
+        GearShopMenuRenderString(g_Menu->pShop->unk46A9, g_Menu->pShop->polys2D0, g_Menu->pShop->unk46A8);
+        GearShopMenuRenderString(g_Menu->pShop->numPortraits, g_Menu->pShop->polysCharacterPortraits, g_Menu->pShop->portraitsRenderCtx);
+        for(i = 0; i < 8; i++) {
+            if (g_Menu->pShop->unk4684[i]) {
+                GearShopMenuRenderPolygons(1, g_Menu->pShop->unk3C30[i].vertices, g_Menu->pShop->unk3C30[i].polys, g_Menu->pShop->unk3C30[i].renderContext);
+                GearShopMenuRenderPolygons(1, g_Menu->pShop->unk4030[i].vertices, g_Menu->pShop->unk4030[i].polys, g_Menu->pShop->unk4030[i].renderContext);
+            }
+        }
+        if (g_Menu->pShop->unk46B6[0]) {
+            GearShopMenuRenderPolygons(1, g_Menu->pShop->str4530.vertices, g_Menu->pShop->str4530.polys, g_Menu->pShop->str4530.renderContext);
+        }
+
+        if (g_Menu->pShop->unk46A7) {
+            GearShopMenuRenderPolygons(1, g_Menu->pShop->strItemDesc.vertices, g_Menu->pShop->strItemDesc.polys, g_Menu->pShop->strItemDesc.renderContext);
+        }
+
+        if (g_Menu->pShop->unk46B5) {
+            GearShopMenuRenderPolygons(1, g_Menu->pShop->str44B0.vertices, g_Menu->pShop->str44B0.polys, g_Menu->pShop->str44B0.renderContext);
+        }
+
+        if (g_Menu->pShop->unk4785 != 0) {
+            GearShopMenuRenderPolygons(1, g_Menu->pShop->str45B0.vertices, g_Menu->pShop->str45B0.polys, g_Menu->pShop->str45B0.renderContext);
+        }
+
+        if (g_Menu->pShop->unk46B2 != 0) {
+            AddPrim(&g_Menu->pGfxEnv->ot[4], &g_Menu->pShop->lines3BF0[g_Menu->renderContext]);
+            GearShopMenuRenderString(g_Menu->pShop->goldBeforeStrLen, g_Menu->pShop->polysGoldBefore, g_Menu->pShop->goldBeforeRenderCtx);
+            GearShopMenuRenderString(g_Menu->pShop->totalPriceStrLen, g_Menu->pShop->polysTotalPrice, g_Menu->pShop->totalPriceRenderCtx);
+            GearShopMenuRenderString(g_Menu->pShop->goldAfterStrLen, g_Menu->pShop->polysGoldAfter, g_Menu->pShop->goldAfterRenderCtx);
+            if (g_Menu->pShop->unk46B6[3] != 0) {
+                GearShopMenuRenderString(g_Menu->pShop->unk46B6[2], g_Menu->pShop->unk14F0, g_Menu->pShop->unk46B6[1]);
+            }
+        }
+
+        for(i = 0; i < 8; i++) {
+            GearShopMenuRenderString(g_Menu->pShop->unk468C[i], g_Menu->pShop->polysShopInventory[i*4], g_Menu->pShop->unk4694[i]);
+        }
+
+        for(i = 0; i < 9; i++) {
+            GearShopMenuRenderString(g_Menu->pShop->unk46BC[i], g_Menu->pShop->polys27B0[i], g_Menu->pShop->unk46CE[i]);
+            GearShopMenuRenderString(g_Menu->pShop->unk46C5[i], g_Menu->pShop->polys3020[i], g_Menu->pShop->unk46D7[i]);
+        }
+    }
+    if (g_Menu->pManager->unk5B == 1) {
+        GearShopMenuRenderString(g_Menu->pShop->finalPriceStrLen, g_Menu->pShop->polysFinalPrice, g_Menu->pShop->finalPriceRenderCtx);
+    }
+    if (g_Menu->pManager->unk5C[8] != 0) {
+        GearShopMenuRenderString(g_Menu->pShop->unk46B6[5], g_Menu->pShop->unk17C0, g_Menu->pShop->unk46B6[4]);
+    }
+}
 
 
 /*
- This is the function in gear_shop_menu that calls into gear_shop_helper
+ This is the function in gear_shop_menu that calls into LibGear
  */
 void func_801CE7E0(void) {
     // most likely: if helper library is loaded into memory
@@ -92,9 +155,74 @@ void func_801CE82C(void) {
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CEA68);
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CEEA8);
+void func_801CEEA8(void) {
+    u8 needsUpdate;
+    u16 var_s1;
+    u16 var_s2;
 
-u8 func_8001BD40(int, u8); // Required signature for function below to match
+    if (g_Menu->menuUnk8->unk1EDB) {
+        // update timer?
+        if (g_Menu->menuUnk8->unk1EDF != 0) {
+            (s8)g_Menu->menuUnk8->unk1EDF -= 1;
+            return;
+        }
+
+        needsUpdate = FALSE;
+        switch(g_Menu->menuUnk8->unk1EDB) {
+            case 1:
+                var_s2 = D_801D705C[D_801D7030[(g_Menu->mainMenuChoice * 4) + g_Menu->subMenuChoice]];
+                var_s1 = D_801D7068[D_801D7030[(g_Menu->mainMenuChoice * 4) + g_Menu->subMenuChoice]];
+                needsUpdate = TRUE;
+                break;
+            case 2:
+                if(func_8001BD40(0, 0xFF) < 4) {
+                    var_s2 = D_801D705C[func_8001BD40(0, 5)];
+                    var_s1 = D_801D7068[func_8001BD40(0, 5)];
+                    needsUpdate = TRUE;
+                }
+                break;
+        }
+
+        if(needsUpdate) {
+            g_Menu->menuUnk8->unk1EFC = var_s2;
+            g_Menu->menuUnk8->unk1EFE = var_s1;
+        }
+
+        g_Menu->menuUnk8->unk1ED3 = func_8002675C(g_Menu->resources,
+                      g_Menu->menuUnk8->unk1EE2 + 0x172,
+                      g_Menu->menuUnk8->polysD00,
+                      g_Menu->renderContext,
+                      g_Menu->menuUnk8->unk1EFC,
+                      g_Menu->menuUnk8->unk1EFE,
+                      0x1000);
+
+        g_Menu->menuUnk8->unk1ED7 = (u8) g_Menu->renderContext;
+        g_Menu->menuUnk8->unk1EDF = 1;
+
+        switch (g_Menu->menuUnk8->unk1EDB) {
+        case 1:
+            if (++g_Menu->menuUnk8->unk1EE2 >= 3) {
+                g_Menu->menuUnk8->unk1EDB = 2;
+            }
+            break;
+        case 2:
+            if (++g_Menu->menuUnk8->unk1EE2 >= 11) {
+                g_Menu->menuUnk8->unk1EE2 = 3;
+            }
+            break;
+        case 3:
+            g_Menu->menuUnk8->unk1EE2 = 2;
+            g_Menu->menuUnk8->unk1EDB = 4;
+            break;
+        case 4:
+            if (--g_Menu->menuUnk8->unk1EE2 < 0) {
+                g_Menu->menuUnk8->unk1EDB = 0;
+            }
+            break;
+        }
+    }
+}
+
 void func_801CF184(void) {
     MenuUnk8* pMenu;
     int i;
@@ -342,7 +470,94 @@ void func_801D05EC(void) {
     g_Menu->pShop->explanationsRenderCtx = g_Menu->renderContext;
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D06D8);
+void func_801D06D8(u32 startingBalance, u32 totalPrice, u32 newBalance, u32 salesTotal, u8 renderSalesTotal) {
+    int i;
+
+    for(i = 0; i < 2; i++) {
+        SetLineF2(&g_Menu->pShop->lines3BF0[i]);
+        setRGB0(&g_Menu->pShop->lines3BF0[i], 0xFF, 0xFF, 0xFF);
+        setXY2(&g_Menu->pShop->lines3BF0[i],
+                D_801D6D6C - 8 - renderSalesTotal * 16,
+                D_801D6D70 + 9 - renderSalesTotal * 8,
+                D_801D6D6C + 0x4e - renderSalesTotal * 16,
+                D_801D6D70 + 9 - renderSalesTotal * 8
+               );
+    }
+
+    GearShopMenuParseNumberToString(startingBalance);
+
+    g_Menu->pShop->goldBeforeStrLen = 0;
+    for(i = 0; i < 9; i++) {
+        if(g_Menu->digits[i] != 0xFF) {
+            g_Menu->pShop->goldBeforeStrLen += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i],
+                &g_Menu->pShop->polysGoldBefore[g_Menu->pShop->goldBeforeStrLen*2],
+                g_Menu->renderContext,
+                ((i * 8) + D_801D6D64) - (renderSalesTotal * 0x10),
+                D_801D6D68 - (renderSalesTotal * 0x10),
+                0x1000
+            );
+        }
+    }
+    g_Menu->pShop->goldBeforeRenderCtx = (u8) g_Menu->renderContext;
+
+    GearShopMenuParseNumberToString(totalPrice);
+    g_Menu->pShop->totalPriceStrLen = 0;
+    for(i = 0; i < 9; i++) {
+        if(g_Menu->digits[i] != 0xFF) {
+            g_Menu->pShop->totalPriceStrLen += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i],
+                &g_Menu->pShop->polysTotalPrice[g_Menu->pShop->totalPriceStrLen*2],
+                g_Menu->renderContext,
+                ((i * 8) + D_801D6D6C) - (renderSalesTotal * 0x10),
+                D_801D6D70 - (renderSalesTotal * 0x10),
+                0x1000
+            );
+        }
+    }
+    g_Menu->pShop->totalPriceRenderCtx = (u8) g_Menu->renderContext;
+
+    GearShopMenuParseNumberToString(newBalance);
+    g_Menu->pShop->goldAfterStrLen = 0;
+    for(i = 0; i < 9; i++) {
+        if(g_Menu->digits[i] != 0xFF) {
+            g_Menu->pShop->goldAfterStrLen += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i],
+                &g_Menu->pShop->polysGoldAfter[g_Menu->pShop->goldAfterStrLen*2],
+                g_Menu->renderContext,
+                ((i * 8) + D_801D6D74) - (renderSalesTotal * 0x10),
+                D_801D6D78 - (renderSalesTotal * 8), 0x1000U
+            );
+        }
+    }
+    g_Menu->pShop->goldAfterRenderCtx = (u8) g_Menu->renderContext;
+
+    g_Menu->pShop->unk46B6[2] = 0;
+    g_Menu->pShop->unk46B6[3] = 0;
+
+    if (renderSalesTotal) {
+        GearShopMenuParseNumberToString(salesTotal);
+        for(i = 0; i < 9; i++) {
+            if(g_Menu->digits[i] != 0xFF) {
+                g_Menu->pShop->unk46B6[2] += func_8002675C(
+                    g_Menu->resources,
+                    g_Menu->digits[i],
+                    &g_Menu->pShop->unk14F0[(g_Menu->pShop->unk46B6[2])*2],
+                    g_Menu->renderContext,
+                    ((i * 8) + D_801D6D6C) - (renderSalesTotal * 0x10),
+                    D_801D6D70 - (renderSalesTotal * 8),
+                    0x1000
+                );
+            }
+        }
+        g_Menu->pShop->unk46B6[1] = (u8) g_Menu->renderContext;
+        g_Menu->pShop->unk46B6[3] = 1;
+    }
+    g_Menu->pShop->unk46B2 = 1;
+}
 
 // GearShopMenuSetFinalPriceGraphics ?
 void func_801D0C20(int number, u8 arg1) {
@@ -962,7 +1177,78 @@ s32 func_801D3C78(s32 rowIndex, s32 scrollOffset, u8 *unused) {
     return price;
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D44FC);
+void func_801D44FC(u32 newBalance) {
+    s32 inventoryIndex;
+    s32 itemIndex;
+    u8 notFound;
+
+    GearShopMenuPlaySoundEffect(0xD1);
+    g_GameState.gold = newBalance;
+
+    if (newBalance > MAX_GOLD_AMOUNT) {
+        g_GameState.gold = MAX_GOLD_AMOUNT;
+    }
+    for(itemIndex = 0; itemIndex < MAX_SHOP_ITEMS; itemIndex++) {
+        if ((g_Menu->shopItemIDs[itemIndex] != 0) && (g_Menu->pShop->curItemQuantities[itemIndex] != 0)) {
+            switch (g_Menu->shopItemTypes[itemIndex]) {
+            case ITEM_TYPE_GEAR_ARMOR:
+                g_GameState.gears[g_gearShopCurrentGearId].armorId = g_Menu->shopItemIDs[itemIndex];
+                break;
+            case ITEM_TYPE_GEAR_FRAME:
+                g_GameState.gears[g_gearShopCurrentGearId].frameId = g_Menu->shopItemIDs[itemIndex];
+                break;
+            case ITEM_TYPE_GEAR_ENGINE:
+                g_GameState.gears[g_gearShopCurrentGearId].engineId = g_Menu->shopItemIDs[itemIndex];
+                break;
+            case ITEM_TYPE_GEAR_WEAPON:
+                notFound = 1;
+
+                for(inventoryIndex = 0; inventoryIndex < MAX_INVENTORY_WEAPONS; inventoryIndex++) {
+                    if (g_GameState.gearWeaponsIds[inventoryIndex] == g_Menu->shopItemIDs[itemIndex]) {
+                        notFound = 0;
+
+                        if( (g_GameState.gearWeaponsQty[inventoryIndex] = g_GameState.gearWeaponsQty[inventoryIndex] + g_Menu->pShop->curItemQuantities[itemIndex]) > MAX_ITEM_QUANTITY) {
+                            g_GameState.gearWeaponsQty[inventoryIndex] = MAX_ITEM_QUANTITY;
+                        }
+                    }
+                }
+
+                if(notFound) {
+                    for(inventoryIndex = 0; inventoryIndex < MAX_INVENTORY_WEAPONS; inventoryIndex++) {
+                        if (g_GameState.gearWeaponsIds[inventoryIndex] == 0) {
+                            g_GameState.gearWeaponsIds[inventoryIndex] = g_Menu->shopItemIDs[itemIndex];
+                            g_GameState.gearWeaponsQty[inventoryIndex] = g_Menu->pShop->curItemQuantities[itemIndex];
+                            break;
+                        }
+                    }
+                }
+                break;
+            case ITEM_TYPE_GEAR_ACCESSORY:
+                notFound = 1;
+                for(inventoryIndex = 0; inventoryIndex < MAX_INVENTORY_ITEMS; inventoryIndex++) {
+                    if (g_GameState.gearPartsIds[inventoryIndex] == g_Menu->shopItemIDs[itemIndex]) {
+                        notFound = 0;
+                        if( (g_GameState.gearPartsQty[inventoryIndex] = g_GameState.gearPartsQty[inventoryIndex] + g_Menu->pShop->curItemQuantities[itemIndex]) > MAX_ITEM_QUANTITY) {
+                            g_GameState.gearPartsQty[inventoryIndex] = MAX_ITEM_QUANTITY;
+                        }
+                    }
+                }
+
+                if(notFound) {
+                    for(inventoryIndex = 0; inventoryIndex < MAX_INVENTORY_ITEMS; inventoryIndex++) {
+                        if (g_GameState.gearPartsIds[inventoryIndex] == 0) {
+                            g_GameState.gearPartsIds[inventoryIndex] = g_Menu->shopItemIDs[itemIndex];
+                            g_GameState.gearPartsQty[inventoryIndex] = g_Menu->pShop->curItemQuantities[itemIndex];
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
+
 
 u8 func_801D4888(s32 itemId) {
     u8 equipped;
@@ -1257,8 +1543,106 @@ void func_801D57A8(void) {
     }
 }
 
-// https://decomp.me/scratch/7SJpB - Main logic for submenus
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D5828);
+s32 func_801D5828(void) {
+    u8 continueProcessing = TRUE;
+    u8 redrawWindows = TRUE;
+    u8 var_s0 = 0;
+
+    if ((g_Menu->mainMenuChoice == 3) && !func_801D573C()) return 1;
+
+    g_Menu->subMenuChoice = 0;
+    g_Menu->subMenuPrevChoice = 0xFF;
+    if (g_Menu->mainMenuChoice == 3) {
+        g_Menu->subMenuChoice = 3;
+        var_s0 = 4;
+    }
+
+    while(continueProcessing) {
+            GearShopMenuUpdateAndRender();
+            if (g_Menu->transitionEffectState == 0) {
+                if (g_gearShopAvailableCharacterCount >= 2) {
+                    g_Menu->pManager->shoulderButtonUiActive = 1;
+                }
+            }
+            if (redrawWindows) {
+                func_801CCE90(4, g_Menu->unk6E0, &D_801D6A24[var_s0], (s8* ) g_Menu->pManager->unkC);
+                GearShopMenuInitializeSubmenu(0);
+                redrawWindows = FALSE;
+            }
+            if (g_Menu->subMenuChoice != g_Menu->subMenuPrevChoice) {
+                func_801CCEE8(4, g_Menu->unk6E0, (s32) &D_801D6A24[var_s0], &D_801D6A40[var_s0], g_Menu->pManager->unkC, g_Menu->subMenuChoice, 4, 0);
+                GearShopMenuUpdateSubmenuTextures(0);
+                g_Menu->subMenuPrevChoice = g_Menu->subMenuChoice;
+            }
+            if (g_Menu->menuUnk8->unk1ED9[0] == 0) {
+                g_Menu->pManager->unk5C[0xA] = 1;
+                g_Menu->pManager->unk5C[9] = 0;
+            }
+
+            switch (g_Menu->input) {
+                case MENU_INPUT_CONFIRM:
+                    g_Menu->pManager->unk4 = 0;
+                    g_Menu->pManager->unk3 = 0;
+                    g_Menu->pManager->unkA = 0;
+                    g_Menu->pManager->unk5C[0xA] = 0;
+                    func_801CCEBC(4, (s8* ) g_Menu->pManager->unkC);
+                    GearShopMenuPlaySoundEffect(2);
+                    func_801CFC60();
+                    g_Menu->pManager->shoulderButtonUiActive = 0;
+                    switch (g_Menu->mainMenuChoice) {              /* switch 2; irregular */
+                        case 1:
+                            GearShopMenuSellModeMenuHandleSelectedOption(1);
+                            break;
+                        case 2:
+                            GearShopMenuPurchaseDialog(1, 0);
+                            break;
+                        case 3:
+                            func_801D57A8();
+                            break;
+                    }
+                    func_801CFF18();
+                    GearShopMenuUpdateAndRender();
+                    func_801CF448();
+                    GearShopMenuUpdateAndRender();
+                    g_Menu->pManager->unk4 = 1;
+                    g_Menu->pManager->unk3 = 1;
+                    g_Menu->pManager->unkA = 1;
+                    func_801CCE90(4, g_Menu->unk6E0, &D_801D6A24[var_s0], (s8* ) g_Menu->pManager->unkC);
+                    g_Menu->subMenuPrevChoice = 0xFF;
+                case MENU_INPUT_LEFT:                             /* switch 1 */
+                case 6:                             /* switch 1 */
+                case 7:                             /* switch 1 */
+                case MENU_INPUT_IDLE:                             /* switch 1 */
+                    break;
+                case MENU_INPUT_BACK:                             /* switch 1 */
+                    continueProcessing = 0;
+                    break;
+                case MENU_INPUT_DOWN:                             /* switch 1 */
+                    if (g_Menu->subMenuChoice != 0) {
+                        (s8)g_Menu->subMenuChoice -= 1;
+                    } else {
+                        g_Menu->subMenuChoice = g_Menu->subMenuNumChoices + 0xFF;
+                    }
+                    break;
+                case MENU_INPUT_UP:                             /* switch 1 */
+                    if ( ++g_Menu->subMenuChoice >= (u8) g_Menu->subMenuNumChoices) {
+                        g_Menu->subMenuChoice = 0;
+                    }
+                    break;
+                case MENU_INPUT_NEXT:                             /* switch 1 */
+                    GearShopMenuChangeCurrentGear(0);
+                    break;
+                case MENU_INPUT_PREV:                            /* switch 1 */
+                    GearShopMenuChangeCurrentGear(1);
+                    break;
+            }
+    }
+    g_Menu->pManager->unk4 = 0;
+    g_Menu->pManager->unk3 = 0;
+    func_801CCEBC(4, (s8* ) g_Menu->pManager->unkC);
+
+    return 1;
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D5D38);
 
@@ -1300,7 +1684,7 @@ void func_801D5F94(MenuDressingRoom* pView, u_char gearId) {
     pView->fuel = pGear->fuel;
     pView->maxFuel = pGear->maxFuel;
 
-    ether = pGear->engineOutput * (pGear->attackPower + pGear->unk56);
+    ether = pGear->engineOutput * (pGear->attackPower + pGear->unk55[1]);
 
     if(gearId == 0x5 || gearId == 0xD) {
         etherModifier = ((pGear->weaponData[0].unk2 + pGear->weaponData[2].unk2) * 6) / 10;
@@ -1384,7 +1768,116 @@ void func_801D62A4(MenuDressingRoom* shopInfo, u8 gearId) {
 }
 
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D6334);
+void func_801D6334(MenuDressingRoom* dressingRoom, u8 gearId) {
+    GameGear* pGear;
+    GearAccessory* pAccessory;
+    u8 accessoryInd;
+    u8 i;
+    u8 characterId;
+    u16 *pFlags1, *pFlags2;
+
+    pGear = &g_GameState.gears[gearId];
+    characterId = D_801D70F4[gearId];
+
+    pFlags1 = &g_GameState.unk16BC[characterId].unk8;
+    pFlags2 = &g_GameState.unk16BC[characterId].unk1E;
+
+    pGear->defenseFromEquipment = 0;
+    pGear->etherDefenseFromEquipment = 0;
+    pGear->weightFromEquipment = 0;
+    pGear->unk48 = 0;
+    pGear->unk4C = 0;
+    pGear->responsiveness = 0;
+    pGear->unk4E = 0;
+    pGear->unk4F = 0;
+    pGear->unk6E = 0;
+
+
+    for(i = 0; i < 16; i++) {
+        pGear->unk88[i] = 0;
+    }
+
+    for(i = 0; i < 4; i++) {
+        pGear->unk50[i] = 0;
+    }
+
+    for(i = 0; i < 3; i++) {
+        pGear->unk55[i] = 0;
+    }
+
+    pGear->unk54 = 0;
+    pGear->unk7E = 0;
+    pGear->unk82 = 0;
+    pGear->unk86 &= 0xF000;
+    *pFlags1 &= 0xDB7F;
+
+    for(accessoryInd = 0; accessoryInd < 3; accessoryInd++) {
+        pAccessory = dressingRoom->pGearAccessories;
+        pAccessory += pGear->accessorySlots[accessoryInd];
+
+        pGear->defenseFromEquipment += pAccessory->defense;
+        pGear->etherDefenseFromEquipment += pAccessory->etherDefense;
+        pGear->weightFromEquipment += pAccessory->weight;
+        pGear->unk4C += pAccessory->unk18;
+        pGear->responsiveness += pAccessory->responsiveness;
+
+        for(i = 0; i < 4; i++) {
+            pGear->unk50[i] += pAccessory->unk10[i];
+        }
+
+        switch(pAccessory->unk15) {
+            case 1:
+                pGear->unk7E |= pAccessory->unk16;
+                break;
+            case 2:
+                pGear->unk82 |= pAccessory->unk16;
+                break;
+            case 3:
+                pGear->unk86 |= pAccessory->unk16;
+                break;
+            case 4:
+                for(i = 0; i < 16; i++) {
+                    pGear->unk6E |= pAccessory->unk16;
+                    if(pAccessory->unk16 & (0x8000 >> i)) {
+                        pGear->unk88[i] += pAccessory->unk1A;
+                    }
+                }
+                break;
+            case 5:
+                pGear->unk4F += pAccessory->unk16;
+                break;
+            case 6:
+                if( (*pFlags1 & 0x1000) && (*pFlags1 & 0x800) )
+                    *pFlags1 |= 0x400;
+                break;
+            case 7:
+                if( (*pFlags1 & 0x200) && (*pFlags1 & 0x100) )
+                    *pFlags1 |= 0x80;
+                break;
+            case 8:
+                if( (*pFlags1 & 0x40) && (*pFlags1 & 0x20) ) {
+                    *pFlags1 |= 0x10;
+                }
+                break;
+            case 9:
+                pGear->unk48 |= pAccessory->unk16;
+            case 10:
+                pGear->unk55[1] += (u8) pAccessory->unk16;
+                break;
+            case 11:
+                pGear->unk55[2] += (u8) pAccessory->unk16;
+                break;
+        }
+    }
+
+    pGear->unk4A = func_801D690C(gearId);
+    if (pGear->unk4F) {
+        *pFlags2 |= 0x8000;
+    }
+    else if (gearId == g_GameState.characters[D_801D70F4[gearId]].gearId) {
+        *pFlags2 &= 0x7FFF;
+    }
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D6738);
 
