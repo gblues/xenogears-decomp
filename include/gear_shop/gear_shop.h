@@ -89,6 +89,9 @@ extern int D_801D6D70;
 extern s32 D_801D6D74;
 extern s32 D_801D6D78;
 extern u16 D_801D6D7C[2];
+extern u8 D_801D6DA0[];
+extern u16 D_801D6DB4[];
+extern u16 D_801D6DD8[];
 
 extern int g_GearShopInventoryCounts[5];
 
@@ -99,10 +102,20 @@ extern u16 D_801D705C[6];
 extern u16 D_801D7068[6];
 extern u16 D_801D7074[6];
 extern u16 D_801D7080[6];
+extern u16 D_801D708C[];
+extern u16 D_801D70A8[];
+extern u16 D_801D70C4[];
+extern u16 D_801D70E0;
+extern u16 D_801D70E2;
+extern u16 D_801D70E4;
+extern u16 D_801D70E6;
+extern u16 D_801D70E8;
+extern u16 D_801D70EA;
+extern u16 D_801D70EC;
+extern u16 D_801D70EE;
+extern u16 D_801D70F0;
+extern u16 D_801D70F2;
 extern u8  D_801D70F4[9];
-
-
-
 
 extern POLY_FT4 D_801D7108[];
 

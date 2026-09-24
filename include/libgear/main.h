@@ -140,5 +140,8 @@ typedef struct {
 extern ModelMesh g_LibGearMeshes[MAX_MODEL_MESHES];
 extern Temp6 D_801E8648[2];
 extern Model* g_LibGearModels[MAX_MODELS];
+extern s16* D_801E8644;
+
+void LibGearInitialize(int);
 
 #endif

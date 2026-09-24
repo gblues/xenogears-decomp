@@ -6,6 +6,10 @@
 #include "system/debug.h"
 #include "util/copyspec.h"
 #include "gear_shop/gear_shop.h"
+#include "libgear/main.h"
+
+extern s32 D_80050100;
+extern s32 D_8005A4AC[2];
 
 s32 func_801C5260(u8);
 
@@ -281,12 +285,108 @@ void func_801CF38C(u_char stringIndex) {
     HeapFree(D_801D9088);
 }
 
-// Render gear stats (Fuel, HP, Weight) - https://decomp.me/scratch/SfkHu
+// Render gear stats (Fuel, HP, Weight)
 // Resource IDs for text:
 // 0x11, 0x19 = HP
 // 0xF, 0x1E, 0xE, 0x15 = FUEL
 // 0x20, 0xE, 0x12, 0x10, 0x11, 0x1D = WEIGHT
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CF448);
+void func_801CF448(void) {
+    int i, j;
+
+    for (j = 0; j < 0xE; j++) {
+        func_8002675C(
+            g_Menu->resources,
+            D_801D708C[j], // Resource ID
+            &g_Menu->menuUnk8->polys12A0[j * 2],
+            g_Menu->renderContext,
+            D_801D70A8[j], D_801D70C4[j],
+            0x1000
+        );
+    }
+
+    GearShopMenuParseNumberToString(g_GameState.gears[g_gearShopCurrentGearId].hp);
+    g_Menu->menuUnk8->unk1EE8 = 0;
+    for (i = 0, j = 0; i < 5; i++) {
+
+        if (g_Menu->digits[i + 4] != 0xFF) {
+            g_Menu->menuUnk8->unk1EE8 += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i + 4],
+                &g_Menu->menuUnk8->polys1700[g_Menu->menuUnk8->unk1EE8 * 2],
+                g_Menu->renderContext,
+                D_801D70E0 + (i * 8), D_801D70E2,
+                0x1000
+            );
+        }
+    }
+
+    GearShopMenuParseNumberToString(g_GameState.gears[g_gearShopCurrentGearId].maxHp);
+    g_Menu->menuUnk8->unk1EE9 = 0;
+    for (i = 0, j = 0; i < 5; i++) {
+        if (g_Menu->digits[i + 4] != 0xFF) {
+            g_Menu->menuUnk8->unk1EE9 += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i + 4],
+                &g_Menu->menuUnk8->polys1890[g_Menu->menuUnk8->unk1EE9 * 2],
+                g_Menu->renderContext,
+                D_801D70E4 + (j * 8), D_801D70E6,
+                0x1000
+            );
+            j++;
+        }
+    }
+
+    GearShopMenuParseNumberToString(g_GameState.gears[g_gearShopCurrentGearId].fuel);
+    g_Menu->menuUnk8->unk1EEA = 0;
+    for (i = 0, j = 0; i < 4; i++) {
+        if (g_Menu->digits[i + 5] != 0xFF) {
+            g_Menu->menuUnk8->unk1EEA += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i + 5],
+                &g_Menu->menuUnk8->polys1A20[g_Menu->menuUnk8->unk1EEA * 2],
+                g_Menu->renderContext,
+                D_801D70E8 + (i * 8), D_801D70EA,
+                0x1000
+            );
+        }
+    }
+
+    GearShopMenuParseNumberToString(g_GameState.gears[g_gearShopCurrentGearId].maxFuel);
+    g_Menu->menuUnk8->unk1EEB = 0;
+    for (i = 0, j = 0; i < 4; i++) {
+        if (g_Menu->digits[i + 5] != 0xFF) {
+            g_Menu->menuUnk8->unk1EEB += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i + 5],
+                &g_Menu->menuUnk8->polys1BB0[g_Menu->menuUnk8->unk1EEB * 2],
+                g_Menu->renderContext,
+                D_801D70EC + (j * 8), D_801D70EE,
+                0x1000
+            );
+            j++;
+        }
+    }
+
+    GearShopMenuParseNumberToString(g_GameState.gears[g_gearShopCurrentGearId].weight);
+    g_Menu->menuUnk8->unk1EEC = 0;
+    for (i = 0; i < 5; i++) {
+        if (g_Menu->digits[i + 4] != 0xFF) {
+            g_Menu->menuUnk8->unk1EEC += func_8002675C(
+                g_Menu->resources,
+                g_Menu->digits[i + 4],
+                &g_Menu->menuUnk8->polys1D40[g_Menu->menuUnk8->unk1EEC * 2],
+                g_Menu->renderContext,
+                D_801D70F0 + (i * 8), D_801D70F2,
+                0x1000
+            );
+        }
+    }
+
+    // Render the gear name
+    func_801CF38C((g_gearShopCurrentGearId + 0xB));
+
+    g_Menu->menuUnk8->unk1EED = g_Menu->renderContext;
+}
 
 void func_801CF9BC(u_char gearId, u8 arg1) {
     ArchiveSetIndex(ARCHIVE_DIR_FIELD, 0);
@@ -302,7 +402,38 @@ void func_801CF9BC(u_char gearId, u8 arg1) {
     ArchiveSetIndex(ARCHIVE_DIR_MENUS, 0);
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CFAB8);
+void func_801CFAB8(u8 needsOffset, u8 gearId) {
+    u8 characterId = 0;
+    s32 s3 = needsOffset;
+    s3 &= 0xFF;
+
+    func_801E742C(
+        needsOffset,
+        0,
+        g_Menu->unk458[needsOffset]->unk0,
+        g_Menu->unk458[needsOffset]->unk4,
+        (needsOffset * 64) + 0x200,
+        0,
+        0,
+        (s3 & 0xFF) + 0x1C0,
+        &g_Menu->unk458[needsOffset]->unk8
+    );
+
+    g_LibGearModels[needsOffset]->ground = D_801D6DB4[gearId];
+    g_LibGearModels[needsOffset]->scale = D_801D6DD8[gearId];
+    g_LibGearModels[1]->pSkeleton->rotation.vy -= 0x400;
+    g_LibGearModels[1]->pSkeleton->rotation.vx -= 0x20;
+    D_80050100 = 0;
+
+    if(gearId != 0xFF) {
+        characterId = D_801D6DA0[gearId];
+    }
+    func_801E8330((s3 & 0xFF), 0, characterId );
+    HeapFree(g_Menu->unk458[needsOffset]->unk4);
+    g_Menu->unk458[needsOffset]->unk12 = 1;
+    func_801CF448();
+    g_Menu->pManager->unk5C[0xA] = 1;
+}
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CFC60);
 
@@ -1644,7 +1775,52 @@ s32 func_801D5828(void) {
     return 1;
 }
 
-INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D5D38);
+void func_801D5D38(void) {
+    s32 firstAvailable = 0;
+
+    LibGearInitialize(0x40);
+
+    g_Menu->unk298 = 0x546;
+    g_Menu->unk29A = -0xE39;
+    g_Menu->unk29C = 0x546;
+    g_Menu->unk29E = 0;
+    g_Menu->unk2A0 = 0;
+    g_Menu->unk2A2 = 0;
+    g_Menu->unk2A4 = 0;
+    g_Menu->unk2A6 = 0;
+    g_Menu->unk2A8 = 0;
+
+    g_Menu->unk2B8 = 0x600;
+    g_Menu->unk2BA = 0;
+    g_Menu->unk2BC = 0;
+    g_Menu->unk2BE = 0x600;
+    g_Menu->unk2C0 = 0;
+    g_Menu->unk2C2 = 0;
+    g_Menu->unk2C4 = 0x600;
+    g_Menu->unk2C6 = 0;
+    g_Menu->unk2C8 = 0;
+
+    D_801E8644 = &g_Menu->unk2B8;
+    SetBackColor(0x3C, 0x3C, 0x3C);
+
+    g_Menu->gfxEnvs[0].unkB0 = D_8005A4AC[0];
+    g_Menu->gfxEnvs[1].unkB0 = D_8005A4AC[1];
+
+    g_Menu->unk458[0] = HeapAlloc(sizeof(SystemMenuArchiveData), 0);
+    bzero(g_Menu->unk458[0], sizeof(SystemMenuArchiveData));
+
+    g_Menu->unk458[1] = HeapAlloc(sizeof(SystemMenuArchiveData), 0);
+    bzero(g_Menu->unk458[1], sizeof(SystemMenuArchiveData));
+
+    while(g_Menu->availableCharacters[firstAvailable] == 0) {
+        firstAvailable++;
+    }
+
+    g_gearShopCurrentGearId = g_GameState.characters[firstAvailable].gearId;
+
+    func_801CF9BC(g_gearShopCurrentGearId, 1);
+    GearShopMenuSetAvailableCharacterCount();
+}
 
 void func_801D5EB8(void) {
     while (g_Menu->transitionEffectState != 0) {
