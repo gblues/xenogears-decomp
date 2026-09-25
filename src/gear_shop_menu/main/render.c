@@ -435,6 +435,7 @@ void func_801CFAB8(u8 needsOffset, u8 gearId) {
     g_Menu->pManager->unk5C[0xA] = 1;
 }
 
+// https://decomp.me/scratch/qGQoV
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801CFC60);
 
 void func_801CFF18(void) {
@@ -849,7 +850,7 @@ s32 func_801D1078(u8 itemId, u8 itemType) {
 
     return result;
 }
-
+// https://decomp.me/scratch/Ww9Bw
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D1304);
 
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D18F8);
@@ -901,7 +902,7 @@ void GearShopMenuFinalizeSalesTransaction(s32 newBalance, u8* pItemIds, u8* pIte
     }
 }
 
-// Spawn and run the logic for a sell menu
+// Spawn and run the logic for a sell menu - https://decomp.me/scratch/Mmljx
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", GearShopMenuSellMenu);
 
 void GearShopMenuSellPartsMenu(void) {
@@ -991,7 +992,7 @@ void func_801D2950(u8 itemType) {
     g_Menu->pShop->unk46B6[0] = 1;
     HeapFree(pWorkspace);
 }
-
+// https://decomp.me/scratch/5HauM
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D2B74);
 
 void func_801D3558(s32* pDelta, s8* pIsImprovement, u8 itemId, u8 itemType, u8 characterId) {
@@ -1648,7 +1649,7 @@ s32 GearShopMenuPurchaseDialog(u8 arg0, u8 disableQuantitySelection) {
     return 1;
 }
 
-// Handles the logic for the "Fuel" option under "Tune up"
+// Handles the logic for the "Fuel" option under "Tune up" - https://decomp.me/scratch/G6NdW
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D5398);
 
 u_char func_801D573C(void) {
@@ -2054,7 +2055,7 @@ void func_801D6334(MenuDressingRoom* dressingRoom, u8 gearId) {
         *pFlags2 &= 0x7FFF;
     }
 }
-
+// https://decomp.me/scratch/Zlso3
 INCLUDE_ASM("asm/gear_shop_menu/nonmatchings/main/render", func_801D6738);
 
 s32 func_801D690C(u8 index) {
