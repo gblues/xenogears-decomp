@@ -324,10 +324,7 @@ typedef struct {
 
 // TODO: these are placeholders so the struct is the right size
 typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1;
-    /* 0x02 */ u8 unk2;
-    /* 0x03 */ u8 unk3;
+    /* 0x00 */ u8 unk0[4];
     /* 0x04 */ u32 equipFlags;
     /* 0x08 */ u16 price;
     /* 0x0A */ u16 unkA;
@@ -402,10 +399,8 @@ typedef struct {
     /* 0x1EE0 */ u8 unk1EE0;
     /* 0x1EE1 */ u8 unk1EE1;
     /* 0x1EE2 */ s16 unk1EE2;
-    /* 0x1EE4 */ u8 unk1EE4;
-    /* 0x1EE5 */ u8 unk1EE5;
-    /* 0x1EE6 */ u8 unk1EE6;
-    /* 0x1EE7 */ u8 unk1EE7;
+    /* 0x1EE4 */ s16 unk1EE4;
+    /* 0x1EE6 */ s16 unk1EE6;
     /* 0x1EE8 */ u8 unk1EE8; // Gear HP digits string length
     /* 0x1EE9 */ u8 unk1EE9; // Gear Max HP digits string length
     /* 0x1EEA */ u8 unk1EEA; // Gear Fuel digits string length

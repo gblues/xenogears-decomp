@@ -136,7 +136,10 @@ INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_800339FC);
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033A2C);
 
-INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033A5C);
+// TODO: determine what strings are in bank 51 and give this function a better name
+void *func_80033A5C(s32 entryId) {
+    return GetStringEntry(g_SystemDataEntries->entries[51], entryId);
+}
 
 INCLUDE_ASM("asm/slus_006.64/nonmatchings/system/system", func_80033A8C);
 
