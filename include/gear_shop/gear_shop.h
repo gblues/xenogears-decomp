@@ -94,7 +94,9 @@ extern u16 D_801D6DB4[];
 extern u16 D_801D6DD8[];
 
 extern int g_GearShopInventoryCounts[5];
-
+extern s16 D_801D6DFC[14];
+extern s16 D_801D6E18[204];
+extern s16 D_801D6FB0[0x10];
 extern s32 D_801D6FD0[2];
 
 extern u8 D_801D7030[16];
